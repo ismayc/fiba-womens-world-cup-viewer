@@ -16,10 +16,14 @@ so every `fiba-womens-world-cup-viewer.netlify.app` URL returns 404.
 - **Calendar Subscribe served the wrong tournament.** Scaffolding left
   `CalendarModal`'s production origin on the *soccer* Women's World Cup viewer's
   domain, which answers 200 with that competition's games. It now points at this
-  repo's own host. The feed is a Netlify function and cannot run on GitHub Pages,
-  so those links stay dead until the Netlify site is created.
+  repo's own host, and the missing Netlify site has since been created, so the
+  feed now serves this tournament's 24 group games from Berlin.
 - **The README coverage badge 404'd** against the same host; it now reads
   `coverage.json` from Pages.
+
+The split is now deliberate: GitHub Pages is the canonical public URL and the one
+the preview card points at, and Netlify is the mirror that keeps deploying when
+Actions is down and the only host that can run the calendar function.
 
 ## August 29, 2026 — first release
 

@@ -9,9 +9,12 @@ Cup 2026 in Berlin, in **your** timezone, with where to watch, which arena, the
 final-phase bracket, group standings, and the full FIBA tie-breaker and
 qualification math.
 
-🔗 **Live:** https://ismayc.github.io/fiba-womens-world-cup-viewer/ (the Netlify
-mirror in `netlify.toml` is configured but its site has not been created yet, so
-`fiba-womens-world-cup-viewer.netlify.app` currently 404s)
+🔗 **Live:** https://ismayc.github.io/fiba-womens-world-cup-viewer/ · https://fiba-womens-world-cup-viewer.netlify.app
+
+GitHub Pages is the canonical public URL and the one the link-preview card points
+at. Netlify is the mirror that keeps deploying when GitHub Actions is down, and it
+is also the only host that can serve `/calendar.ics`, since that feed is a Netlify
+function.
 
 **This edition has not been played yet.** It tips off on 4 September 2026 and the
 Final is on 13 September. The schedule ships complete and score-free; results

@@ -2,6 +2,22 @@
 
 Dated changelog, newest first.
 
+## August 29, 2026 — the guard that guards the family
+
+`test/guards.test.js` was the only one of its kind in the family, so nothing stopped the
+other eleven repos regressing the bugs it describes. It now lives in all twelve, tailored
+per repo, and two faults in this copy were fixed on the way out.
+
+- **The sibling-prefix list was wrong.** It checked for `wmm:` and `euro:`, neither of
+  which any repo uses (the real prefixes are `mmw:` and `euros:`), and it never checked
+  `st:`, `wc2026:` or `copa:` at all. Because a viewer only ever borrows a prefix that
+  really exists, the two dead entries could never fire and three real siblings went
+  unguarded. The list is now the full verified family registry, and a failure names the
+  repo the prefix belongs to.
+- **`vite.config.js` pointed at a test that does not exist.** Its comment credited
+  `test/timezone-pinned.test.js` for asserting the UTC pin. That file is real in three
+  siblings but was never created here; the assertion lives in `test/guards.test.js`.
+
 ## August 29, 2026 — the source link pointed at the wrong repo
 
 "View source on GitHub" in the footer linked to `ismayc/womens-world-cup-viewer`,

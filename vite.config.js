@@ -29,7 +29,7 @@ export default defineConfig({
     // calendar day under UTC and the day headings match Berlin's. A developer's
     // local zone does not have that property — America/Los_Angeles moves the
     // morning games back a day — which is why the pin exists and why local runs
-    // must not drop it. test/timezone-pinned.test.js asserts the pin explicitly
+    // must not drop it. test/guards.test.js asserts the pin explicitly
     // so it cannot be deleted unnoticed on an already-UTC CI runner.
     env: { TZ: 'UTC' },
     coverage: {

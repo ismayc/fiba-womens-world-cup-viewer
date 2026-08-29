@@ -1,9 +1,9 @@
 // Repo-level guards: invariants about the project itself rather than about the
-// tournament. Each of these has bitten a viewer in this family before.
+// competition. Each of these has bitten a viewer in this family before, so the
+// same file lives in every sibling repo.
 
 import { describe, it, expect } from 'vitest'
-import { readFileSync, readdirSync, statSync } from 'node:fs'
-import { GAMES } from '../src/data/games.js'
+import { readFileSync, readdirSync, statSync, existsSync } from 'node:fs'
 import { join } from 'node:path'
 
 const ROOT = join(import.meta.dirname, '..')
@@ -19,9 +19,9 @@ function walk(dir) {
   return out
 }
 
-describe('scripts runtime', () => {
-  const scripts = walk('scripts').filter((f) => f.endsWith('.mjs'))
+const scripts = walk('scripts').filter((f) => f.endsWith('.mjs'))
 
+describe('scripts runtime', () => {
   it('has scripts to check', () => {
     expect(scripts.length).toBeGreaterThan(0)
   })
@@ -41,12 +41,15 @@ describe('scripts runtime', () => {
 })
 
 describe('the ESPN host', () => {
-  // site.api.espn.com serves the same routes but 403s from datacenter IPs, so
-  // any CI job that touches it fails while local runs pass.
+  // site.api.espn.com serves the same routes but 403s from datacenter IPs AND
+  // on a browser User-Agent, with no CORS headers. curl with its default UA
+  // gets 200, so the host looks healthy from a terminal while every deployed
+  // page silently loses live scores. site.web.api serves the same routes.
   it('is site.web.api everywhere it appears', () => {
-    for (const file of [...walk('scripts').filter((f) => f.endsWith('.mjs')), 'src/services/espn.js']) {
-      const src = read(file)
-      expect(src, file).not.toMatch(/site\.api\.espn\.com\/apis/)
+    const files = [...scripts, 'src/services/espn.js'].filter((f) => existsSync(join(ROOT, f)))
+    expect(files).toContain('src/services/espn.js')
+    for (const file of files) {
+      expect(read(file), file).not.toMatch(/site\.api\.espn\.com\/apis/)
     }
   })
 })
@@ -54,52 +57,91 @@ describe('the ESPN host', () => {
 describe('the storage namespace', () => {
   // The hub and all the sibling viewers are served from one origin
   // (ismayc.github.io), so localStorage is shared. A key prefix borrowed from a
-  // sibling silently reads and writes that app's preferences.
+  // sibling silently reads and writes that app's preferences. Verified against
+  // every repo's source on 2026-08-29.
+  const FAMILY = [
+    ['pl:', 'premier-league'],
+    ['nba:', 'the-nba-schedule'],
+    ['wnba:', 'the-wnba-schedule'],
+    ['nfl:', 'the-nfl-schedule'],
+    ['st:', 'hub'],
+    ['mmm:', 'the-mens-march-madness'],
+    ['mmw:', 'the-womens-march-madness'],
+    ['wc2026:', 'world-cup-viewer'],
+    ['wwc:', 'womens-world-cup-viewer'],
+    ['euros:', 'football-euros-viewer'],
+    ['copa:', 'copa-america-viewer'],
+    ['fwwc:', 'fiba-womens-world-cup-viewer'],
+  ]
+  const OWN = 'fwwc:'
+  const files = [...walk('src'), 'index.html'].filter(
+    (f) => /\.(js|jsx|html)$/.test(f) && existsSync(join(ROOT, f)),
+  )
+
+  it('knows its own prefix is in the family registry', () => {
+    expect(FAMILY.map(([p]) => p)).toContain(OWN)
+  })
+
   it('uses this app’s prefix, never a sibling’s', () => {
-    const files = [...walk('src'), 'index.html'].filter((f) => /\.(js|jsx|html)$/.test(f))
     for (const file of files) {
       const src = read(file)
       const keys = [...src.matchAll(/localStorage\.(?:get|set|remove)Item\(\s*'([^']+)'/g)].map(
         (m) => m[1],
       )
       for (const key of keys) {
-        expect(key, `${file} uses storage key "${key}"`).toMatch(/^fwwc:/)
+        expect(key.startsWith(OWN), `${file} uses storage key "${key}"`).toBe(true)
       }
-      // Nor may a sibling's prefix appear at all.
-      for (const foreign of ['wwc:', 'nba:', 'wnba:', 'nfl:', 'mmm:', 'wmm:', 'pl:', 'euro:']) {
-        expect(src.includes(`'${foreign}`), `${file} mentions "${foreign}"`).toBe(false)
+    }
+  })
+
+  it('never mentions a sibling’s prefix', () => {
+    // The leading quote matters: it keeps 'nba:' from matching 'wnba:theme'.
+    for (const file of files) {
+      const src = read(file)
+      for (const [foreign, repo] of FAMILY) {
+        if (foreign === OWN) continue
+        expect(src.includes(`'${foreign}`), `${file} mentions ${repo}'s "${foreign}"`).toBe(false)
       }
     }
   })
 })
 
 describe('the test timezone pin', () => {
-  // Every date-derived assertion in this suite reads the pinned zone. UTC is
-  // day-stable for this data; a developer's local zone is not
-  // (America/Los_Angeles moves the morning games back a day), so a dropped pin
-  // fails locally in a confusing way and passes on an already-UTC CI runner.
+  // Every date-derived assertion in this suite reads the pinned zone. A dropped
+  // pin fails on a developer's machine in a confusing way and passes on CI,
+  // whose runners sit in UTC.
   it('is set to UTC in vite.config.js', () => {
-    expect(read('vite.config.js')).toMatch(/env:\s*\{\s*TZ:\s*'UTC'\s*\}/)
-    expect(process.env.TZ).toBe('UTC')
+    expect(read('vite.config.js')).toContain("env: { TZ: 'UTC' }")
   })
 
-  it('leaves every game on the same calendar day in UTC as in Berlin', () => {
-    // If this ever stops holding, the pin has to change and the day headings
-    // need re-checking.
-    for (const g of GAMES.filter((x) => x.ko)) {
-      const utc = new Date(g.ko).toLocaleDateString('en-CA', { timeZone: 'UTC' })
-      const berlin = new Date(g.ko).toLocaleDateString('en-CA', { timeZone: 'Europe/Berlin' })
-      expect(utc, `game ${g.num}`).toBe(berlin)
-    }
+  it('actually took effect in this process', () => {
+    expect(process.env.TZ).toBe('UTC')
   })
 })
 
 describe('generated data', () => {
+  // A hand edit to a generated file is silently reverted by the next refresh
+  // run, so the banner has to survive.
   it('carries the do-not-edit banner and names its builder', () => {
     for (const file of ['src/data/games.js', 'src/data/teams.js', 'src/data/venues.js']) {
       const src = read(file)
-      expect(src, file).toMatch(/GENERATED by scripts\/fetch-tournament\.mjs/)
+      expect(src, file).toMatch(/GENERATED by scripts\//)
       expect(src, file).toMatch(/do not edit by hand/)
+    }
+  })
+})
+
+describe('the Berlin calendar day', () => {
+  // If this ever stops holding, the pin has to change and the day headings need
+  // re-checking.
+  it('leaves every game on the same calendar day in UTC as in Berlin', async () => {
+    const { GAMES } = await import('../src/data/games.js')
+    const played = GAMES.filter((x) => x.ko)
+    expect(played.length).toBeGreaterThan(0)
+    for (const g of played) {
+      const utc = new Date(g.ko).toLocaleDateString('en-CA', { timeZone: 'UTC' })
+      const berlin = new Date(g.ko).toLocaleDateString('en-CA', { timeZone: 'Europe/Berlin' })
+      expect(utc, `game ${g.num}`).toBe(berlin)
     }
   })
 })

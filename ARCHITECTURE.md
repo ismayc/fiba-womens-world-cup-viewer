@@ -157,6 +157,13 @@ game is live, and recomputes the derived state below on each refresh.
   implements FIBA's **restart rule**, which football has no counterpart for: when
   a criterion separates some but not all of a tied set, the still-level teams are
   re-ranked from criterion 1 with a fresh sub-table among only themselves.
+  `byLots` stands in for FIBA's drawing of lots, which no viewer can compute, with
+  the **FIBA World Ranking** (April 1 2026, `RANK_BY_TEAM` in `data/teams.js`),
+  strongest first. It is a display order, not a FIBA rule. It carries the most
+  weight before a ball is thrown: with every team 0-0 the whole group is one tied
+  block, so `byLots` alone orders the opening table and the projected final phase.
+  `tiebreakNotes.js` mirrors this comparator and **must change with it**, or the
+  ⚖️ markers point at a different adjacent pair than the table shows.
 - `tiebreakNotes.js` — `softTiebreaks`, `TIEBREAK_LABEL`: placings nothing but a
   drawing of lots could separate (the "⚖️" case). There is only ONE soft reason
   here; FIBA has no fair-play criterion, so that branch is absent rather than

@@ -33,7 +33,7 @@
 // There is no fair-play criterion in basketball, so there is no conduct score
 // and nothing reads a card feed.
 
-import { TEAMS } from '../data/teams.js'
+import { TEAMS, RANK_BY_TEAM } from '../data/teams.js'
 
 const GROUPS = Object.keys(TEAMS)
 export const GROUP_GAME_COUNT = 6 // 4 teams => 6 games per group
@@ -53,10 +53,17 @@ export const ADVANCING_PER_GROUP = 3
 // worth far more here than in a top-two-advance tournament.
 export const DIRECT_TO_QF = 1
 
-// FIBA settles a total tie by drawing lots, which no viewer can compute.
-// Alphabetical order keeps the table stable and repeatable; utils/tiebreakNotes.js
-// surfaces "would have gone to lots" wherever it actually bites.
-export const byLots = (a, b) => a.localeCompare(b)
+// FIBA settles a total tie by drawing lots, which no viewer can compute. This
+// stands in for it with the FIBA World Ranking (April 1 2026, see RANK_BY_TEAM),
+// strongest first, so the order is stable, repeatable and a defensible guess at
+// what the draw would produce. It is a DISPLAY order, not FIBA's rule:
+// utils/tiebreakNotes.js still surfaces "would have gone to lots" wherever it
+// actually bites, so the table never claims the ranking decided anything.
+//
+// It matters most before a ball is thrown. With every team 0-0 the entire group
+// is one tied block, so this comparator alone orders the opening table and the
+// projected final phase; alphabetical order put Mali above Spain.
+export const byLots = (a, b) => RANK_BY_TEAM[a] - RANK_BY_TEAM[b]
 
 function blank(team, group) {
   return { ...team, group, P: 0, W: 0, L: 0, PF: 0, PA: 0, PD: 0, Pts: 0 }

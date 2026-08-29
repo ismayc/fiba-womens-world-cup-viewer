@@ -12,7 +12,7 @@
 // lots. FIBA has no conduct criterion at all, so that branch is absent rather
 // than ported and left permanently unreachable.
 
-import { rankGroup, headToHead } from './qualification.js'
+import { rankGroup, headToHead, byLots } from './qualification.js'
 
 // Within a points-level block, mark adjacent pairs that nothing could separate.
 function markBlock(tied, group, games, notes) {
@@ -25,7 +25,9 @@ function markBlock(tied, group, games, notes) {
       sub[b.name].PF - sub[a.name].PF ||
       b.PD - a.PD ||
       b.PF - a.PF ||
-      a.name.localeCompare(b.name),
+      // Must stay identical to resolveTie's comparator in qualification.js, or
+      // the ⚖ markers point at a different adjacent pair than the table shows.
+      byLots(a.name, b.name),
   )
   for (let k = 0; k + 1 < ord.length; k++) {
     const a = ord[k]
@@ -66,7 +68,9 @@ export function softTiebreaks(group, games) {
 
 export const TIEBREAK_LABEL = {
   // FIBA's last resort is not a computation at all: see byLots in
-  // utils/qualification.js, which stands in for it with a stable alphabetical
-  // order so the table stays deterministic.
+  // utils/qualification.js, which stands in for it with the FIBA World Ranking so
+  // the table stays deterministic. This label is what keeps that honest — wherever
+  // it shows, the order came from the ranking and the real tournament would draw
+  // lots instead.
   lots: 'a drawing of lots',
 }

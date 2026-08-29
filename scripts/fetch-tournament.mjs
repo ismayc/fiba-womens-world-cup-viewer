@@ -90,6 +90,37 @@ function keepEvent(event) {
 // would look like the other's result. Teams are therefore keyed by ESPN's
 // numeric id and named by `displayName`, and the short code the app shows is
 // derived from ABBR below rather than read from the feed.
+// FIBA World Ranking Women, presented by Nike, as published on April 1 2026 —
+// the last update before the tournament. Hand-transcribed and checked against two
+// independent sources that agree on all sixteen: FIBA's own ranking page
+// (fiba.basketball/en/ranking/women) and Wikipedia's SportsRankings data module.
+//
+// This is the tournament's SEEDING ORDER, and it is what the app falls back on
+// when nothing on the court separates two teams. It is not part of FIBA's
+// tie-break procedure: FIBA's last resort is a drawing of lots, which no viewer
+// can compute. See byLots in src/utils/qualification.js.
+//
+// The numbers are world ranks, not 1-16 seeds, so they are sparse: the sixteen
+// qualifiers are ranks 1-19 with 7, 9 and 12 absent (teams that did not qualify).
+const RANK = {
+  'United States': 1,
+  France: 2,
+  Australia: 3,
+  China: 4,
+  Belgium: 5,
+  Spain: 6,
+  Nigeria: 8,
+  Japan: 10,
+  Germany: 11,
+  'Puerto Rico': 13,
+  Italy: 14,
+  'South Korea': 15,
+  Türkiye: 16,
+  Czechia: 17,
+  Mali: 18,
+  Hungary: 19,
+}
+
 const ABBR = {
   Australia: 'AUS',
   Belgium: 'BEL',
@@ -275,12 +306,16 @@ function finalPhaseMatches(event, official, all) {
 function buildTeams() {
   const out = {}
   for (const [g, names] of Object.entries(GROUPS)) {
+    // Ordered by world ranking, strongest first, NOT alphabetically. Before a
+    // ball is thrown every team is 0-0, so this order is what the standings
+    // table and the projected final phase show on day one.
     out[g] = names
-      .map((n) => ({ name: n, flag: FLAGS[n], abbr: ABBR[n] }))
-      .sort((a, b) => a.name.localeCompare(b.name))
+      .map((n) => ({ name: n, flag: FLAGS[n], abbr: ABBR[n], rank: RANK[n] }))
+      .sort((a, b) => a.rank - b.rank)
     for (const t of out[g]) {
       assert(t.flag, `No flag for ${t.name}`)
       assert(t.abbr, `No abbreviation for ${t.name}`)
+      assert(t.rank, `No world ranking for ${t.name}`)
     }
   }
   return out
@@ -386,7 +421,10 @@ function renderTeams(groups) {
   const body = Object.entries(groups)
     .map(([g, teams]) => {
       const rows = teams
-        .map((t) => `    { name: ${q(t.name)}, flag: ${q(t.flag)}, abbr: ${q(t.abbr)} },`)
+        .map(
+          (t) =>
+            `    { name: ${q(t.name)}, flag: ${q(t.flag)}, abbr: ${q(t.abbr)}, rank: ${t.rank} },`,
+        )
         .join('\n')
       return `  ${g}: [\n${rows}\n  ],`
     })
@@ -395,6 +433,10 @@ function renderTeams(groups) {
   const flat = Object.values(groups).flat()
   const flags = flat.map((t) => `  ${q(t.name)}: ${q(t.flag)},`).join('\n')
   const abbrs = flat.map((t) => `  ${q(t.name)}: ${q(t.abbr)},`).join('\n')
+  const ranks = [...flat]
+    .sort((a, b) => a.rank - b.rank)
+    .map((t) => `  ${q(t.name)}: ${t.rank},`)
+    .join('\n')
   const all = flat
     .map((t) => t.name)
     .sort()
@@ -409,10 +451,18 @@ function renderTeams(groups) {
     `// "KOR" and one team's result would read as the other's. The codes below are\n` +
     `// the FIBA ones, set in scripts/fetch-tournament.mjs. Never repopulate this\n` +
     `// from the feed's own abbreviation.\n` +
+    `//\n` +
+    `// \`rank\` is the FIBA World Ranking Women published on April 1 2026, the last\n` +
+    `// update before the tournament. Groups are listed strongest-first by it, and it\n` +
+    `// is the app's fallback order when nothing on the court separates two teams.\n` +
+    `// It is NOT part of FIBA's tie-break procedure, whose last resort is a drawing\n` +
+    `// of lots. The values are world ranks, so they are sparse: these sixteen are\n` +
+    `// ranks 1-19, with 7, 9 and 12 belonging to teams that did not qualify.\n` +
     `\n` +
     `export const TEAMS = {\n${body}\n}\n\n` +
     `export const FLAG_BY_TEAM = {\n${flags}\n}\n\n` +
     `export const ABBR_BY_TEAM = {\n${abbrs}\n}\n\n` +
+    `export const RANK_BY_TEAM = {\n${ranks}\n}\n\n` +
     `export const ALL_TEAMS = [\n${all}\n]\n`
   )
 }

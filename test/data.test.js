@@ -4,7 +4,7 @@
 
 import { describe, it, expect } from 'vitest'
 import { GAMES, STAGE_LABELS, STAGE_ORDER } from '../src/data/games.js'
-import { TEAMS, FLAG_BY_TEAM, ABBR_BY_TEAM, ALL_TEAMS } from '../src/data/teams.js'
+import { TEAMS, FLAG_BY_TEAM, ABBR_BY_TEAM, ALL_TEAMS, RANK_BY_TEAM } from '../src/data/teams.js'
 import { VENUES } from '../src/data/venues.js'
 
 const GROUPS = ['A', 'B', 'C', 'D']
@@ -87,6 +87,54 @@ describe('teams', () => {
   it('has no duplicate abbreviations at all', () => {
     const codes = ALL_TEAMS.map((n) => ABBR_BY_TEAM[n])
     expect(new Set(codes).size).toBe(codes.length)
+  })
+
+  // The FIBA World Ranking published April 1 2026, checked against FIBA's own
+  // ranking page and Wikipedia's SportsRankings module, which agree on all 16.
+  // These are the exact values, because a silently shifted ranking would reorder
+  // the opening table and the projected final phase without failing anything else.
+  it('carries the April 1 2026 FIBA World Ranking for all 16 teams', () => {
+    expect(RANK_BY_TEAM).toEqual({
+      'United States': 1,
+      France: 2,
+      Australia: 3,
+      China: 4,
+      Belgium: 5,
+      Spain: 6,
+      Nigeria: 8,
+      Japan: 10,
+      Germany: 11,
+      'Puerto Rico': 13,
+      Italy: 14,
+      'South Korea': 15,
+      Türkiye: 16,
+      Czechia: 17,
+      Mali: 18,
+      Hungary: 19,
+    })
+  })
+
+  // Ranks are world ranks, not 1-16 seeds: 7, 9 and 12 belong to teams that did
+  // not qualify. Asserting distinctness matters because the ranking is the final
+  // tiebreak, and two teams sharing a rank would make the order non-deterministic.
+  it('gives every team a distinct rank, sparse but ordered', () => {
+    const ranks = ALL_TEAMS.map((n) => RANK_BY_TEAM[n])
+    expect(new Set(ranks).size).toBe(16)
+    expect(Math.min(...ranks)).toBe(1)
+    expect(ranks).not.toContain(7)
+  })
+
+  // Teams are listed strongest-first, NOT alphabetically. This is the order the
+  // standings table shows before a ball is thrown, so it is load-bearing.
+  it('lists each group by world ranking, not alphabetically', () => {
+    for (const g of GROUPS) {
+      const ranks = TEAMS[g].map((t) => t.rank)
+      expect(ranks).toEqual([...ranks].sort((a, b) => a - b))
+      // The embedded rank must agree with the lookup, or the two orders diverge.
+      for (const t of TEAMS[g]) expect(t.rank).toBe(RANK_BY_TEAM[t.name])
+    }
+    // Group A is the sharp case: alphabetical put Germany first and Spain last.
+    expect(TEAMS.A.map((t) => t.name)).toEqual(['Spain', 'Japan', 'Germany', 'Mali'])
   })
 })
 

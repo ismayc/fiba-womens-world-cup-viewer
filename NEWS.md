@@ -2,6 +2,27 @@
 
 Dated changelog, newest first.
 
+## August 29, 2026 — world ranking, not the alphabet
+
+Before a ball is thrown every team is 0-0, so the whole group is one tied block and
+the very last tie-break decides the entire table. That fallback was alphabetical
+order, which opened Group A with Germany on top and the world number 6, Spain, in
+last place. It is now the **FIBA World Ranking**.
+
+- **The ranking is committed data.** `RANK_BY_TEAM` in `src/data/teams.js` holds
+  the ranking published April 1 2026, the last update before the tournament,
+  hand-transcribed from FIBA's own ranking page and cross-checked against
+  Wikipedia's data module, which agrees on all sixteen. A test pins every value,
+  because a silently shifted ranking would reorder the opening table without
+  failing anything else.
+- Groups are now listed strongest-first, so Group A opens Spain, Japan, Germany,
+  Mali and Group D opens United States, China, Italy, Czechia.
+- **It is a display order, not a FIBA rule.** FIBA's real last resort is a drawing
+  of lots, which no viewer can compute. The standings legend now says so, and the
+  ⚖️ marker still appears wherever lots would genuinely have decided a placing.
+- Results always beat the ranking: it is only ever reached when nothing on the
+  court separates two teams, and there is a test that Mali can still win Group A.
+
 ## August 29, 2026 — the mark is Berlin's bear now
 
 The icon was Germany's flag with a basketball. Every one of the 36 games is in

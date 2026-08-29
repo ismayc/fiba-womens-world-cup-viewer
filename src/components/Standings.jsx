@@ -355,8 +355,8 @@ export default function Standings({ matches, tz, hideScores, clinch, onGoToMatch
           className="legend-tb"
           tabIndex={0}
           role="note"
-          aria-label="FIBA tie-breakers: points (2 for a win, 1 for a loss), then head-to-head points, head-to-head point difference and head-to-head points scored among the tied teams, then overall point difference, then overall points scored, then a drawing of lots"
-          data-tip="Tie-breakers: points (W 2 / L 1) → head-to-head points → h2h point difference → h2h points scored → overall point difference → overall points scored → drawing of lots"
+          aria-label="FIBA tie-breakers: points (2 for a win, 1 for a loss), then head-to-head points, head-to-head point difference and head-to-head points scored among the tied teams, then overall point difference, then overall points scored, then a drawing of lots, which this app shows as FIBA World Ranking order"
+          data-tip="Tie-breakers: points (W 2 / L 1) → head-to-head points → h2h point difference → h2h points scored → overall point difference → overall points scored → drawing of lots, shown here as world-ranking order"
         >
           tie-breakers
         </span>{' '}
@@ -366,7 +366,10 @@ export default function Standings({ matches, tz, hideScores, clinch, onGoToMatch
         <span className="q-badge c-in">✅ Through</span> /{' '}
         <span className="q-badge c-out">❌ Out</span> mark mathematically clinched outcomes ·{' '}
         <span className="finish">Fin 1–3</span> the group positions still arithmetically
-        possible (a single gold number means the finish is locked).
+        possible (a single gold number means the finish is locked) ·{' '}
+        teams nothing on the court separates are listed in{' '}
+        <strong>FIBA World Ranking</strong> order (April 1, 2026), which is where an
+        unplayed group’s order comes from; FIBA itself would draw lots.
       </p>
       <div className="standings-toolbar">
         <button

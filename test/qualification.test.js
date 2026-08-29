@@ -13,6 +13,7 @@ import {
   DIRECT_TO_QF,
   LOSS_POINTS,
   WIN_POINTS,
+  byLots,
   computeQualification,
   groupComplete,
   headToHead,
@@ -138,6 +139,42 @@ describe('tie-breakers', () => {
     expect(sub.Japan.PD).toBe(10)
     expect(sub.Japan.PF).toBe(80)
     expect(sub.Spain.PD).toBe(-10)
+  })
+
+  // The last resort. FIBA draws lots, which no viewer can compute, so the app
+  // stands in the FIBA World Ranking. These assert it is the RANKING and not the
+  // alphabet: every pair below is ordered oppositely by the two rules, so a
+  // regression to localeCompare fails here instead of quietly reordering a table.
+  it('settles an unbreakable tie by world ranking, not alphabetically', () => {
+    expect(byLots('Spain', 'Japan')).toBeLessThan(0) // 6 before 10, A-Z says Japan
+    expect(byLots('Mali', 'Spain')).toBeGreaterThan(0) // 18 after 6, A-Z says Mali
+    expect(byLots('United States', 'China')).toBeLessThan(0) // 1 before 4
+    expect(byLots('Czechia', 'Italy')).toBeGreaterThan(0) // 17 after 14
+  })
+
+  // Before a ball is thrown every team is 0-0, so the whole group is one tied
+  // block and byLots alone orders the opening table. Alphabetical order opened
+  // group A with Germany on top and the world number 6 in last place.
+  it('opens the unplayed tournament in world-ranking order', () => {
+    expect(order(rankGroup('A', GAMES))).toEqual(['Spain', 'Japan', 'Germany', 'Mali'])
+    expect(order(rankGroup('B', GAMES))).toEqual(['France', 'Nigeria', 'South Korea', 'Hungary'])
+    expect(order(rankGroup('C', GAMES))).toEqual(['Australia', 'Belgium', 'Puerto Rico', 'Türkiye'])
+    expect(order(rankGroup('D', GAMES))).toEqual(['United States', 'China', 'Italy', 'Czechia'])
+  })
+
+  // Ranking is the LAST resort, never a shortcut past the court. Mali is ranked
+  // 18th and Spain 6th, so if the ranking ever outranked results Mali could not
+  // top this group.
+  it('still lets results beat the ranking', () => {
+    const board = A([
+      ['Mali', 'Spain', 80, 70],
+      ['Mali', 'Japan', 85, 70],
+      ['Mali', 'Germany', 90, 70],
+      ['Spain', 'Japan', 75, 70],
+      ['Spain', 'Germany', 75, 70],
+      ['Japan', 'Germany', 75, 70],
+    ])
+    expect(order(rankGroup('A', board))[0]).toBe('Mali')
   })
 })
 

@@ -10,70 +10,96 @@
 // "KOR" and one team's result would read as the other's. The codes below are
 // the FIBA ones, set in scripts/fetch-tournament.mjs. Never repopulate this
 // from the feed's own abbreviation.
+//
+// `rank` is the FIBA World Ranking Women published on April 1 2026, the last
+// update before the tournament. Groups are listed strongest-first by it, and it
+// is the app's fallback order when nothing on the court separates two teams.
+// It is NOT part of FIBA's tie-break procedure, whose last resort is a drawing
+// of lots. The values are world ranks, so they are sparse: these sixteen are
+// ranks 1-19, with 7, 9 and 12 belonging to teams that did not qualify.
 
 export const TEAMS = {
   A: [
-    { name: 'Germany', flag: '🇩🇪', abbr: 'GER' },
-    { name: 'Japan', flag: '🇯🇵', abbr: 'JPN' },
-    { name: 'Mali', flag: '🇲🇱', abbr: 'MLI' },
-    { name: 'Spain', flag: '🇪🇸', abbr: 'ESP' },
+    { name: 'Spain', flag: '🇪🇸', abbr: 'ESP', rank: 6 },
+    { name: 'Japan', flag: '🇯🇵', abbr: 'JPN', rank: 10 },
+    { name: 'Germany', flag: '🇩🇪', abbr: 'GER', rank: 11 },
+    { name: 'Mali', flag: '🇲🇱', abbr: 'MLI', rank: 18 },
   ],
   B: [
-    { name: 'France', flag: '🇫🇷', abbr: 'FRA' },
-    { name: 'Hungary', flag: '🇭🇺', abbr: 'HUN' },
-    { name: 'Nigeria', flag: '🇳🇬', abbr: 'NGR' },
-    { name: 'South Korea', flag: '🇰🇷', abbr: 'KOR' },
+    { name: 'France', flag: '🇫🇷', abbr: 'FRA', rank: 2 },
+    { name: 'Nigeria', flag: '🇳🇬', abbr: 'NGR', rank: 8 },
+    { name: 'South Korea', flag: '🇰🇷', abbr: 'KOR', rank: 15 },
+    { name: 'Hungary', flag: '🇭🇺', abbr: 'HUN', rank: 19 },
   ],
   C: [
-    { name: 'Australia', flag: '🇦🇺', abbr: 'AUS' },
-    { name: 'Belgium', flag: '🇧🇪', abbr: 'BEL' },
-    { name: 'Puerto Rico', flag: '🇵🇷', abbr: 'PUR' },
-    { name: 'Türkiye', flag: '🇹🇷', abbr: 'TUR' },
+    { name: 'Australia', flag: '🇦🇺', abbr: 'AUS', rank: 3 },
+    { name: 'Belgium', flag: '🇧🇪', abbr: 'BEL', rank: 5 },
+    { name: 'Puerto Rico', flag: '🇵🇷', abbr: 'PUR', rank: 13 },
+    { name: 'Türkiye', flag: '🇹🇷', abbr: 'TUR', rank: 16 },
   ],
   D: [
-    { name: 'China', flag: '🇨🇳', abbr: 'CHN' },
-    { name: 'Czechia', flag: '🇨🇿', abbr: 'CZE' },
-    { name: 'Italy', flag: '🇮🇹', abbr: 'ITA' },
-    { name: 'United States', flag: '🇺🇸', abbr: 'USA' },
+    { name: 'United States', flag: '🇺🇸', abbr: 'USA', rank: 1 },
+    { name: 'China', flag: '🇨🇳', abbr: 'CHN', rank: 4 },
+    { name: 'Italy', flag: '🇮🇹', abbr: 'ITA', rank: 14 },
+    { name: 'Czechia', flag: '🇨🇿', abbr: 'CZE', rank: 17 },
   ],
 }
 
 export const FLAG_BY_TEAM = {
-  'Germany': '🇩🇪',
-  'Japan': '🇯🇵',
-  'Mali': '🇲🇱',
   'Spain': '🇪🇸',
+  'Japan': '🇯🇵',
+  'Germany': '🇩🇪',
+  'Mali': '🇲🇱',
   'France': '🇫🇷',
-  'Hungary': '🇭🇺',
   'Nigeria': '🇳🇬',
   'South Korea': '🇰🇷',
+  'Hungary': '🇭🇺',
   'Australia': '🇦🇺',
   'Belgium': '🇧🇪',
   'Puerto Rico': '🇵🇷',
   'Türkiye': '🇹🇷',
-  'China': '🇨🇳',
-  'Czechia': '🇨🇿',
-  'Italy': '🇮🇹',
   'United States': '🇺🇸',
+  'China': '🇨🇳',
+  'Italy': '🇮🇹',
+  'Czechia': '🇨🇿',
 }
 
 export const ABBR_BY_TEAM = {
-  'Germany': 'GER',
-  'Japan': 'JPN',
-  'Mali': 'MLI',
   'Spain': 'ESP',
+  'Japan': 'JPN',
+  'Germany': 'GER',
+  'Mali': 'MLI',
   'France': 'FRA',
-  'Hungary': 'HUN',
   'Nigeria': 'NGR',
   'South Korea': 'KOR',
+  'Hungary': 'HUN',
   'Australia': 'AUS',
   'Belgium': 'BEL',
   'Puerto Rico': 'PUR',
   'Türkiye': 'TUR',
-  'China': 'CHN',
-  'Czechia': 'CZE',
-  'Italy': 'ITA',
   'United States': 'USA',
+  'China': 'CHN',
+  'Italy': 'ITA',
+  'Czechia': 'CZE',
+}
+
+export const RANK_BY_TEAM = {
+  'United States': 1,
+  'France': 2,
+  'Australia': 3,
+  'China': 4,
+  'Belgium': 5,
+  'Spain': 6,
+  'Nigeria': 8,
+  'Japan': 10,
+  'Germany': 11,
+  'Puerto Rico': 13,
+  'Italy': 14,
+  'South Korea': 15,
+  'Türkiye': 16,
+  'Czechia': 17,
+  'Mali': 18,
+  'Hungary': 19,
 }
 
 export const ALL_TEAMS = [

@@ -47,7 +47,7 @@ export default function CalendarModal({ matches, filtered, onClose }) {
 
         <div className="md-section">
           <h4>Subscribe <span className="cal-hint">auto-updates as teams &amp; scores resolve</span></h4>
-          <SubRow label="All 32 matches" httpsUrl={FEED} />
+          <SubRow label="All 36 games" httpsUrl={FEED} />
           {count > 0 && <SubRow label={`My teams (${count})`} httpsUrl={myFeed} />}
           <p className="cal-note">
             “Subscribe” opens your default calendar app. On Google, use the Google button. The feed

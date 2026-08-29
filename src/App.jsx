@@ -532,7 +532,7 @@ export default function App() {
         <span className="results-text">
           {resultsState === 'loading' && 'Loading live results…'}
           {resultsState === 'error' && 'Couldn’t reach results feed — showing schedule only.'}
-          {resultsState === 'ok' && finishedCount > 0 && `${finishedCount} match${finishedCount === 1 ? '' : 'es'} with scores`}
+          {resultsState === 'ok' && finishedCount > 0 && `${finishedCount} game${finishedCount === 1 ? '' : 's'} with scores`}
           {resultsState === 'ok' && finishedCount === 0 && 'No results yet, tip-off is September 4, 2026'}
         </span>
         {liveCount > 0 && (
@@ -562,7 +562,7 @@ export default function App() {
           title={
             concluded
               ? 'Tournament complete — auto-refresh is off for good'
-              : 'Re-fetch scores periodically (faster while a match is live)'
+              : 'Re-fetch scores periodically (faster while a game is live)'
           }
         >
           <input
@@ -613,7 +613,7 @@ export default function App() {
               <button
                 className={`myteams-btn${filters.myTeams ? ' active' : ''}`}
                 onClick={() => setFilters((f) => ({ ...f, myTeams: !f.myTeams }))}
-                title="Show only matches with teams you follow"
+                title="Show only games with teams you follow"
               >
                 ⭐ My Teams <span className="myteams-count">{followCount}</span>
               </button>
@@ -672,7 +672,7 @@ export default function App() {
           <main className="schedule">
             {days.length === 0 && (
               <div className="empty">
-                <p>No matches match your filters.</p>
+                <p>No games match your filters.</p>
               </div>
             )}
             {visibleDays.map(([key, matches]) => {
@@ -689,7 +689,7 @@ export default function App() {
                       <span className="day-chev" aria-hidden="true">{collapsed ? '▸' : '▾'}</span>
                       <h2>{formatDateLong(matches[0].ko, tz)}</h2>
                       <span className="day-count">
-                        {matches.length} match{matches.length === 1 ? '' : 'es'}
+                        {matches.length} game{matches.length === 1 ? '' : 's'}
                       </span>
                     </button>
                     {!collapsed && (

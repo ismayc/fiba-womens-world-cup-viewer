@@ -128,7 +128,7 @@ export default function WeekView({ allMatches, shown, tz, dayHidden }) {
   const days = Array.from({ length: 7 }, (_, i) => addDays(weekStart, i))
   const total = days.reduce((n, d) => n + (byDay[d]?.length || 0), 0)
 
-  // The day whose "all matches" pop-up is open: { matches, hidden } or null.
+  // The day whose "all games" pop-up is open: { matches, hidden } or null.
   const [dayModal, setDayModal] = useState(null)
 
   return (
@@ -170,7 +170,7 @@ export default function WeekView({ allMatches, shown, tz, dayHidden }) {
                     className="week-day-btn"
                     onClick={() => setDayModal({ matches, hidden })}
                     title={`Show all ${matches.length} match${matches.length === 1 ? '' : 'es'} this day`}
-                    aria-label={`Show all ${matches.length} match${matches.length === 1 ? '' : 'es'} on ${hdr.wd} ${hdr.day}`}
+                    aria-label={`Show all ${matches.length} game${matches.length === 1 ? '' : 's'} on ${hdr.wd} ${hdr.day}`}
                   >
                     ⤢
                   </button>

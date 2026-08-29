@@ -17,6 +17,15 @@ per repo, and two faults in this copy were fixed on the way out.
 - **`vite.config.js` pointed at a test that does not exist.** Its comment credited
   `test/timezone-pinned.test.js` for asserting the UTC pin. That file is real in three
   siblings but was never created here; the assertion lives in `test/guards.test.js`.
+- **Fixed: a concurrent push to main threw away the whole nightly refresh.** The refresh
+  job checks main out, spends a couple of minutes rebuilding its committed data from ESPN,
+  tests the result, then pushes. The push was a bare `git push`, so if anything else landed
+  on main in that window it died with `! [rejected] main -> main (fetch first)` and the
+  freshly fetched data was discarded until the next scheduled run. It happened to the WNBA
+  viewer today, where a hand push landed one second ahead of the bot. Every refresh workflow
+  in the family had the same bare push. The step now rebases its single data commit onto
+  whatever arrived and retries, up to three times. A genuine content conflict still fails
+  the run rather than force-pushing over someone's work.
 
 ## August 29, 2026 — the source link pointed at the wrong repo
 

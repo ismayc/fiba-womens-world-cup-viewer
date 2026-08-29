@@ -1,0 +1,33 @@
+{
+  "name": "fiba-womens-world-cup-viewer",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "description": "FIBA Women's Basketball World Cup 2026 schedule viewer with local timezone, arenas, group standings and the final-phase bracket",
+  "license": "MIT",
+  "author": "Chester Ismay",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
+    "coverage:badge": "vitest run --coverage && node scripts/coverage-badge.mjs",
+    "fetch:tournament": "node scripts/fetch-tournament.mjs"
+  },
+  "dependencies": {
+    "react": "^19.2.8",
+    "react-dom": "^19.2.8"
+  },
+  "devDependencies": {
+    "@testing-library/dom": "^10.4.1",
+    "@testing-library/jest-dom": "^7.0.0",
+    "@testing-library/react": "^16.3.2",
+    "@vitejs/plugin-react": "^6.0.5",
+    "@vitest/coverage-v8": "^4.1.10",
+    "jsdom": "^30.0.1",
+    "vite": "^8.2.0",
+    "vitest": "^4.1.10"
+  }
+}

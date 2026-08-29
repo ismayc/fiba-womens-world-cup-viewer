@@ -1,0 +1,17 @@
+node_modules
+dist
+dist-ssr
+coverage
+# public/coverage.json is COMMITTED: Netlify builds with `npm run build`, which
+# does not regenerate it, and the README badge reads it from the deployed site.
+*.local
+.DS_Store
+.netlify
+.env
+.env.*
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Per-machine Claude Code settings (the shared skill in .claude/skills is tracked)
+.claude/settings.local.json

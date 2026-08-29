@@ -1,0 +1,152 @@
+name: Refresh data
+
+# The app ships a committed snapshot of the tournament, so it renders instantly with no
+# requests, but that snapshot goes stale the moment a game finishes. This keeps it
+# current: several times a day it re-fetches, and on any change it tests, commits to
+# main, and redeploys the site, all in this one job. The test run is the gate, so a bad
+# refresh fails here instead of shipping.
+#
+# THIS EDITION HAS TWO JOBS TO DO, not one:
+#
+#   1. Pick up scores as games finish.
+#   2. Pick up the TWELVE FINAL-PHASE FIXTURES, which ESPN has not published at all yet.
+#      The committed records for games 25-36 carry FIBA's slot labels and null teams
+#      until the group phase decides them, and the qualification-round and semi-final
+#      tip-off times are announced only at the end of the previous round. This job is
+#      what turns those into real fixtures with real times.
+#
+# The cron is scoped to the tournament window (4-13 September 2026) rather than running
+# all year, because outside it there is nothing to refresh: see the `if` guard below,
+# which is what actually stops the job, since GitHub cron cannot express a date range.
+#
+# On ESPN 403s, check the HOST first. The fetch script calls site.web.api.espn.com;
+# ESPN's edge refuses the sibling site.api.espn.com from datacenter IPs, which is every
+# runner here, while serving the same routes from site.web.api normally. Transient 5xx
+# and network blips are absorbed by the retry/backoff in scripts/lib/fetch.mjs. See
+# sports-viewer-meta/docs/ESPN-403.md.
+
+on:
+  schedule:
+    # Berlin tips run 11:30-21:00 CEST (09:30-19:00 UTC). These land after the
+    # morning slate, after the afternoon slate, and after the last game of the day.
+    - cron: '30 13 * * *'
+    - cron: '30 17 * * *'
+    - cron: '45 21 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write # commit the refreshed data to main
+  pages: write # deploy the rebuilt site
+  id-token: write # OIDC for actions/deploy-pages
+
+# The fetch/test phase needs no repo-wide lock, only the Pages deploy must serialize
+# with CI's, and that lives as a job-level `pages` group on both deploy jobs. A static
+# workflow-level `pages` group here would occupy the shared slot for the whole
+# fetch+gate run and can cancel main's queued CI.
+concurrency:
+  group: refresh-data
+  cancel-in-progress: false
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    outputs:
+      changed: ${{ steps.diff.outputs.changed }}
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          cache: npm
+
+      # GitHub's cron cannot express "only during September 2026", so the window is
+      # enforced here where a real date comparison is possible. Outside it the job
+      # exits cleanly rather than burning a run on a tournament that is over.
+      - name: Check we are inside the tournament window
+        id: window
+        run: |
+          today=$(date -u +%Y-%m-%d)
+          if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
+            echo "in=true" >> "$GITHUB_OUTPUT"
+          elif [[ "$today" > "2026-09-02" && "$today" < "2026-09-17" ]]; then
+            echo "in=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "in=false" >> "$GITHUB_OUTPUT"
+            echo "Outside the 4-13 September window, nothing to refresh." >> "$GITHUB_STEP_SUMMARY"
+          fi
+
+      # No deps needed to fetch: the script uses Node built-ins only.
+      #
+      # Deliberately no workflow-level retry. The transport already retries the failures
+      # that are actually transient (5xx, 429, network); a 403 is not one of them and
+      # fails fast on purpose, because it means the host is refusing us and no amount of
+      # repeating the request changes that.
+      - name: Regenerate the schedule, results and bracket
+        if: steps.window.outputs.in == 'true'
+        run: node scripts/fetch-tournament.mjs
+
+      - name: Summarize what changed
+        id: diff
+        if: steps.window.outputs.in == 'true'
+        run: |
+          if git diff --quiet -- src/data; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+            echo "No changes." >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+            {
+              echo "### Data refresh"
+              echo '```'
+              git diff --stat -- src/data
+              echo '```'
+            } >> "$GITHUB_STEP_SUMMARY"
+          fi
+
+      # The gate: the group tables and the whole bracket are DERIVED from the committed
+      # scores, so a bad refresh fails a test here rather than shipping a wrong table or
+      # a wrong matchup. Run the SAME gate as CI (the coverage badge), because this push
+      # triggers no CI of its own: a weaker gate here can let refreshed data dry up a
+      # covered branch and break the next human push.
+      - name: Install and test against the refreshed data
+        if: steps.diff.outputs.changed == 'true'
+        run: |
+          npm ci
+          npm run coverage:badge
+
+      # Commit straight to main (the test above is the gate). This push is authored by
+      # GITHUB_TOKEN, so it does NOT trigger the CI deploy: this workflow deploys itself
+      # in the job below instead.
+      - name: Commit the refreshed data to main
+        if: steps.diff.outputs.changed == 'true'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A -- src/data public/coverage.json
+          git commit -m "Refresh results and bracket from ESPN"
+          git push
+
+      - name: Build the site
+        if: steps.diff.outputs.changed == 'true'
+        run: npm run build
+
+      - name: Upload the Pages artifact
+        if: steps.diff.outputs.changed == 'true'
+        uses: actions/upload-pages-artifact@v5
+        with:
+          path: dist
+
+  # Publishes the artifact the refresh job built, only when there was a change.
+  deploy:
+    needs: refresh
+    if: needs.refresh.outputs.changed == 'true'
+    runs-on: ubuntu-latest
+    # Serialize Pages deploys across workflows (CI + refresh-data), never mid-cancel.
+    concurrency:
+      group: pages
+      cancel-in-progress: false
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+    steps:
+      - id: deploy
+        uses: actions/deploy-pages@v5

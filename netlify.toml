@@ -1,0 +1,23 @@
+[build]
+  # Deliberately just the build. Netlify builds this repo straight from Git and is the
+  # fallback that keeps deploying when GitHub Actions is down — so it must not depend on
+  # the test suite, where one flaky run would block the very host we fall back to.
+  # public/coverage.json is committed instead, and vite copies it into dist/ for the
+  # README badge; CI still fails below 100%, so the committed value cannot lie.
+  command = "npm run build"
+  publish = "dist"
+
+[functions]
+  directory = "netlify/functions"
+
+# Clean URL for the auto-updating calendar subscription feed.
+[[redirects]]
+  from = "/calendar.ics"
+  to = "/.netlify/functions/calendar"
+  status = 200
+
+# Single-page app: serve index.html for any other path.
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200

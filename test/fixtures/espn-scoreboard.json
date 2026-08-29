@@ -1,0 +1,2094 @@
+{
+ "events": [
+  {
+   "id": "401907392",
+   "uid": "s:40~l:53~e:401907392",
+   "date": "2026-09-04T09:30Z",
+   "status": {
+    "clock": 0,
+    "displayClock": "0:00",
+    "period": 0,
+    "type": {
+     "id": "1",
+     "name": "STATUS_SCHEDULED",
+     "state": "pre",
+     "completed": false,
+     "description": "Scheduled",
+     "detail": "Fri, September 4th at 5:30 AM EDT",
+     "shortDetail": "9/4 - 5:30 AM EDT"
+    }
+   },
+   "competitions": [
+    {
+     "id": "401907392",
+     "date": "2026-09-04T09:30Z",
+     "neutralSite": true,
+     "venue": {
+      "id": "12017",
+      "fullName": "Max-Schmeling-Halle",
+      "address": {
+       "city": "Berlin",
+       "state": "Germany"
+      },
+      "indoor": true
+     },
+     "notes": [
+      {
+       "type": "event",
+       "headline": "FIBA Women's World Cup - Group C"
+      }
+     ],
+     "broadcasts": [
+      {
+       "market": "national",
+       "names": [
+        "HBO Max"
+       ]
+      }
+     ],
+     "status": {
+      "clock": 0,
+      "displayClock": "0:00",
+      "period": 0,
+      "type": {
+       "id": "1",
+       "name": "STATUS_SCHEDULED",
+       "state": "pre",
+       "completed": false,
+       "description": "Scheduled",
+       "detail": "Fri, September 4th at 5:30 AM EDT",
+       "shortDetail": "9/4 - 5:30 AM EDT"
+      }
+     },
+     "competitors": [
+      {
+       "id": "104959",
+       "homeAway": "home",
+       "score": "0",
+       "team": {
+        "id": "104959",
+        "displayName": "Puerto Rico",
+        "abbreviation": "PUR",
+        "shortDisplayName": "Puerto Rico"
+       }
+      },
+      {
+       "id": "17472",
+       "homeAway": "away",
+       "score": "0",
+       "team": {
+        "id": "17472",
+        "displayName": "Australia",
+        "abbreviation": "AUS",
+        "shortDisplayName": "Australia"
+       }
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "401907390",
+   "uid": "s:40~l:53~e:401907390",
+   "date": "2026-09-04T09:30Z",
+   "status": {
+    "clock": 0,
+    "displayClock": "0:00",
+    "period": 0,
+    "type": {
+     "id": "1",
+     "name": "STATUS_SCHEDULED",
+     "state": "pre",
+     "completed": false,
+     "description": "Scheduled",
+     "detail": "Fri, September 4th at 5:30 AM EDT",
+     "shortDetail": "9/4 - 5:30 AM EDT"
+    }
+   },
+   "competitions": [
+    {
+     "id": "401907390",
+     "date": "2026-09-04T09:30Z",
+     "neutralSite": true,
+     "venue": {
+      "id": "11593",
+      "fullName": "Uber Arena",
+      "address": {
+       "city": "Berlin",
+       "state": "Germany"
+      },
+      "indoor": true
+     },
+     "notes": [
+      {
+       "type": "event",
+       "headline": "FIBA Women's World Cup - Group A"
+      }
+     ],
+     "broadcasts": [
+      {
+       "market": "national",
+       "names": [
+        "HBO Max"
+       ]
+      }
+     ],
+     "status": {
+      "clock": 0,
+      "displayClock": "0:00",
+      "period": 0,
+      "type": {
+       "id": "1",
+       "name": "STATUS_SCHEDULED",
+       "state": "pre",
+       "completed": false,
+       "description": "Scheduled",
+       "detail": "Fri, September 4th at 5:30 AM EDT",
+       "shortDetail": "9/4 - 5:30 AM EDT"
+      }
+     },
+     "competitors": [
+      {
+       "id": "83469",
+       "homeAway": "home",
+       "score": "0",
+       "team": {
+        "id": "83469",
+        "displayName": "Mali",
+        "abbreviation": "KOR",
+        "shortDisplayName": "Mali"
+       }
+      },
+      {
+       "id": "17475",
+       "homeAway": "away",
+       "score": "0",
+       "team": {
+        "id": "17475",
+        "displayName": "Japan",
+        "abbreviation": "JPN",
+        "shortDisplayName": "Japan"
+       }
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "401907391",
+   "uid": "s:40~l:53~e:401907391",
+   "date": "2026-09-04T10:30Z",
+   "status": {
+    "clock": 0,
+    "displayClock": "0:00",
+    "period": 0,
+    "type": {
+     "id": "1",
+     "name": "STATUS_SCHEDULED",
+     "state": "pre",
+     "completed": false,
+     "description": "Scheduled",
+     "detail": "Fri, September 4th at 6:30 AM EDT",
+     "shortDetail": "9/4 - 6:30 AM EDT"
+    }
+   },
+   "competitions": [
+    {
+     "id": "401907391",
+     "date": "2026-09-04T10:30Z",
+     "neutralSite": true,
+     "venue": {
+      "id": "11593",
+      "fullName": "Uber Arena",
+      "address": {
+       "city": "Berlin",
+       "state": "Germany"
+      },
+      "indoor": true
+     },
+     "notes": [
+      {
+       "type": "event",
+       "headline": "FIBA Women's World Cup - Group B"
+      }
+     ],
+     "broadcasts": [
+      {
+       "market": "national",
+       "names": [
+        "HBO Max"
+       ]
+      }
+     ],
+     "status": {
+      "clock": 0,
+      "displayClock": "0:00",
+      "period": 0,
+      "type": {
+       "id": "1",
+       "name": "STATUS_SCHEDULED",
+       "state": "pre",
+       "completed": false,
+       "description": "Scheduled",
+       "detail": "Fri, September 4th at 6:30 AM EDT",
+       "shortDetail": "9/4 - 6:30 AM EDT"
+      }
+     },
+     "competitors": [
+      {
+       "id": "17476",
+       "homeAway": "home",
+       "score": "0",
+       "team": {
+        "id": "17476",
+        "displayName": "Nigeria",
+        "abbreviation": "NGR",
+        "shortDisplayName": "Nigeria"
+       }
+      },
+      {
+       "id": "17480",
+       "homeAway": "away",
+       "score": "0",
+       "team": {
+        "id": "17480",
+        "displayName": "South Korea",
+        "abbreviation": "KOR",
+        "shortDisplayName": "South Korea"
+       }
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "401907393",
+   "uid": "s:40~l:53~e:401907393",
+   "date": "2026-09-04T12:15Z",
+   "status": {
+    "clock": 0,
+    "displayClock": "0:00",
+    "period": 0,
+    "type": {
+     "id": "1",
+     "name": "STATUS_SCHEDULED",
+     "state": "pre",
+     "completed": false,
+     "description": "Scheduled",
+     "detail": "Fri, September 4th at 8:15 AM EDT",
+     "shortDetail": "9/4 - 8:15 AM EDT"
+    }
+   },
+   "competitions": [
+    {
+     "id": "401907393",
+     "date": "2026-09-04T12:15Z",
+     "neutralSite": true,
+     "venue": {
+      "id": "12017",
+      "fullName": "Max-Schmeling-Halle",
+      "address": {
+       "city": "Berlin",
+       "state": "Germany"
+      },
+      "indoor": true
+     },
+     "notes": [
+      {
+       "type": "event",
+       "headline": "FIBA Women's World Cup - Group D"
+      }
+     ],
+     "broadcasts": [
+      {
+       "market": "national",
+       "names": [
+        "TNT",
+        "truTV"
+       ]
+      }
+     ],
+     "status": {
+      "clock": 0,
+      "displayClock": "0:00",
+      "period": 0,
+      "type": {
+       "id": "1",
+       "name": "STATUS_SCHEDULED",
+       "state": "pre",
+       "completed": false,
+       "description": "Scheduled",
+       "detail": "Fri, September 4th at 8:15 AM EDT",
+       "shortDetail": "9/4 - 8:15 AM EDT"
+      }
+     },
+     "competitors": [
+      {
+       "id": "17478",
+       "homeAway": "home",
+       "score": "0",
+       "team": {
+        "id": "17478",
+        "displayName": "China",
+        "abbreviation": "CHN",
+        "shortDisplayName": "China"
+       }
+      },
+      {
+       "id": "17483",
+       "homeAway": "away",
+       "score": "0",
+       "team": {
+        "id": "17483",
+        "displayName": "United States",
+        "abbreviation": "USA",
+        "shortDisplayName": "United States"
+       }
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "401907436",
+   "uid": "s:40~l:53~e:401907436",
+   "date": "2026-09-04T15:30Z",
+   "status": {
+    "clock": 0,
+    "displayClock": "0:00",
+    "period": 0,
+    "type": {
+     "id": "1",
+     "name": "STATUS_SCHEDULED",
+     "state": "pre",
+     "completed": false,
+     "description": "Scheduled",
+     "detail": "Fri, September 4th at 11:30 AM EDT",
+     "shortDetail": "9/4 - 11:30 AM EDT"
+    }
+   },
+   "competitions": [
+    {
+     "id": "401907436",
+     "date": "2026-09-04T15:30Z",
+     "neutralSite": true,
+     "venue": {
+      "id": "12017",
+      "fullName": "Max-Schmeling-Halle",
+      "address": {
+       "city": "Berlin",
+       "state": "Germany"
+      },
+      "indoor": true
+     },
+     "notes": [
+      {
+       "type": "event",
+       "headline": "FIBA Women's World Cup - Group C"
+      }
+     ],
+     "broadcasts": [
+      {
+       "market": "national",
+       "names": [
+        "HBO Max"
+       ]
+      }
+     ],
+     "status": {
+      "clock": 0,
+      "displayClock": "0:00",
+      "period": 0,
+      "type": {
+       "id": "1",
+       "name": "STATUS_SCHEDULED",
+       "state": "pre",
+       "completed": false,
+       "description": "Scheduled",
+       "detail": "Fri, September 4th at 11:30 AM EDT",
+       "shortDetail": "9/4 - 11:30 AM EDT"
+      }
+     },
+     "competitors": [
+      {
+       "id": "104957",
+       "homeAway": "home",
+       "score": "0",
+       "team": {
+        "id": "104957",
+        "displayName": "Türkiye",
+        "abbreviation": "TUR",
+        "shortDisplayName": "Türkiye"
+       }
+      },
+      {
+       "id": "106761",
+       "homeAway": "away",
+       "score": "0",
+       "team": {
+        "id": "106761",
+        "displayName": "Belgium",
+        "abbreviation": "BEL",
+        "shortDisplayName": "Belgium"
+       }
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "401907394",
+   "uid": "s:40~l:53~e:401907394",
+   "date": "2026-09-04T15:45Z",
+   "status": {
+    "clock": 0,
+    "displayClock": "0:00",
+    "period": 0,
+    "type": {
+     "id": "1",
+     "name": "STATUS_SCHEDULED",
+     "state": "pre",
+     "completed": false,
+     "description": "Scheduled",
+     "detail": "Fri, September 4th at 11:45 AM EDT",
+     "shortDetail": "9/4 - 11:45 AM EDT"
+    }
+   },
+   "competitions": [
+    {
+     "id": "401907394",
+     "date": "2026-09-04T15:45Z",
+     "neutralSite": true,
+     "venue": {
+      "id": "11593",
+      "fullName": "Uber Arena",
+      "address": {
+       "city": "Berlin",
+       "state": "Germany"
+      },
+      "indoor": true
+     },
+     "notes": [
+      {
+       "type": "event",
+       "headline": "FIBA Women's World Cup - Group A"
+      }
+     ],
+     "broadcasts": [
+      {
+       "market": "national",
+       "names": [
+        "truTV"
+       ]
+      }
+     ],
+     "status": {
+      "clock": 0,
+      "displayClock": "0:00",
+      "period": 0,
+      "type": {
+       "id": "1",
+       "name": "STATUS_SCHEDULED",
+       "state": "pre",
+       "completed": false,
+       "description": "Scheduled",
+       "detail": "Fri, September 4th at 11:45 AM EDT",
+       "shortDetail": "9/4 - 11:45 AM EDT"
+      }
+     },
+     "competitors": [
+      {
+       "id": "122706",
+       "homeAway": "home",
+       "score": "0",
+       "team": {
+        "id": "122706",
+        "displayName": "Germany",
+        "abbreviation": "GER",
+        "shortDisplayName": "Germany"
+       }
+      },
+      {
+       "id": "17482",
+       "homeAway": "away",
+       "score": "0",
+       "team": {
+        "id": "17482",
+        "displayName": "Spain",
+        "abbreviation": "ESP",
+        "shortDisplayName": "Spain"
+       }
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "401907437",
+   "uid": "s:40~l:53~e:401907437",
+   "date": "2026-09-04T18:15Z",
+   "status": {
+    "clock": 0,
+    "displayClock": "0:00",
+    "period": 0,
+    "type": {
+     "id": "1",
+     "name": "STATUS_SCHEDULED",
+     "state": "pre",
+     "completed": false,
+     "description": "Scheduled",
+     "detail": "Fri, September 4th at 2:15 PM EDT",
+     "shortDetail": "9/4 - 2:15 PM EDT"
+    }
+   },
+   "competitions": [
+    {
+     "id": "401907437",
+     "date": "2026-09-04T18:15Z",
+     "neutralSite": true,
+     "venue": {
+      "id": "12017",
+      "fullName": "Max-Schmeling-Halle",
+      "address": {
+       "city": "Berlin",
+       "state": "Germany"
+      },
+      "indoor": true
+     },
+     "notes": [
+      {
+       "type": "event",
+       "headline": "FIBA Women's World Cup - Group D"
+      }
+     ],
+     "broadcasts": [
+      {
+       "market": "national",
+       "names": [
+        "HBO Max"
+       ]
+      }
+     ],
+     "status": {
+      "clock": 0,
+      "displayClock": "0:00",
+      "period": 0,
+      "type": {
+       "id": "1",
+       "name": "STATUS_SCHEDULED",
+       "state": "pre",
+       "completed": false,
+       "description": "Scheduled",
+       "detail": "Fri, September 4th at 2:15 PM EDT",
+       "shortDetail": "9/4 - 2:15 PM EDT"
+      }
+     },
+     "competitors": [
+      {
+       "id": "129555",
+       "homeAway": "home",
+       "score": "0",
+       "team": {
+        "id": "129555",
+        "displayName": "Italy",
+        "abbreviation": "ITA",
+        "shortDisplayName": "Italy"
+       }
+      },
+      {
+       "id": "17479",
+       "homeAway": "away",
+       "score": "0",
+       "team": {
+        "id": "17479",
+        "displayName": "Czechia",
+        "abbreviation": "CZE",
+        "shortDisplayName": "Czechia"
+       }
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "401907435",
+   "uid": "s:40~l:53~e:401907435",
+   "date": "2026-09-04T19:00Z",
+   "status": {
+    "clock": 0,
+    "displayClock": "0:00",
+    "period": 0,
+    "type": {
+     "id": "1",
+     "name": "STATUS_SCHEDULED",
+     "state": "pre",
+     "completed": false,
+     "description": "Scheduled",
+     "detail": "Fri, September 4th at 3:00 PM EDT",
+     "shortDetail": "9/4 - 3:00 PM EDT"
+    }
+   },
+   "competitions": [
+    {
+     "id": "401907435",
+     "date": "2026-09-04T19:00Z",
+     "neutralSite": true,
+     "venue": {
+      "id": "11593",
+      "fullName": "Uber Arena",
+      "address": {
+       "city": "Berlin",
+       "state": "Germany"
+      },
+      "indoor": true
+     },
+     "notes": [
+      {
+       "type": "event",
+       "headline": "FIBA Women's World Cup - Group B"
+      }
+     ],
+     "broadcasts": [
+      {
+       "market": "national",
+       "names": [
+        "truTV"
+       ]
+      }
+     ],
+     "status": {
+      "clock": 0,
+      "displayClock": "0:00",
+      "period": 0,
+      "type": {
+       "id": "1",
+       "name": "STATUS_SCHEDULED",
+       "state": "pre",
+       "completed": false,
+       "description": "Scheduled",
+       "detail": "Fri, September 4th at 3:00 PM EDT",
+       "shortDetail": "9/4 - 3:00 PM EDT"
+      }
+     },
+     "competitors": [
+      {
+       "id": "104956",
+       "homeAway": "home",
+       "score": "0",
+       "team": {
+        "id": "104956",
+        "displayName": "France",
+        "abbreviation": "FRA",
+        "shortDisplayName": "France"
+       }
+      },
+      {
+       "id": "107068",
+       "homeAway": "away",
+       "score": "0",
+       "team": {
+        "id": "107068",
+        "displayName": "Hungary",
+        "abbreviation": "HUN",
+        "shortDisplayName": "Hungary"
+       }
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "401907438",
+   "uid": "s:40~l:53~e:401907438",
+   "date": "2026-09-05T09:30Z",
+   "status": {
+    "clock": 0,
+    "displayClock": "0:00",
+    "period": 0,
+    "type": {
+     "id": "1",
+     "name": "STATUS_SCHEDULED",
+     "state": "pre",
+     "completed": false,
+     "description": "Scheduled",
+     "detail": "Sat, September 5th at 5:30 AM EDT",
+     "shortDetail": "9/5 - 5:30 AM EDT"
+    }
+   },
+   "competitions": [
+    {
+     "id": "401907438",
+     "date": "2026-09-05T09:30Z",
+     "neutralSite": true,
+     "venue": {
+      "id": "12017",
+      "fullName": "Max-Schmeling-Halle",
+      "address": {
+       "city": "Berlin",
+       "state": "Germany"
+      },
+      "indoor": true
+     },
+     "notes": [
+      {
+       "type": "event",
+       "headline": "FIBA Women's World Cup - Group A"
+      }
+     ],
+     "broadcasts": [
+      {
+       "market": "national",
+       "names": [
+        "HBO Max"
+       ]
+      }
+     ],
+     "status": {
+      "clock": 0,
+      "displayClock": "0:00",
+      "period": 0,
+      "type": {
+       "id": "1",
+       "name": "STATUS_SCHEDULED",
+       "state": "pre",
+       "completed": false,
+       "description": "Scheduled",
+       "detail": "Sat, September 5th at 5:30 AM EDT",
+       "shortDetail": "9/5 - 5:30 AM EDT"
+      }
+     },
+     "competitors": [
+      {
+       "id": "17482",
+       "homeAway": "home",
+       "score": "0",
+       "team": {
+        "id": "17482",
+        "displayName": "Spain",
+        "abbreviation": "ESP",
+        "shortDisplayName": "Spain"
+       }
+      },
+      {
+       "id": "83469",
+       "homeAway": "away",
+       "score": "0",
+       "team": {
+        "id": "83469",
+        "displayName": "Mali",
+        "abbreviation": "KOR",
+        "shortDisplayName": "Mali"
+       }
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "401907439",
+   "uid": "s:40~l:53~e:401907439",
+   "date": "2026-09-05T12:15Z",
+   "status": {
+    "clock": 0,
+    "displayClock": "0:00",
+    "period": 0,
+    "type": {
+     "id": "1",
+     "name": "STATUS_SCHEDULED",
+     "state": "pre",
+     "completed": false,
+     "description": "Scheduled",
+     "detail": "Sat, September 5th at 8:15 AM EDT",
+     "shortDetail": "9/5 - 8:15 AM EDT"
+    }
+   },
+   "competitions": [
+    {
+     "id": "401907439",
+     "date": "2026-09-05T12:15Z",
+     "neutralSite": true,
+     "venue": {
+      "id": "12017",
+      "fullName": "Max-Schmeling-Halle",
+      "address": {
+       "city": "Berlin",
+       "state": "Germany"
+      },
+      "indoor": true
+     },
+     "notes": [
+      {
+       "type": "event",
+       "headline": "FIBA Women's World Cup - Group B"
+      }
+     ],
+     "broadcasts": [
+      {
+       "market": "national",
+       "names": [
+        "HBO Max"
+       ]
+      }
+     ],
+     "status": {
+      "clock": 0,
+      "displayClock": "0:00",
+      "period": 0,
+      "type": {
+       "id": "1",
+       "name": "STATUS_SCHEDULED",
+       "state": "pre",
+       "completed": false,
+       "description": "Scheduled",
+       "detail": "Sat, September 5th at 8:15 AM EDT",
+       "shortDetail": "9/5 - 8:15 AM EDT"
+      }
+     },
+     "competitors": [
+      {
+       "id": "107068",
+       "homeAway": "home",
+       "score": "0",
+       "team": {
+        "id": "107068",
+        "displayName": "Hungary",
+        "abbreviation": "HUN",
+        "shortDisplayName": "Hungary"
+       }
+      },
+      {
+       "id": "17476",
+       "homeAway": "away",
+       "score": "0",
+       "team": {
+        "id": "17476",
+        "displayName": "Nigeria",
+        "abbreviation": "NGR",
+        "shortDisplayName": "Nigeria"
+       }
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "401907440",
+   "uid": "s:40~l:53~e:401907440",
+   "date": "2026-09-05T16:00Z",
+   "status": {
+    "clock": 0,
+    "displayClock": "0:00",
+    "period": 0,
+    "type": {
+     "id": "1",
+     "name": "STATUS_SCHEDULED",
+     "state": "pre",
+     "completed": false,
+     "description": "Scheduled",
+     "detail": "Sat, September 5th at 12:00 PM EDT",
+     "shortDetail": "9/5 - 12:00 PM EDT"
+    }
+   },
+   "competitions": [
+    {
+     "id": "401907440",
+     "date": "2026-09-05T16:00Z",
+     "neutralSite": true,
+     "venue": {
+      "id": "12017",
+      "fullName": "Max-Schmeling-Halle",
+      "address": {
+       "city": "Berlin",
+       "state": "Germany"
+      },
+      "indoor": true
+     },
+     "notes": [
+      {
+       "type": "event",
+       "headline": "FIBA Women's World Cup - Group A"
+      }
+     ],
+     "broadcasts": [
+      {
+       "market": "national",
+       "names": [
+        "HBO Max"
+       ]
+      }
+     ],
+     "status": {
+      "clock": 0,
+      "displayClock": "0:00",
+      "period": 0,
+      "type": {
+       "id": "1",
+       "name": "STATUS_SCHEDULED",
+       "state": "pre",
+       "completed": false,
+       "description": "Scheduled",
+       "detail": "Sat, September 5th at 12:00 PM EDT",
+       "shortDetail": "9/5 - 12:00 PM EDT"
+      }
+     },
+     "competitors": [
+      {
+       "id": "17475",
+       "homeAway": "home",
+       "score": "0",
+       "team": {
+        "id": "17475",
+        "displayName": "Japan",
+        "abbreviation": "JPN",
+        "shortDisplayName": "Japan"
+       }
+      },
+      {
+       "id": "122706",
+       "homeAway": "away",
+       "score": "0",
+       "team": {
+        "id": "122706",
+        "displayName": "Germany",
+        "abbreviation": "GER",
+        "shortDisplayName": "Germany"
+       }
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "401907441",
+   "uid": "s:40~l:53~e:401907441",
+   "date": "2026-09-05T18:45Z",
+   "status": {
+    "clock": 0,
+    "displayClock": "0:00",
+    "period": 0,
+    "type": {
+     "id": "1",
+     "name": "STATUS_SCHEDULED",
+     "state": "pre",
+     "completed": false,
+     "description": "Scheduled",
+     "detail": "Sat, September 5th at 2:45 PM EDT",
+     "shortDetail": "9/5 - 2:45 PM EDT"
+    }
+   },
+   "competitions": [
+    {
+     "id": "401907441",
+     "date": "2026-09-05T18:45Z",
+     "neutralSite": true,
+     "venue": {
+      "id": "12017",
+      "fullName": "Max-Schmeling-Halle",
+      "address": {
+       "city": "Berlin",
+       "state": "Germany"
+      },
+      "indoor": true
+     },
+     "notes": [
+      {
+       "type": "event",
+       "headline": "FIBA Women's World Cup - Group B"
+      }
+     ],
+     "broadcasts": [
+      {
+       "market": "national",
+       "names": [
+        "HBO Max"
+       ]
+      }
+     ],
+     "status": {
+      "clock": 0,
+      "displayClock": "0:00",
+      "period": 0,
+      "type": {
+       "id": "1",
+       "name": "STATUS_SCHEDULED",
+       "state": "pre",
+       "completed": false,
+       "description": "Scheduled",
+       "detail": "Sat, September 5th at 2:45 PM EDT",
+       "shortDetail": "9/5 - 2:45 PM EDT"
+      }
+     },
+     "competitors": [
+      {
+       "id": "17480",
+       "homeAway": "home",
+       "score": "0",
+       "team": {
+        "id": "17480",
+        "displayName": "South Korea",
+        "abbreviation": "KOR",
+        "shortDisplayName": "South Korea"
+       }
+      },
+      {
+       "id": "104956",
+       "homeAway": "away",
+       "score": "0",
+       "team": {
+        "id": "104956",
+        "displayName": "France",
+        "abbreviation": "FRA",
+        "shortDisplayName": "France"
+       }
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "401907442",
+   "uid": "s:40~l:53~e:401907442",
+   "date": "2026-09-06T09:30Z",
+   "status": {
+    "clock": 0,
+    "displayClock": "0:00",
+    "period": 0,
+    "type": {
+     "id": "1",
+     "name": "STATUS_SCHEDULED",
+     "state": "pre",
+     "completed": false,
+     "description": "Scheduled",
+     "detail": "Sun, September 6th at 5:30 AM EDT",
+     "shortDetail": "9/6 - 5:30 AM EDT"
+    }
+   },
+   "competitions": [
+    {
+     "id": "401907442",
+     "date": "2026-09-06T09:30Z",
+     "neutralSite": true,
+     "venue": {
+      "id": "11593",
+      "fullName": "Uber Arena",
+      "address": {
+       "city": "Berlin",
+       "state": "Germany"
+      },
+      "indoor": true
+     },
+     "notes": [
+      {
+       "type": "event",
+       "headline": "FIBA Women's World Cup - Group C"
+      }
+     ],
+     "broadcasts": [
+      {
+       "market": "national",
+       "names": [
+        "HBO Max"
+       ]
+      }
+     ],
+     "status": {
+      "clock": 0,
+      "displayClock": "0:00",
+      "period": 0,
+      "type": {
+       "id": "1",
+       "name": "STATUS_SCHEDULED",
+       "state": "pre",
+       "completed": false,
+       "description": "Scheduled",
+       "detail": "Sun, September 6th at 5:30 AM EDT",
+       "shortDetail": "9/6 - 5:30 AM EDT"
+      }
+     },
+     "competitors": [
+      {
+       "id": "17472",
+       "homeAway": "home",
+       "score": "0",
+       "team": {
+        "id": "17472",
+        "displayName": "Australia",
+        "abbreviation": "AUS",
+        "shortDisplayName": "Australia"
+       }
+      },
+      {
+       "id": "104957",
+       "homeAway": "away",
+       "score": "0",
+       "team": {
+        "id": "104957",
+        "displayName": "Türkiye",
+        "abbreviation": "TUR",
+        "shortDisplayName": "Türkiye"
+       }
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "401907443",
+   "uid": "s:40~l:53~e:401907443",
+   "date": "2026-09-06T12:30Z",
+   "status": {
+    "clock": 0,
+    "displayClock": "0:00",
+    "period": 0,
+    "type": {
+     "id": "1",
+     "name": "STATUS_SCHEDULED",
+     "state": "pre",
+     "completed": false,
+     "description": "Scheduled",
+     "detail": "Sun, September 6th at 8:30 AM EDT",
+     "shortDetail": "9/6 - 8:30 AM EDT"
+    }
+   },
+   "competitions": [
+    {
+     "id": "401907443",
+     "date": "2026-09-06T12:30Z",
+     "neutralSite": true,
+     "venue": {
+      "id": "11593",
+      "fullName": "Uber Arena",
+      "address": {
+       "city": "Berlin",
+       "state": "Germany"
+      },
+      "indoor": true
+     },
+     "notes": [
+      {
+       "type": "event",
+       "headline": "FIBA Women's World Cup - Group D"
+      }
+     ],
+     "broadcasts": [
+      {
+       "market": "national",
+       "names": [
+        "HBO Max"
+       ]
+      }
+     ],
+     "status": {
+      "clock": 0,
+      "displayClock": "0:00",
+      "period": 0,
+      "type": {
+       "id": "1",
+       "name": "STATUS_SCHEDULED",
+       "state": "pre",
+       "completed": false,
+       "description": "Scheduled",
+       "detail": "Sun, September 6th at 8:30 AM EDT",
+       "shortDetail": "9/6 - 8:30 AM EDT"
+      }
+     },
+     "competitors": [
+      {
+       "id": "17479",
+       "homeAway": "home",
+       "score": "0",
+       "team": {
+        "id": "17479",
+        "displayName": "Czechia",
+        "abbreviation": "CZE",
+        "shortDisplayName": "Czechia"
+       }
+      },
+      {
+       "id": "17478",
+       "homeAway": "away",
+       "score": "0",
+       "team": {
+        "id": "17478",
+        "displayName": "China",
+        "abbreviation": "CHN",
+        "shortDisplayName": "China"
+       }
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "401907444",
+   "uid": "s:40~l:53~e:401907444",
+   "date": "2026-09-06T15:45Z",
+   "status": {
+    "clock": 0,
+    "displayClock": "0:00",
+    "period": 0,
+    "type": {
+     "id": "1",
+     "name": "STATUS_SCHEDULED",
+     "state": "pre",
+     "completed": false,
+     "description": "Scheduled",
+     "detail": "Sun, September 6th at 11:45 AM EDT",
+     "shortDetail": "9/6 - 11:45 AM EDT"
+    }
+   },
+   "competitions": [
+    {
+     "id": "401907444",
+     "date": "2026-09-06T15:45Z",
+     "neutralSite": true,
+     "venue": {
+      "id": "11593",
+      "fullName": "Uber Arena",
+      "address": {
+       "city": "Berlin",
+       "state": "Germany"
+      },
+      "indoor": true
+     },
+     "notes": [
+      {
+       "type": "event",
+       "headline": "FIBA Women's World Cup - Group C"
+      }
+     ],
+     "broadcasts": [
+      {
+       "market": "national",
+       "names": [
+        "truTV"
+       ]
+      }
+     ],
+     "status": {
+      "clock": 0,
+      "displayClock": "0:00",
+      "period": 0,
+      "type": {
+       "id": "1",
+       "name": "STATUS_SCHEDULED",
+       "state": "pre",
+       "completed": false,
+       "description": "Scheduled",
+       "detail": "Sun, September 6th at 11:45 AM EDT",
+       "shortDetail": "9/6 - 11:45 AM EDT"
+      }
+     },
+     "competitors": [
+      {
+       "id": "106761",
+       "homeAway": "home",
+       "score": "0",
+       "team": {
+        "id": "106761",
+        "displayName": "Belgium",
+        "abbreviation": "BEL",
+        "shortDisplayName": "Belgium"
+       }
+      },
+      {
+       "id": "104959",
+       "homeAway": "away",
+       "score": "0",
+       "team": {
+        "id": "104959",
+        "displayName": "Puerto Rico",
+        "abbreviation": "PUR",
+        "shortDisplayName": "Puerto Rico"
+       }
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "401907445",
+   "uid": "s:40~l:53~e:401907445",
+   "date": "2026-09-06T18:45Z",
+   "status": {
+    "clock": 0,
+    "displayClock": "0:00",
+    "period": 0,
+    "type": {
+     "id": "1",
+     "name": "STATUS_SCHEDULED",
+     "state": "pre",
+     "completed": false,
+     "description": "Scheduled",
+     "detail": "Sun, September 6th at 2:45 PM EDT",
+     "shortDetail": "9/6 - 2:45 PM EDT"
+    }
+   },
+   "competitions": [
+    {
+     "id": "401907445",
+     "date": "2026-09-06T18:45Z",
+     "neutralSite": true,
+     "venue": {
+      "id": "11593",
+      "fullName": "Uber Arena",
+      "address": {
+       "city": "Berlin",
+       "state": "Germany"
+      },
+      "indoor": true
+     },
+     "notes": [
+      {
+       "type": "event",
+       "headline": "FIBA Women's World Cup - Group D"
+      }
+     ],
+     "broadcasts": [
+      {
+       "market": "national",
+       "names": [
+        "TNT"
+       ]
+      }
+     ],
+     "status": {
+      "clock": 0,
+      "displayClock": "0:00",
+      "period": 0,
+      "type": {
+       "id": "1",
+       "name": "STATUS_SCHEDULED",
+       "state": "pre",
+       "completed": false,
+       "description": "Scheduled",
+       "detail": "Sun, September 6th at 2:45 PM EDT",
+       "shortDetail": "9/6 - 2:45 PM EDT"
+      }
+     },
+     "competitors": [
+      {
+       "id": "17483",
+       "homeAway": "home",
+       "score": "0",
+       "team": {
+        "id": "17483",
+        "displayName": "United States",
+        "abbreviation": "USA",
+        "shortDisplayName": "United States"
+       }
+      },
+      {
+       "id": "129555",
+       "homeAway": "away",
+       "score": "0",
+       "team": {
+        "id": "129555",
+        "displayName": "Italy",
+        "abbreviation": "ITA",
+        "shortDisplayName": "Italy"
+       }
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "401907450",
+   "uid": "s:40~l:53~e:401907450",
+   "date": "2026-09-07T09:30Z",
+   "status": {
+    "clock": 0,
+    "displayClock": "0:00",
+    "period": 0,
+    "type": {
+     "id": "1",
+     "name": "STATUS_SCHEDULED",
+     "state": "pre",
+     "completed": false,
+     "description": "Scheduled",
+     "detail": "Mon, September 7th at 5:30 AM EDT",
+     "shortDetail": "9/7 - 5:30 AM EDT"
+    }
+   },
+   "competitions": [
+    {
+     "id": "401907450",
+     "date": "2026-09-07T09:30Z",
+     "neutralSite": true,
+     "venue": {
+      "id": "12017",
+      "fullName": "Max-Schmeling-Halle",
+      "address": {
+       "city": "Berlin",
+       "state": "Germany"
+      },
+      "indoor": true
+     },
+     "notes": [
+      {
+       "type": "event",
+       "headline": "FIBA Women's World Cup - Group C"
+      }
+     ],
+     "broadcasts": [
+      {
+       "market": "national",
+       "names": [
+        "HBO Max"
+       ]
+      }
+     ],
+     "status": {
+      "clock": 0,
+      "displayClock": "0:00",
+      "period": 0,
+      "type": {
+       "id": "1",
+       "name": "STATUS_SCHEDULED",
+       "state": "pre",
+       "completed": false,
+       "description": "Scheduled",
+       "detail": "Mon, September 7th at 5:30 AM EDT",
+       "shortDetail": "9/7 - 5:30 AM EDT"
+      }
+     },
+     "competitors": [
+      {
+       "id": "104957",
+       "homeAway": "home",
+       "score": "0",
+       "team": {
+        "id": "104957",
+        "displayName": "Türkiye",
+        "abbreviation": "TUR",
+        "shortDisplayName": "Türkiye"
+       }
+      },
+      {
+       "id": "104959",
+       "homeAway": "away",
+       "score": "0",
+       "team": {
+        "id": "104959",
+        "displayName": "Puerto Rico",
+        "abbreviation": "PUR",
+        "shortDisplayName": "Puerto Rico"
+       }
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "401907446",
+   "uid": "s:40~l:53~e:401907446",
+   "date": "2026-09-07T09:30Z",
+   "status": {
+    "clock": 0,
+    "displayClock": "0:00",
+    "period": 0,
+    "type": {
+     "id": "1",
+     "name": "STATUS_SCHEDULED",
+     "state": "pre",
+     "completed": false,
+     "description": "Scheduled",
+     "detail": "Mon, September 7th at 5:30 AM EDT",
+     "shortDetail": "9/7 - 5:30 AM EDT"
+    }
+   },
+   "competitions": [
+    {
+     "id": "401907446",
+     "date": "2026-09-07T09:30Z",
+     "neutralSite": true,
+     "venue": {
+      "id": "11593",
+      "fullName": "Uber Arena",
+      "address": {
+       "city": "Berlin",
+       "state": "Germany"
+      },
+      "indoor": true
+     },
+     "notes": [
+      {
+       "type": "event",
+       "headline": "FIBA Women's World Cup - Group C"
+      }
+     ],
+     "broadcasts": [
+      {
+       "market": "national",
+       "names": [
+        "HBO Max"
+       ]
+      }
+     ],
+     "status": {
+      "clock": 0,
+      "displayClock": "0:00",
+      "period": 0,
+      "type": {
+       "id": "1",
+       "name": "STATUS_SCHEDULED",
+       "state": "pre",
+       "completed": false,
+       "description": "Scheduled",
+       "detail": "Mon, September 7th at 5:30 AM EDT",
+       "shortDetail": "9/7 - 5:30 AM EDT"
+      }
+     },
+     "competitors": [
+      {
+       "id": "17472",
+       "homeAway": "home",
+       "score": "0",
+       "team": {
+        "id": "17472",
+        "displayName": "Australia",
+        "abbreviation": "AUS",
+        "shortDisplayName": "Australia"
+       }
+      },
+      {
+       "id": "106761",
+       "homeAway": "away",
+       "score": "0",
+       "team": {
+        "id": "106761",
+        "displayName": "Belgium",
+        "abbreviation": "BEL",
+        "shortDisplayName": "Belgium"
+       }
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "401907451",
+   "uid": "s:40~l:53~e:401907451",
+   "date": "2026-09-07T12:30Z",
+   "status": {
+    "clock": 0,
+    "displayClock": "0:00",
+    "period": 0,
+    "type": {
+     "id": "1",
+     "name": "STATUS_SCHEDULED",
+     "state": "pre",
+     "completed": false,
+     "description": "Scheduled",
+     "detail": "Mon, September 7th at 8:30 AM EDT",
+     "shortDetail": "9/7 - 8:30 AM EDT"
+    }
+   },
+   "competitions": [
+    {
+     "id": "401907451",
+     "date": "2026-09-07T12:30Z",
+     "neutralSite": true,
+     "venue": {
+      "id": "12017",
+      "fullName": "Max-Schmeling-Halle",
+      "address": {
+       "city": "Berlin",
+       "state": "Germany"
+      },
+      "indoor": true
+     },
+     "notes": [
+      {
+       "type": "event",
+       "headline": "FIBA Women's World Cup - Group B"
+      }
+     ],
+     "broadcasts": [
+      {
+       "market": "national",
+       "names": [
+        "HBO Max"
+       ]
+      }
+     ],
+     "status": {
+      "clock": 0,
+      "displayClock": "0:00",
+      "period": 0,
+      "type": {
+       "id": "1",
+       "name": "STATUS_SCHEDULED",
+       "state": "pre",
+       "completed": false,
+       "description": "Scheduled",
+       "detail": "Mon, September 7th at 8:30 AM EDT",
+       "shortDetail": "9/7 - 8:30 AM EDT"
+      }
+     },
+     "competitors": [
+      {
+       "id": "17480",
+       "homeAway": "home",
+       "score": "0",
+       "team": {
+        "id": "17480",
+        "displayName": "South Korea",
+        "abbreviation": "KOR",
+        "shortDisplayName": "South Korea"
+       }
+      },
+      {
+       "id": "107068",
+       "homeAway": "away",
+       "score": "0",
+       "team": {
+        "id": "107068",
+        "displayName": "Hungary",
+        "abbreviation": "HUN",
+        "shortDisplayName": "Hungary"
+       }
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "401907447",
+   "uid": "s:40~l:53~e:401907447",
+   "date": "2026-09-07T12:30Z",
+   "status": {
+    "clock": 0,
+    "displayClock": "0:00",
+    "period": 0,
+    "type": {
+     "id": "1",
+     "name": "STATUS_SCHEDULED",
+     "state": "pre",
+     "completed": false,
+     "description": "Scheduled",
+     "detail": "Mon, September 7th at 8:30 AM EDT",
+     "shortDetail": "9/7 - 8:30 AM EDT"
+    }
+   },
+   "competitions": [
+    {
+     "id": "401907447",
+     "date": "2026-09-07T12:30Z",
+     "neutralSite": true,
+     "venue": {
+      "id": "11593",
+      "fullName": "Uber Arena",
+      "address": {
+       "city": "Berlin",
+       "state": "Germany"
+      },
+      "indoor": true
+     },
+     "notes": [
+      {
+       "type": "event",
+       "headline": "FIBA Women's World Cup - Group B"
+      }
+     ],
+     "broadcasts": [
+      {
+       "market": "national",
+       "names": [
+        "truTV"
+       ]
+      }
+     ],
+     "status": {
+      "clock": 0,
+      "displayClock": "0:00",
+      "period": 0,
+      "type": {
+       "id": "1",
+       "name": "STATUS_SCHEDULED",
+       "state": "pre",
+       "completed": false,
+       "description": "Scheduled",
+       "detail": "Mon, September 7th at 8:30 AM EDT",
+       "shortDetail": "9/7 - 8:30 AM EDT"
+      }
+     },
+     "competitors": [
+      {
+       "id": "104956",
+       "homeAway": "home",
+       "score": "0",
+       "team": {
+        "id": "104956",
+        "displayName": "France",
+        "abbreviation": "FRA",
+        "shortDisplayName": "France"
+       }
+      },
+      {
+       "id": "17476",
+       "homeAway": "away",
+       "score": "0",
+       "team": {
+        "id": "17476",
+        "displayName": "Nigeria",
+        "abbreviation": "NGR",
+        "shortDisplayName": "Nigeria"
+       }
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "401907452",
+   "uid": "s:40~l:53~e:401907452",
+   "date": "2026-09-07T15:50Z",
+   "status": {
+    "clock": 0,
+    "displayClock": "0:00",
+    "period": 0,
+    "type": {
+     "id": "1",
+     "name": "STATUS_SCHEDULED",
+     "state": "pre",
+     "completed": false,
+     "description": "Scheduled",
+     "detail": "Mon, September 7th at 11:50 AM EDT",
+     "shortDetail": "9/7 - 11:50 AM EDT"
+    }
+   },
+   "competitions": [
+    {
+     "id": "401907452",
+     "date": "2026-09-07T15:50Z",
+     "neutralSite": true,
+     "venue": {
+      "id": "12017",
+      "fullName": "Max-Schmeling-Halle",
+      "address": {
+       "city": "Berlin",
+       "state": "Germany"
+      },
+      "indoor": true
+     },
+     "notes": [
+      {
+       "type": "event",
+       "headline": "FIBA Women's World Cup - Group A"
+      }
+     ],
+     "broadcasts": [
+      {
+       "market": "national",
+       "names": [
+        "truTV"
+       ]
+      }
+     ],
+     "status": {
+      "clock": 0,
+      "displayClock": "0:00",
+      "period": 0,
+      "type": {
+       "id": "1",
+       "name": "STATUS_SCHEDULED",
+       "state": "pre",
+       "completed": false,
+       "description": "Scheduled",
+       "detail": "Mon, September 7th at 11:50 AM EDT",
+       "shortDetail": "9/7 - 11:50 AM EDT"
+      }
+     },
+     "competitors": [
+      {
+       "id": "17482",
+       "homeAway": "home",
+       "score": "0",
+       "team": {
+        "id": "17482",
+        "displayName": "Spain",
+        "abbreviation": "ESP",
+        "shortDisplayName": "Spain"
+       }
+      },
+      {
+       "id": "17475",
+       "homeAway": "away",
+       "score": "0",
+       "team": {
+        "id": "17475",
+        "displayName": "Japan",
+        "abbreviation": "JPN",
+        "shortDisplayName": "Japan"
+       }
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "401907448",
+   "uid": "s:40~l:53~e:401907448",
+   "date": "2026-09-07T15:50Z",
+   "status": {
+    "clock": 0,
+    "displayClock": "0:00",
+    "period": 0,
+    "type": {
+     "id": "1",
+     "name": "STATUS_SCHEDULED",
+     "state": "pre",
+     "completed": false,
+     "description": "Scheduled",
+     "detail": "Mon, September 7th at 11:50 AM EDT",
+     "shortDetail": "9/7 - 11:50 AM EDT"
+    }
+   },
+   "competitions": [
+    {
+     "id": "401907448",
+     "date": "2026-09-07T15:50Z",
+     "neutralSite": true,
+     "venue": {
+      "id": "11593",
+      "fullName": "Uber Arena",
+      "address": {
+       "city": "Berlin",
+       "state": "Germany"
+      },
+      "indoor": true
+     },
+     "notes": [
+      {
+       "type": "event",
+       "headline": "FIBA Women's World Cup - Group A"
+      }
+     ],
+     "broadcasts": [
+      {
+       "market": "national",
+       "names": [
+        "HBO Max"
+       ]
+      }
+     ],
+     "status": {
+      "clock": 0,
+      "displayClock": "0:00",
+      "period": 0,
+      "type": {
+       "id": "1",
+       "name": "STATUS_SCHEDULED",
+       "state": "pre",
+       "completed": false,
+       "description": "Scheduled",
+       "detail": "Mon, September 7th at 11:50 AM EDT",
+       "shortDetail": "9/7 - 11:50 AM EDT"
+      }
+     },
+     "competitors": [
+      {
+       "id": "83469",
+       "homeAway": "home",
+       "score": "0",
+       "team": {
+        "id": "83469",
+        "displayName": "Mali",
+        "abbreviation": "KOR",
+        "shortDisplayName": "Mali"
+       }
+      },
+      {
+       "id": "122706",
+       "homeAway": "away",
+       "score": "0",
+       "team": {
+        "id": "122706",
+        "displayName": "Germany",
+        "abbreviation": "GER",
+        "shortDisplayName": "Germany"
+       }
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "401907453",
+   "uid": "s:40~l:53~e:401907453",
+   "date": "2026-09-07T18:45Z",
+   "status": {
+    "clock": 0,
+    "displayClock": "0:00",
+    "period": 0,
+    "type": {
+     "id": "1",
+     "name": "STATUS_SCHEDULED",
+     "state": "pre",
+     "completed": false,
+     "description": "Scheduled",
+     "detail": "Mon, September 7th at 2:45 PM EDT",
+     "shortDetail": "9/7 - 2:45 PM EDT"
+    }
+   },
+   "competitions": [
+    {
+     "id": "401907453",
+     "date": "2026-09-07T18:45Z",
+     "neutralSite": true,
+     "venue": {
+      "id": "12017",
+      "fullName": "Max-Schmeling-Halle",
+      "address": {
+       "city": "Berlin",
+       "state": "Germany"
+      },
+      "indoor": true
+     },
+     "notes": [
+      {
+       "type": "event",
+       "headline": "FIBA Women's World Cup - Group D"
+      }
+     ],
+     "broadcasts": [
+      {
+       "market": "national",
+       "names": [
+        "HBO Max"
+       ]
+      }
+     ],
+     "status": {
+      "clock": 0,
+      "displayClock": "0:00",
+      "period": 0,
+      "type": {
+       "id": "1",
+       "name": "STATUS_SCHEDULED",
+       "state": "pre",
+       "completed": false,
+       "description": "Scheduled",
+       "detail": "Mon, September 7th at 2:45 PM EDT",
+       "shortDetail": "9/7 - 2:45 PM EDT"
+      }
+     },
+     "competitors": [
+      {
+       "id": "17478",
+       "homeAway": "home",
+       "score": "0",
+       "team": {
+        "id": "17478",
+        "displayName": "China",
+        "abbreviation": "CHN",
+        "shortDisplayName": "China"
+       }
+      },
+      {
+       "id": "129555",
+       "homeAway": "away",
+       "score": "0",
+       "team": {
+        "id": "129555",
+        "displayName": "Italy",
+        "abbreviation": "ITA",
+        "shortDisplayName": "Italy"
+       }
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "401907449",
+   "uid": "s:40~l:53~e:401907449",
+   "date": "2026-09-07T18:45Z",
+   "status": {
+    "clock": 0,
+    "displayClock": "0:00",
+    "period": 0,
+    "type": {
+     "id": "1",
+     "name": "STATUS_SCHEDULED",
+     "state": "pre",
+     "completed": false,
+     "description": "Scheduled",
+     "detail": "Mon, September 7th at 2:45 PM EDT",
+     "shortDetail": "9/7 - 2:45 PM EDT"
+    }
+   },
+   "competitions": [
+    {
+     "id": "401907449",
+     "date": "2026-09-07T18:45Z",
+     "neutralSite": true,
+     "venue": {
+      "id": "11593",
+      "fullName": "Uber Arena",
+      "address": {
+       "city": "Berlin",
+       "state": "Germany"
+      },
+      "indoor": true
+     },
+     "notes": [
+      {
+       "type": "event",
+       "headline": "FIBA Women's World Cup - Group D"
+      }
+     ],
+     "broadcasts": [
+      {
+       "market": "national",
+       "names": [
+        "TNT",
+        "truTV"
+       ]
+      }
+     ],
+     "status": {
+      "clock": 0,
+      "displayClock": "0:00",
+      "period": 0,
+      "type": {
+       "id": "1",
+       "name": "STATUS_SCHEDULED",
+       "state": "pre",
+       "completed": false,
+       "description": "Scheduled",
+       "detail": "Mon, September 7th at 2:45 PM EDT",
+       "shortDetail": "9/7 - 2:45 PM EDT"
+      }
+     },
+     "competitors": [
+      {
+       "id": "17479",
+       "homeAway": "home",
+       "score": "0",
+       "team": {
+        "id": "17479",
+        "displayName": "Czechia",
+        "abbreviation": "CZE",
+        "shortDisplayName": "Czechia"
+       }
+      },
+      {
+       "id": "17483",
+       "homeAway": "away",
+       "score": "0",
+       "team": {
+        "id": "17483",
+        "displayName": "United States",
+        "abbreviation": "USA",
+        "shortDisplayName": "United States"
+       }
+      }
+     ]
+    }
+   ]
+  }
+ ]
+}

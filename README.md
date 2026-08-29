@@ -1,7 +1,7 @@
 # FIBA Women's World Cup 2026 Schedule Viewer
 
 [![CI](https://github.com/ismayc/fiba-womens-world-cup-viewer/actions/workflows/ci.yml/badge.svg)](https://github.com/ismayc/fiba-womens-world-cup-viewer/actions/workflows/ci.yml)
-[![coverage](https://img.shields.io/endpoint?url=https://fiba-womens-world-cup-viewer.netlify.app/coverage.json)](https://github.com/ismayc/fiba-womens-world-cup-viewer/actions/workflows/ci.yml)
+[![coverage](https://img.shields.io/endpoint?url=https://ismayc.github.io/fiba-womens-world-cup-viewer/coverage.json)](https://github.com/ismayc/fiba-womens-world-cup-viewer/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](./LICENSE)
 
 A React + Vite web app showing all 36 games of the FIBA Women's Basketball World
@@ -9,7 +9,9 @@ Cup 2026 in Berlin, in **your** timezone, with where to watch, which arena, the
 final-phase bracket, group standings, and the full FIBA tie-breaker and
 qualification math.
 
-🔗 **Live:** https://fiba-womens-world-cup-viewer.netlify.app · https://ismayc.github.io/fiba-womens-world-cup-viewer/
+🔗 **Live:** https://ismayc.github.io/fiba-womens-world-cup-viewer/ (the Netlify
+mirror in `netlify.toml` is configured but its site has not been created yet, so
+`fiba-womens-world-cup-viewer.netlify.app` currently 404s)
 
 **This edition has not been played yet.** It tips off on 4 September 2026 and the
 Final is on 13 September. The schedule ships complete and score-free; results

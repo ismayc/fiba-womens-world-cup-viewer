@@ -2,6 +2,25 @@
 
 Dated changelog, newest first.
 
+## August 29, 2026 — point the shared URLs at a host that exists
+
+Three separate breakages, one root cause: the repo is wired for a Netlify mirror
+(`netlify.toml`, a functions directory) but that Netlify site was never created,
+so every `fiba-womens-world-cup-viewer.netlify.app` URL returns 404.
+
+- **Link previews were blank.** `og:image` pointed at the dead Netlify host, so
+  iMessage, Slack and everything else fetched a 404 and drew no card. `og:url`,
+  `twitter:image` and the canonical link had the same problem. All four now point
+  at GitHub Pages, which serves the 1200×630 card today, matching how the
+  `wnba` and `nba` siblings do it.
+- **Calendar Subscribe served the wrong tournament.** Scaffolding left
+  `CalendarModal`'s production origin on the *soccer* Women's World Cup viewer's
+  domain, which answers 200 with that competition's games. It now points at this
+  repo's own host. The feed is a Netlify function and cannot run on GitHub Pages,
+  so those links stay dead until the Netlify site is created.
+- **The README coverage badge 404'd** against the same host; it now reads
+  `coverage.json` from Pages.
+
 ## August 29, 2026 — first release
 
 New viewer for the **FIBA Women's Basketball World Cup 2026** (Berlin, 4–13

@@ -5,7 +5,11 @@ import { useModalA11y } from '../hooks/useModalA11y.js'
 
 // Subscriptions must point at the deployed feed (a localhost URL can't be
 // subscribed to), so links always use the production origin.
-const PROD = 'https://womens-world-cup-viewer.netlify.app'
+// Scaffolded from the soccer Women's World Cup viewer, and this host was left on ITS
+// domain — so Subscribe handed out a live 200 feed of the wrong tournament's games.
+// The feed is a Netlify function, so it cannot be served from GitHub Pages; this points
+// at THIS repo's own Netlify host, which 404s until that site is created.
+const PROD = 'https://fiba-womens-world-cup-viewer.netlify.app'
 const FEED = `${PROD}/calendar.ics`
 
 function SubRow({ label, httpsUrl }) {

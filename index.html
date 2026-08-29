@@ -10,7 +10,10 @@
       content="All 36 games of the FIBA Women's Basketball World Cup 2026 in Berlin, in your timezone — scores, group standings, the final-phase bracket, and which arena each game is in."
     />
     <meta name="theme-color" content="#12233d" />
-    <link rel="canonical" href="https://fiba-womens-world-cup-viewer.netlify.app/" />
+    <!-- GitHub Pages, not Netlify: no Netlify site exists for this repo, so every
+         netlify.app URL here 404s. A 404 og:image is why iMessage showed no card at
+         all. Matches the wnba/nba siblings, which also point their cards at Pages. -->
+    <link rel="canonical" href="https://ismayc.github.io/fiba-womens-world-cup-viewer/" />
 
     <!-- PWA: installable to home screen, standalone launch -->
     <link rel="manifest" href="manifest.webmanifest" />
@@ -27,8 +30,8 @@
       property="og:description"
       content="All 36 games in your timezone — scores, group standings, and the final-phase bracket."
     />
-    <meta property="og:url" content="https://fiba-womens-world-cup-viewer.netlify.app/" />
-    <meta property="og:image" content="https://fiba-womens-world-cup-viewer.netlify.app/og-image.png" />
+    <meta property="og:url" content="https://ismayc.github.io/fiba-womens-world-cup-viewer/" />
+    <meta property="og:image" content="https://ismayc.github.io/fiba-womens-world-cup-viewer/og-image.png" />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
     <meta property="og:image:alt" content="FIBA Women's World Cup 2026 Schedule Viewer" />
@@ -40,7 +43,7 @@
       name="twitter:description"
       content="All 36 games in your timezone — scores, group standings, and the final-phase bracket."
     />
-    <meta name="twitter:image" content="https://fiba-womens-world-cup-viewer.netlify.app/og-image.png" />
+    <meta name="twitter:image" content="https://ismayc.github.io/fiba-womens-world-cup-viewer/og-image.png" />
     <script>
       // Set the theme before paint to avoid a flash of the wrong palette.
       (function () {

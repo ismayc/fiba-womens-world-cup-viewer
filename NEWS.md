@@ -2,6 +2,29 @@
 
 Dated changelog, newest first.
 
+## August 29, 2026 — the mark is Berlin's bear now
+
+The icon was Germany's flag with a basketball. Every one of the 36 games is in
+Berlin, so the mark now carries the city: a bear standing on Berlin's red-white-red
+with a paw on the ball. Tab icon, home-screen icon and the share card all change
+together.
+
+- **One source of truth.** The art lives in `scripts/lib/mark.mjs` and nothing else
+  draws it. `npm run icons` regenerates `icon.svg`, `favicon.svg`, the three PNGs
+  and the badge on the share card, so those can no longer drift apart. The PNGs
+  used to be built by hand.
+- **The generator verifies its own output**, because ImageMagick fails silently and
+  leaves the previous PNG in place: it checks dimensions, that the image is not
+  blank, that the white band is not empty (the bear rendering is the thing that has
+  actually vanished before), and that both flag bands are Berlin red.
+- **A new silent-failure mode, found here:** ImageMagick *discards* any element
+  inside a `rotate()` transform. Not un-rotated, dropped. The bear is therefore
+  built from untransformed primitives. It joins the dropped strokes, black gradient
+  fills and ignored `clipPath` already on that list, and like them it is invisible
+  in a browser preview.
+- The bear is deliberately **not** Berlin's official Landeswappen, which is a
+  protected state emblem restricted by the state's coat-of-arms law.
+
 ## August 29, 2026 — point the shared URLs at a host that exists
 
 Three separate breakages, one root cause: the repo is wired for a Netlify mirror

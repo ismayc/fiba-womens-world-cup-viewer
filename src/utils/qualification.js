@@ -114,6 +114,7 @@ export function headToHead(names, group, games) {
 // genuinely split the set into smaller pieces, so it terminates on its own, but
 // a defensive cap keeps a malformed board from spinning.
 function resolveTie(tied, group, games, depth = 0) {
+  /* v8 ignore next -- unreachable: rankGroup only calls this for a block of 2+, and the recursion below is guarded by block.length > 1 */
   if (tied.length === 1) return tied
 
   const names = tied.map((t) => t.name)

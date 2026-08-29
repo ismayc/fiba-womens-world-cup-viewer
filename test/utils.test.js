@@ -27,6 +27,7 @@ import {
 import {
   detectFinals,
   finalNotification,
+  mergeToasts,
   inScope,
   isFinal,
   isLiveish,
@@ -249,13 +250,37 @@ describe('result notifications', () => {
 
   it('formats a result notification, noting overtime', () => {
     expect(finalNotification({ game: finalGame })).toMatchObject({
-      title: '🏀 FINAL, Japan win',
+      title: '🏀 FINAL: Japan win',
       body: 'Japan 88–61 Mali',
       tag: 'final|1',
     })
     expect(finalNotification({ game: { ...finalGame, ot: 1 } }).title).toContain('(OT)')
     expect(finalNotification({ game: { ...finalGame, ot: 2 } }).title).toContain('(2OT)')
     expect(finalNotification({ game: { ...finalGame, score: [61, 88] } }).title).toContain('Mali')
+  })
+
+  // The toast list is keyed by notification tag, so the same result arriving
+  // twice (a re-render, a poll that overlaps its predecessor) cannot stack.
+  it('appends a new result to the toast list', () => {
+    const merged = mergeToasts([], [{ game: finalGame }])
+    expect(merged).toHaveLength(1)
+    expect(merged[0].id).toBe('final|1')
+    expect(merged[0].ev.game.t1).toBe('Japan')
+  })
+
+  it('keeps toasts already on screen when a different game ends', () => {
+    const other = { num: 2, t1: 'Spain', t2: 'Nigeria', score: [70, 65] }
+    const merged = mergeToasts(mergeToasts([], [{ game: finalGame }]), [{ game: other }])
+    expect(merged.map((x) => x.id)).toEqual(['final|1', 'final|2'])
+  })
+
+  // Returning the ORIGINAL array, not a copy, is what lets React skip the
+  // re-render; an equal-but-new array would repaint the toast stack on every
+  // poll for as long as a toast is up.
+  it('returns the same array when every event is already showing', () => {
+    const first = mergeToasts([], [{ game: finalGame }])
+    expect(mergeToasts(first, [{ game: finalGame }])).toBe(first)
+    expect(mergeToasts(first, [])).toBe(first)
   })
 })
 

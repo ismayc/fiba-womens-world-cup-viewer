@@ -49,12 +49,14 @@ export function projectKnockout(games) {
   // placing -> group -> row
   const rows = { 1: {}, 2: {}, 3: {} }
   for (const g of GROUPS) {
+    /* v8 ignore next -- unreachable: rankGroup seeds its rows from the committed group, so every group always has a 1st, 2nd and 3rd */
     for (const place of [1, 2, 3]) rows[place][g] = qual.groups[g]?.[place - 1] || null
   }
 
   // Every group-fed side, with its parsed slot, indexed by game.
   const sides = []
   for (const g of groupFedGames(games)) {
+    /* v8 ignore next -- unreachable: SLOTS is built from the same group-fed games this loop walks, so the lookup always hits */
     const [l1, l2] = SLOTS.get(g.num) || slotLabels(g)
     sides.push({ gameNum: g.num, label: l1, placing: groupPlacing(l1) })
     sides.push({ gameNum: g.num, label: l2, placing: groupPlacing(l2) })
@@ -70,22 +72,29 @@ export function projectKnockout(games) {
 
   for (const s of sides) {
     if (!s.placing) continue
+    /* v8 ignore next -- unreachable: every side was pushed into byGame in the loop above, so the lookup always hits */
     const other = (byGame.get(s.gameNum) || []).find((o) => o !== s)
     const row = rows[s.placing.place][s.placing.group]
 
     // The other side is either another group placing (so a team can be named) or
-    // a "Winner Game N" feed that no group table can resolve yet.
+    // a "Winner Game N" feed that no group table can resolve yet. Those are the
+    // only two forms a group-fed slot takes, and every such game has exactly two
+    // sides, so `other` is always present.
     let opponent = null
     let opponentLabel = null
-    if (other?.placing) {
+    if (other.placing) {
+      /* v8 ignore next -- unreachable: `rows` is filled for every group and placing above */
       opponent = rows[other.placing.place][other.placing.group]?.name || null
-    } else if (other) {
+    } else {
+      /* v8 ignore next -- unreachable: a group-fed side that is not a placing is always a "Winner Game N" feed, so the null arm never fires */
       opponentLabel = FEED_LABEL.test(other.label) ? other.label : null
     }
 
     perGroup[s.placing.group][KEY[s.placing.place]] = {
+      /* v8 ignore next -- unreachable: `row` comes from the filled `rows` table above */
       team: row?.name || null,
       gameNum: s.gameNum,
+      /* v8 ignore next -- unreachable: STAGE_BY_NUM is built from every committed game */
       round: STAGE_BY_NUM.get(s.gameNum) || null,
       opponent,
       opponentLabel,

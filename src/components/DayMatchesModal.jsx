@@ -4,6 +4,7 @@ import { STAGE_LABELS } from '../data/games.js'
 import { colorForGame } from '../data/groupColors.js'
 import { formatTime, tzAbbrev, liveState, statusFlag } from '../utils/time.js'
 import { feederTeams } from '../utils/bracket.js'
+import { sideNames } from '../utils/slots.js'
 import { useModalA11y } from '../hooks/useModalA11y.js'
 import { useDetail } from '../context/detail.js'
 import LiveBadge from './LiveBadge.jsx'
@@ -24,8 +25,9 @@ function longDate(iso, tz) {
 // opens the existing full match-detail modal.
 function DayRow({ match, tz, scoreHidden, onOpen, byNum }) {
   const venue = venueFor(match)
-  const f1 = feederTeams(match.t1, byNum)
-  const f2 = feederTeams(match.t2, byNum)
+  const [side1, side2] = sideNames(match)
+  const f1 = feederTeams(side1, byNum)
+  const f2 = feederTeams(side2, byNum)
   const stage = match.stage === 'Group' ? `Group ${match.group}` : STAGE_LABELS[match.stage]
   const color = colorForGame(match)
   const state = liveState(match)
@@ -35,7 +37,7 @@ function DayRow({ match, tz, scoreHidden, onOpen, byNum }) {
   const showScore = hasScore && !scoreHidden
   return (
     <li>
-      <button type="button" className="dm-row" onClick={() => onOpen(match)} title="Open match details">
+      <button type="button" className="dm-row" onClick={() => onOpen(match)} title="Open game details">
         <span className="dm-time">
           {formatTime(match.ko, tz)} <span className="dm-tz">{tzAbbrev(match.ko, tz)}</span>
         </span>
@@ -45,8 +47,8 @@ function DayRow({ match, tz, scoreHidden, onOpen, byNum }) {
               <FeederPair feeder={f1} />
             ) : (
               <>
-                <span className="gg-flag">{FLAG_BY_TEAM[match.t1] || '•'}</span>
-                <span className="gg-name">{match.t1}</span>
+                <span className="gg-flag">{FLAG_BY_TEAM[side1] || '•'}</span>
+                <span className="gg-name">{side1}</span>
               </>
             )}
           </span>
@@ -54,7 +56,11 @@ function DayRow({ match, tz, scoreHidden, onOpen, byNum }) {
             {showScore ? (
               <span className="gg-score">
                 {match.score[0]}–{match.score[1]}
-                {match.pens && <span className="gg-pens"> (p {match.pens[0]}–{match.pens[1]})</span>}
+                {/* Overtime, not a shootout: basketball has no penalties, so the
+                    inherited `pens` render was dead in every arm. */}
+                {match.ot > 0 && (
+                  <span className="gg-pens"> {match.ot > 1 ? `${match.ot}OT` : 'OT'}</span>
+                )}
               </span>
             ) : hasScore ? (
               <span className="gg-score gg-score-hidden">•–•</span>
@@ -67,8 +73,8 @@ function DayRow({ match, tz, scoreHidden, onOpen, byNum }) {
               <FeederPair feeder={f2} />
             ) : (
               <>
-                <span className="gg-flag">{FLAG_BY_TEAM[match.t2] || '•'}</span>
-                <span className="gg-name">{match.t2}</span>
+                <span className="gg-flag">{FLAG_BY_TEAM[side2] || '•'}</span>
+                <span className="gg-name">{side2}</span>
               </>
             )}
           </span>
@@ -117,7 +123,7 @@ export default function DayMatchesModal({ matches, tz, hideScores, byNum, onClos
         <div className="md-head">
           <span className="md-stage">{fixtures.length ? longDate(fixtures[0].ko, tz) : 'Schedule'}</span>
           <span className="gg-head-team">
-            {fixtures.length} match{fixtures.length === 1 ? '' : 'es'}
+            {fixtures.length} game{fixtures.length === 1 ? '' : 's'}
           </span>
         </div>
 

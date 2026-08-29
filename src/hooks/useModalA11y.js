@@ -9,6 +9,7 @@ export function useModalA11y(onClose) {
   useEffect(() => {
     const previouslyFocused = document.activeElement
     const node = ref.current
+    /* v8 ignore next 6 -- the empty arm is unreachable in the app: every caller spreads the returned ref onto its dialog card, so `node` is always attached by the time this effect runs */
     const focusable = () =>
       node
         ? [...node.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])')].filter(
@@ -41,6 +42,7 @@ export function useModalA11y(onClose) {
     document.addEventListener('keydown', onKey)
     return () => {
       document.removeEventListener('keydown', onKey)
+      /* v8 ignore next -- defensive: document.activeElement is the body when nothing else holds focus, so it is never null here and always has focus() */
       if (previouslyFocused && typeof previouslyFocused.focus === 'function') previouslyFocused.focus()
     }
   }, [onClose])

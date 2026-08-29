@@ -59,7 +59,7 @@ export default function CalendarModal({ matches, filtered, onClose }) {
           <h4>One-time download <span className="cal-hint">snapshot, won’t update</span></h4>
           <div className="cal-downloads">
             <button onClick={() => downloadICSCollection(matches, 'fiba-womens-world-cup-2026-all.ics')}>
-              All matches ({matches.length})
+              All games ({matches.length})
             </button>
             <button onClick={() => downloadICSCollection(filtered, 'fiba-womens-world-cup-2026-filtered.ics')}>
               Current filter ({filtered.length})

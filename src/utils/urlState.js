@@ -7,11 +7,10 @@ export const DEFAULT_FILTERS = {
   stages: [],
   group: 'all',
   team: 'all',
-  country: 'all',
-  region: 'all',
   venue: 'all',
   timeframe: 'all',
   myTeams: false,
+  onMyServices: false,
 }
 
 export function readState(detectedTz) {
@@ -24,11 +23,10 @@ export function readState(detectedTz) {
     stages: p.has('stages') ? p.get('stages').split(',').filter(Boolean) : [],
     group: get('group', 'all'),
     team: get('team', 'all'),
-    country: get('country', 'all'),
-    region: get('region', 'all'),
     venue: get('venue', 'all'),
     timeframe: get('when', 'all'),
     myTeams: get('mine', '0') === '1',
+    onMyServices: get('svc', '0') === '1',
   }
 
   return {
@@ -49,11 +47,12 @@ export function writeState({ view, tz, hideScores, filters }, detectedTz) {
   if (filters.stages.length) p.set('stages', filters.stages.join(','))
   if (filters.group !== 'all') p.set('group', filters.group)
   if (filters.team !== 'all') p.set('team', filters.team)
-  if (filters.country !== 'all') p.set('country', filters.country)
-  if (filters.region !== 'all') p.set('region', filters.region)
   if (filters.venue !== 'all') p.set('venue', filters.venue)
   if (filters.timeframe !== 'all') p.set('when', filters.timeframe)
   if (filters.myTeams) p.set('mine', '1')
+  // The FILTER is shareable; the service SELECTION behind it is not, and lives
+  // only in localStorage. A shared link should not carry what someone pays for.
+  if (filters.onMyServices) p.set('svc', '1')
 
   const qs = p.toString()
   const url = qs ? `${window.location.pathname}?${qs}` : window.location.pathname

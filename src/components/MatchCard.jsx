@@ -6,10 +6,13 @@ import { formatTime, tzAbbrev, liveState, statusFlag, teamKickoffTooltip } from 
 import { downloadICS } from '../utils/ics.js'
 import { useFollow } from '../context/follow.jsx'
 import { useDetail } from '../context/detail.js'
+import { sideNames } from '../utils/slots.js'
 import LiveBadge from './LiveBadge.jsx'
 import FeederPair from './FeederPair.jsx'
 import { clinchBadge } from '../utils/clinch.js'
 import { feederTeams } from '../utils/bracket.js'
+import { broadcastNotBadged, hasKnownBroadcast, watchableServices } from '../utils/watch.js'
+import { useServices } from '../context/services.jsx'
 import { venueFor } from '../utils/venue.js'
 
 // Tooltip describing which final-phase slot this team feeds into, given its
@@ -83,10 +86,13 @@ function Channels({ feed }) {
       <div className="feed-lang">{feed.language}</div>
       <div className="feed-detail">
         <span className="feed-label">TV</span>
+        {/* No free-to-air tag. The football siblings mark the one broadcaster
+            anyone can watch without a subscription; every US outlet carrying
+            THIS tournament is paid, so `US_BROADCAST.english.freeOverTheAir` is
+            null and the tag would never render. */}
         {feed.tv.map((c) => (
-          <span key={c} className={`chip${c === feed.freeOverTheAir ? ' chip-free' : ''}`}>
+          <span key={c} className="chip">
             {c}
-            {c === feed.freeOverTheAir && <span className="free-tag">free</span>}
           </span>
         ))}
       </div>
@@ -103,6 +109,10 @@ function Channels({ feed }) {
 }
 
 export default function MatchCard({ match, tz, hidden = false, clinch, slotMap, byNum }) {
+  // Which of the viewer's own services carry this game. Empty when they have not
+  // picked any, so an unconfigured card is exactly as it was before.
+  const { services } = useServices()
+  const watched = watchableServices(match.tv, services)
   const [showWatch, setShowWatch] = useState(false)
   const [revealScore, setRevealScore] = useState(false)
   const openDetail = useDetail()
@@ -115,6 +125,12 @@ export default function MatchCard({ match, tz, hidden = false, clinch, slotMap, 
   // the end of the previous round, so those games ship with `ko: null` and
   // `tbdTip: true`. Everything time-shaped has to tolerate that rather than
   // formatting an Invalid Date.
+  // A final-phase game carries NULL teams and its slot LABEL until the draw
+  // resolves it, so every read of a side has to fall back. Reading `match.t1`
+  // directly (as this card did) renders the whole final phase with blank team
+  // names in the Schedule and Week views, while the Bracket shows them fine —
+  // because only the Bracket had the fallback.
+  const [side1, side2] = sideNames(match)
   const tbd = !match.ko
   const viewerTime = formatTime(match.ko, tz)
   const viewerAbbr = tzAbbrev(match.ko, tz)
@@ -174,7 +190,7 @@ export default function MatchCard({ match, tz, hidden = false, clinch, slotMap, 
         </div>
 
         <div className="matchup">
-          <Team name={match.t1} ko={match.ko} clinch={match.stage === 'Group' ? clinch?.[match.t1] : undefined} group={match.group} slot={slotMap?.[match.group]} feeder={feederTeams(match.t1, byNum)} />
+          <Team name={side1} ko={match.ko} clinch={match.stage === 'Group' ? clinch?.[match.t1] : undefined} group={match.group} slot={slotMap?.[match.group]} feeder={feederTeams(side1, byNum)} />
           {hasScore ? (
             scoreHidden ? (
               <button
@@ -199,7 +215,7 @@ export default function MatchCard({ match, tz, hidden = false, clinch, slotMap, 
           ) : (
             <span className="vs">v</span>
           )}
-          <Team name={match.t2} ko={match.ko} clinch={match.stage === 'Group' ? clinch?.[match.t2] : undefined} group={match.group} slot={slotMap?.[match.group]} feeder={feederTeams(match.t2, byNum)} />
+          <Team name={side2} ko={match.ko} clinch={match.stage === 'Group' ? clinch?.[match.t2] : undefined} group={match.group} slot={slotMap?.[match.group]} feeder={feederTeams(side2, byNum)} />
         </div>
 
         <div className="venue">
@@ -211,6 +227,29 @@ export default function MatchCard({ match, tz, hidden = false, clinch, slotMap, 
           {!sameClock && (
             <span className="venue-local">
               · {localTime} {localAbbr} local
+            </span>
+          )}
+        </div>
+
+        {/* Where THIS game is, personalized. A green badge per service the viewer
+            actually has, then whatever networks are not already named by one, so
+            a game on HBO Max with HBO Max selected reads "📺 HBO Max" once rather
+            than "HBO Max · 📺 HBO Max". A game ESPN has not placed yet says so
+            instead of silently showing nothing. */}
+        <div className="card-tv">
+          {watched.map((s) => (
+            <span key={s.key} className="tv-badge tv-mine" title={`On your ${s.label}`}>
+              📺 {s.label}
+            </span>
+          ))}
+          {broadcastNotBadged(match.tv, watched).map((n) => (
+            <span key={n} className="tv-badge">
+              {n}
+            </span>
+          ))}
+          {!hasKnownBroadcast(match) && (
+            <span className="tv-badge tv-tbc" title="FIBA and the broadcaster confirm coverage when the fixture is set">
+              TV TBC
             </span>
           )}
         </div>
@@ -243,6 +282,11 @@ export default function MatchCard({ match, tz, hidden = false, clinch, slotMap, 
             {match.tv?.length > 0 && (
               <p className="watch-line watch-this">
                 <strong>This game:</strong> {match.tv.join(' · ')}
+              </p>
+            )}
+            {watched.length > 0 && (
+              <p className="watch-line watch-mine">
+                <strong>On your services:</strong> {watched.map((s) => s.label).join(' · ')}
               </p>
             )}
             <Channels feed={US_BROADCAST.english} />

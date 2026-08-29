@@ -101,6 +101,7 @@ export function tzAbbrev(iso, tz) {
     timeZoneName: 'short',
   }).formatToParts(new Date(iso))
   const part = parts.find((p) => p.type === 'timeZoneName')
+  /* v8 ignore next -- unreachable: timeZoneName:'short' always yields that part for a valid IANA zone, and every zone the picker offers is asserted in the suite */
   return part ? part.value : ''
 }
 

@@ -14,7 +14,8 @@
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
     "coverage:badge": "vitest run --coverage && node scripts/coverage-badge.mjs",
-    "fetch:tournament": "node scripts/fetch-tournament.mjs"
+    "fetch:tournament": "node scripts/fetch-tournament.mjs",
+    "og:image": "node scripts/make-og-image.mjs"
   },
   "dependencies": {
     "react": "^19.2.8",

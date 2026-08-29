@@ -3,6 +3,7 @@ import { FLAG_BY_TEAM } from '../data/teams.js'
 import { STAGE_LABELS } from '../data/games.js'
 import { dayKey, formatTime, tzAbbrev, liveState, teamKickoffTooltip, gameDayKey } from '../utils/time.js'
 import { decideGame } from '../utils/bracketResolve.js'
+import { sideNames } from '../utils/slots.js'
 import { useFollow } from '../context/follow.jsx'
 import LiveBadge from './LiveBadge.jsx'
 import { venueFor } from '../utils/venue.js'
@@ -101,11 +102,11 @@ export default function NextMatch({ matches, tz }) {
           const st = m.stage === 'Group' ? `Group ${m.group}` : STAGE_LABELS[m.stage]
           return (
             <button key={m.num} className="nm-live-row" onClick={() => jumpTo(m)}>
-              <span className="nm-flag">{FLAG_BY_TEAM[m.t1] || '•'}</span>
-              <span className="nm-row-name">{m.t1}</span>
+              <span className="nm-flag">{FLAG_BY_TEAM[sideNames(m)[0]] || '•'}</span>
+              <span className="nm-row-name">{sideNames(m)[0]}</span>
               <span className="nm-v">vs</span>
-              <span className="nm-row-name">{m.t2}</span>
-              <span className="nm-flag">{FLAG_BY_TEAM[m.t2] || '•'}</span>
+              <span className="nm-row-name">{sideNames(m)[1]}</span>
+              <span className="nm-flag">{FLAG_BY_TEAM[sideNames(m)[1]] || '•'}</span>
               <LiveBadge match={m} />
               <span className="nm-when">{st} · {v.city}</span>
             </button>
@@ -130,11 +131,11 @@ export default function NextMatch({ matches, tz }) {
           const st = m.stage === 'Group' ? `Group ${m.group}` : STAGE_LABELS[m.stage]
           return (
             <button key={m.num} className="nm-live-row" onClick={() => jumpTo(m)}>
-              <span className="nm-flag">{FLAG_BY_TEAM[m.t1] || '•'}</span>
-              <span className="nm-row-name">{m.t1}</span>
+              <span className="nm-flag">{FLAG_BY_TEAM[sideNames(m)[0]] || '•'}</span>
+              <span className="nm-row-name">{sideNames(m)[0]}</span>
               <span className="nm-v">vs</span>
-              <span className="nm-row-name">{m.t2}</span>
-              <span className="nm-flag">{FLAG_BY_TEAM[m.t2] || '•'}</span>
+              <span className="nm-row-name">{sideNames(m)[1]}</span>
+              <span className="nm-flag">{FLAG_BY_TEAM[sideNames(m)[1]] || '•'}</span>
               <span className="nm-when">{st} · {v.city}</span>
             </button>
           )
@@ -157,6 +158,7 @@ export default function NextMatch({ matches, tz }) {
   const match = list[0]
   const live = mode === 'live'
   const venue = venueFor(match)
+  const [side1, side2] = sideNames(match)
   const stage = match.stage === 'Group' ? `Group ${match.group}` : STAGE_LABELS[match.stage]
   const t = parts(new Date(match.ko).getTime() - now)
   const jump = () => jumpTo(match)
@@ -169,11 +171,11 @@ export default function NextMatch({ matches, tz }) {
       </div>
 
       <div className="nm-teams">
-        <span className="nm-flag">{FLAG_BY_TEAM[match.t1] || '•'}</span>
-        <span className="nm-name" title={teamKickoffTooltip(match.ko, match.t1) || undefined}>{match.t1}</span>
+        <span className="nm-flag">{FLAG_BY_TEAM[side1] || '•'}</span>
+        <span className="nm-name" title={teamKickoffTooltip(match.ko, side1) || undefined}>{side1}</span>
         <span className="nm-v">vs</span>
-        <span className="nm-name nm-name-right" title={teamKickoffTooltip(match.ko, match.t2) || undefined}>{match.t2}</span>
-        <span className="nm-flag">{FLAG_BY_TEAM[match.t2] || '•'}</span>
+        <span className="nm-name nm-name-right" title={teamKickoffTooltip(match.ko, side2) || undefined}>{side2}</span>
+        <span className="nm-flag">{FLAG_BY_TEAM[side2] || '•'}</span>
       </div>
 
       <div className="nm-bottom">

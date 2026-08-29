@@ -66,8 +66,25 @@ export function finalNotification({ game }) {
   const winner = a > b ? game.t1 : game.t2
   const ot = game.ot ? (game.ot > 1 ? ` (${game.ot}OT)` : ' (OT)') : ''
   return {
-    title: `🏀 FINAL, ${winner} win${ot}`,
+    title: `🏀 FINAL: ${winner} win${ot}`,
     body: `${game.t1} ${a}–${b} ${game.t2}`,
     tag: `final|${game.num}`,
   }
+}
+
+// Merge new final-result events into the on-page toast list. Ids are the
+// notification tag, so a result that somehow arrives twice replaces nothing and
+// adds nothing. Returning the original array unchanged when there is nothing
+// fresh lets React skip the re-render.
+//
+// This lives here rather than inline in App's `setToasts` call so it can be
+// tested directly: v8 does not attribute coverage to an updater arrow that React
+// invokes from inside its own reducer, so an inline version reads as dead code
+// even while the toast it builds is demonstrably on screen.
+export function mergeToasts(existing, events) {
+  const have = new Set(existing.map((x) => x.id))
+  const fresh = events
+    .map((ev) => ({ id: finalNotification(ev).tag, ev }))
+    .filter((x) => !have.has(x.id))
+  return fresh.length ? [...existing, ...fresh] : existing
 }

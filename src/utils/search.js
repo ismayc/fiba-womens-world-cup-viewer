@@ -1,27 +1,39 @@
-// Scoped search: parse a query like `team: Mexico city: Dallas` into field
+// Scoped search: parse a query like `team: Japan arena: Berlin` into field
 // filters plus leftover free text. Unscoped text still does a broad substring
-// match, so plain queries ("Brazil", "azteca") keep working.
+// match, so plain queries ("Japan", "schmeling") keep working.
 
 import { STAGE_LABELS } from '../data/games.js'
+import { sideNames } from './slots.js'
 
 // Accepted field names (and synonyms) -> canonical field.
+//
+// THERE IS NO `region` FIELD. The football sibling separates its two host
+// countries by region (Australian state / New Zealand region), and its venue
+// records carry one. This edition is played in two arenas in a single city, so
+// `venues.js` has no `region` at all, and the inherited case read
+// `venue.region.toLowerCase()` — which throws on any `region:` query. The field
+// is removed rather than left to crash.
 const FIELD_ALIASES = {
   team: 'team', teams: 'team', t: 'team',
   city: 'city',
-  stadium: 'stadium', venue: 'stadium', ground: 'stadium',
+  arena: 'arena', stadium: 'arena', venue: 'arena', ground: 'arena',
   country: 'country', host: 'country',
   group: 'group', grp: 'group', g: 'group',
   stage: 'stage', round: 'stage',
-  region: 'region',
 }
 
-// Stage synonyms -> our stage codes.
+// Stage synonyms -> our stage codes. Every code in STAGE_ORDER needs at least
+// one, or that round is unreachable by a scoped `stage:` query — which is how
+// the qualification round was missed at first, since no football sibling has one.
 const STAGE_SYN = {
   group: 'Group', groups: 'Group', gs: 'Group',
 
+  qr: 'QR', qual: 'QR', qualification: 'QR', 'qualification round': 'QR',
+  'qualifying': 'QR', playin: 'QR', 'play-in': 'QR',
+
   qf: 'QF', quarter: 'QF', quarterfinal: 'QF', quarterfinals: 'QF', 'quarter-final': 'QF',
   sf: 'SF', semi: 'SF', semifinal: 'SF', semifinals: 'SF', 'semi-final': 'SF',
-  '3rd': '3rd', third: '3rd', 'third place': '3rd', 'third-place': '3rd',
+  '3rd': '3rd', third: '3rd', 'third place': '3rd', 'third-place': '3rd', bronze: '3rd',
   final: 'Final',
 }
 
@@ -48,40 +60,40 @@ export function parseQuery(input) {
   return { free, tokens }
 }
 
-// This edition was CO-HOSTED, so every venue's country is the single combined
-// string "Australia & New Zealand". A substring test therefore makes either host
-// name match all 64 matches, which is correct — the field cannot narrow anything
-// here, and `region` is the filter that separates the two countries. The sibling
-// viewers carry a US synonym table ("usa" / "us" / "america") for their
-// single-host "United States"; no venue here spells a country any of those ways,
-// so that table would be dead code and is deliberately absent.
-function matchCountry(country, v) {
-  return country.toLowerCase().includes(v)
-}
-
 function matchStage(stage, v) {
   const code = STAGE_SYN[v]
   if (code) return stage === code
   return STAGE_LABELS[stage].toLowerCase().includes(v)
 }
 
+// A final-phase game carries NULL teams until the draw resolves it. The
+// inherited version read `m.t1.toLowerCase()` unconditionally, which threw on
+// every one of the twelve final-phase records: typing `team: Japan` into the
+// search box took the whole schedule down.
+const sidesOf = sideNames
+
 function tokenMatch(m, venue, { field, value }) {
   const v = value.toLowerCase()
   switch (field) {
     case 'team':
-      return m.t1.toLowerCase().includes(v) || m.t2.toLowerCase().includes(v)
+      return sidesOf(m).some((side) => side.toLowerCase().includes(v))
     case 'city':
       return venue.city.toLowerCase().includes(v)
-    case 'stadium':
-      return venue.name.toLowerCase().includes(v)
+    // Matches EITHER the name FIBA prints or the one ESPN files it under, so a
+    // viewer who searches the sponsor name they saw on television still finds
+    // the game. Only the Berlin Arena has two names.
+    case 'arena':
+      return (
+        venue.name.toLowerCase().includes(v) ||
+        (venue.sponsorName || '').toLowerCase().includes(v)
+      )
     case 'country':
-      return matchCountry(venue.country, v)
-    case 'region':
-      return venue.region.toLowerCase().includes(v)
+      return venue.country.toLowerCase().includes(v)
     case 'group':
       return (m.group || '').toLowerCase() === v.replace(/^group\s*/, '')
     case 'stage':
       return matchStage(m.stage, v)
+    /* v8 ignore next 2 -- unreachable: `field` is a value from FIELD_ALIASES, and every one of them has a case above */
     default:
       return true
   }
@@ -92,9 +104,9 @@ export function matchesSearch(m, venue, parsed) {
     if (!tokenMatch(m, venue, t)) return false
   }
   if (parsed.free) {
-    const hay = `${m.t1} ${m.t2} ${venue.city} ${venue.name} ${venue.country} ${venue.region} ${
-      m.group ? 'group ' + m.group : ''
-    } ${STAGE_LABELS[m.stage]}`.toLowerCase()
+    const hay = `${sidesOf(m).join(' ')} ${venue.city} ${venue.name} ${
+      venue.sponsorName || ''
+    } ${venue.country} ${m.group ? 'group ' + m.group : ''} ${STAGE_LABELS[m.stage]}`.toLowerCase()
     if (!hay.includes(parsed.free.toLowerCase())) return false
   }
   return true

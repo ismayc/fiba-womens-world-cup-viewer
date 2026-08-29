@@ -5,6 +5,7 @@ import { GROUP_COLORS, KNOCKOUT_COLOR, colorForGame } from '../data/groupColors.
 import { dayKey, formatTime, statusFlag, teamKickoffTooltip, gameDayKey } from '../utils/time.js'
 import { weekStartOf, addDays, weekLabel, weekdayHeader } from '../utils/week.js'
 import { gamesByNum, feederTeams } from '../utils/bracket.js'
+import { sideNames } from '../utils/slots.js'
 import { useFollow } from '../context/follow.jsx'
 import { useDetail } from '../context/detail.js'
 import LiveBadge from './LiveBadge.jsx'
@@ -30,8 +31,9 @@ function Legend() {
 function WeekCell({ m, tz, hidden, byNum }) {
   const { isFollowed } = useFollow()
   const openDetail = useDetail()
-  const f1 = feederTeams(m.t1, byNum)
-  const f2 = feederTeams(m.t2, byNum)
+  const [side1, side2] = sideNames(m)
+  const f1 = feederTeams(side1, byNum)
+  const f2 = feederTeams(side2, byNum)
   const venue = venueFor(m)
   const color = colorForGame(m)
   const label = m.stage === 'Group' ? `Group ${m.group}` : STAGE_LABELS[m.stage]
@@ -39,8 +41,10 @@ function WeekCell({ m, tz, hidden, byNum }) {
   const voided = flag?.kind === 'voided'
   const awarded = flag?.kind === 'awarded'
   const showScore = Array.isArray(m.score) && !hidden
+  // `ot`, not the football sibling's pens/aet: those fields do not exist on a
+  // record in this repo, so the inherited expression was dead in both arms.
   const scoreText = showScore
-    ? `${m.score[0]}–${m.score[1]}${m.pens ? ` (p ${m.pens[0]}–${m.pens[1]})` : m.aet ? ' AET' : ''}`
+    ? `${m.score[0]}–${m.score[1]}${m.ot ? (m.ot > 1 ? ` ${m.ot}OT` : ' OT') : ''}`
     : 'v'
   const cls = (name) => `wc-name${isFollowed(name) ? ' followed' : ''}`
   return (
@@ -63,13 +67,13 @@ function WeekCell({ m, tz, hidden, byNum }) {
           </>
         )}
       </div>
-      <div className="wc-team" title={f1 ? undefined : teamKickoffTooltip(m.ko, m.t1) || undefined}>
+      <div className="wc-team" title={f1 ? undefined : teamKickoffTooltip(m.ko, side1) || undefined}>
         {f1 ? (
           <FeederPair feeder={f1} />
         ) : (
           <>
-            <span className="wc-flag">{FLAG_BY_TEAM[m.t1] || '•'}</span>
-            <span className={cls(m.t1)}>{m.t1}</span>
+            <span className="wc-flag">{FLAG_BY_TEAM[side1] || '•'}</span>
+            <span className={cls(side1)}>{side1}</span>
           </>
         )}
       </div>
@@ -78,13 +82,13 @@ function WeekCell({ m, tz, hidden, byNum }) {
         {scoreText}
         {awarded && showScore && <span className="awarded-note">awarded</span>}
       </div>
-      <div className="wc-team" title={f2 ? undefined : teamKickoffTooltip(m.ko, m.t2) || undefined}>
+      <div className="wc-team" title={f2 ? undefined : teamKickoffTooltip(m.ko, side2) || undefined}>
         {f2 ? (
           <FeederPair feeder={f2} />
         ) : (
           <>
-            <span className="wc-flag">{FLAG_BY_TEAM[m.t2] || '•'}</span>
-            <span className={cls(m.t2)}>{m.t2}</span>
+            <span className="wc-flag">{FLAG_BY_TEAM[side2] || '•'}</span>
+            <span className={cls(side2)}>{side2}</span>
           </>
         )}
       </div>
@@ -140,7 +144,7 @@ export default function WeekView({ allMatches, shown, tz, dayHidden }) {
         <div className="week-title">
           {weekLabel(weekStart)}
           <span className="week-count">
-            · {total} match{total === 1 ? '' : 'es'}
+            · {total} game{total === 1 ? '' : 's'}
           </span>
         </div>
         <button
@@ -169,7 +173,7 @@ export default function WeekView({ allMatches, shown, tz, dayHidden }) {
                     type="button"
                     className="week-day-btn"
                     onClick={() => setDayModal({ matches, hidden })}
-                    title={`Show all ${matches.length} match${matches.length === 1 ? '' : 'es'} this day`}
+                    title={`Show all ${matches.length} game${matches.length === 1 ? '' : 's'} this day`}
                     aria-label={`Show all ${matches.length} game${matches.length === 1 ? '' : 's'} on ${hdr.wd} ${hdr.day}`}
                   >
                     ⤢

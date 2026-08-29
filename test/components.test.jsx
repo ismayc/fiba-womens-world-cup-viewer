@@ -267,7 +267,7 @@ describe('ScoreToasts', () => {
         onDismiss={onDismiss}
       />,
     )
-    expect(screen.getByText(/FINAL, Japan win/)).toBeInTheDocument()
+    expect(screen.getByText(/FINAL: Japan win/)).toBeInTheDocument()
     expect(screen.getByText('Japan 88–61 Mali')).toBeInTheDocument()
     fireEvent.click(screen.getByTitle('Open game details'))
     expect(onOpen).toHaveBeenCalledWith(game)

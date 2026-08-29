@@ -5,24 +5,31 @@ import { STAGE_LABELS, STAGE_ORDER } from '../data/games.js'
 import { timezoneOptions } from '../utils/time.js'
 
 const GROUPS = Object.keys(TEAMS)
-// Derived from the venue table rather than hard-coded: this edition had a single
-// host country and its own set of regions, and a stale literal list here would
-// silently filter every match away (the dropdown value would match no venue).
-const uniq = (key) => [...new Set(Object.values(VENUES).map((v) => v[key]))].sort()
-const COUNTRIES = uniq('country')
-const REGIONS = uniq('region')
+
+// NO COUNTRY OR REGION FILTER. The football sibling spans two host countries and
+// several regions, so both narrow something there. Every game of this edition is
+// in one city, so a "Host country" dropdown would offer exactly "Germany" and a
+// "Region" one would be empty — `venues.js` has no `region` field at all, which
+// also made the inherited `region:` search throw. The arena filter below is the
+// only venue axis that separates anything here.
 
 // One-click example queries that demonstrate the scoped-search syntax. Every one
-// must actually return matches in THIS edition: these are buttons, and a chip
-// carrying a team that never played (the Copa scaffold shipped "team: Mexico")
-// or a city with no venue ("city: Arlington") empties the schedule on click.
-// Japan played 5 (out in the quarter-finals), Sydney hosts 11 across its two
-// stadiums, Group C exists, and there is exactly one Final.
-export const SEARCH_EXAMPLES = ['team: Japan', 'city: Sydney', 'stage: Final', 'group: C']
+// must actually return games in THIS edition: these are buttons, and a chip
+// carrying a team that never played or a city with no venue empties the schedule
+// on click. The inherited set shipped "city: Sydney", which matches nothing in
+// Berlin. test/search-examples asserts each one still returns at least one game.
+export const SEARCH_EXAMPLES = [
+  'team: Japan',
+  'arena: Berlin Arena',
+  'stage: Final',
+  'group: C',
+]
 
 // Venues sorted by city for the dropdown.
+// Labelled by arena alone: both are in Berlin, so prefixing the city repeats
+// the same word on every option.
 const VENUE_OPTIONS = Object.entries(VENUES)
-  .map(([id, v]) => ({ id, label: `${v.city} — ${v.name}` }))
+  .map(([id, v]) => ({ id, label: v.name }))
   .sort((a, b) => a.label.localeCompare(b.label))
 
 export default function Filters({ filters, setFilters, tz, setTz, detectedTz, resultCount }) {
@@ -50,8 +57,6 @@ export default function Filters({ filters, setFilters, tz, setTz, detectedTz, re
       stages: [],
       group: 'all',
       team: 'all',
-      country: 'all',
-      region: 'all',
       venue: 'all',
       timeframe: 'all',
     })
@@ -65,7 +70,7 @@ export default function Filters({ filters, setFilters, tz, setTz, detectedTz, re
               className="search"
               type="search"
               autoFocus
-              placeholder='Search — try "team: Norway" or "city: Sydney"'
+              placeholder='Search, try "team: Japan" or "arena: Berlin Arena"'
               value={filters.search}
               onChange={(e) => update({ search: e.target.value })}
             />
@@ -100,7 +105,7 @@ export default function Filters({ filters, setFilters, tz, setTz, detectedTz, re
             </button>
           ))}
           <span className="hint-note">
-            fields: team · city · stadium · country · group · stage · region
+            fields: team · arena · city · country · group · stage
           </span>
         </div>
       )}
@@ -142,34 +147,10 @@ export default function Filters({ filters, setFilters, tz, setTz, detectedTz, re
           </select>
         </label>
 
-        <label className="field">
-          <span>Host country</span>
-          <select value={filters.country} onChange={(e) => update({ country: e.target.value })}>
-            <option value="all">All countries</option>
-            {COUNTRIES.map((c) => (
-              <option key={c} value={c}>
-                {c}
-              </option>
-            ))}
-          </select>
-        </label>
-
-        <label className="field">
-          <span>Region</span>
-          <select value={filters.region} onChange={(e) => update({ region: e.target.value })}>
-            <option value="all">All regions</option>
-            {REGIONS.map((r) => (
-              <option key={r} value={r}>
-                {r}
-              </option>
-            ))}
-          </select>
-        </label>
-
         <label className="field field-wide">
-          <span>City / Stadium</span>
+          <span>Arena</span>
           <select value={filters.venue} onChange={(e) => update({ venue: e.target.value })}>
-            <option value="all">All venues</option>
+            <option value="all">Both arenas</option>
             {VENUE_OPTIONS.map((v) => (
               <option key={v.id} value={v.id}>
                 {v.label}

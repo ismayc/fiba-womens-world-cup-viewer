@@ -9,6 +9,7 @@ import { useDetail } from '../context/detail.js'
 import LiveBadge from './LiveBadge.jsx'
 import PathPicker from './PathPicker.jsx'
 import { venueFor } from '../utils/venue.js'
+import { sideNames } from '../utils/slots.js'
 
 // One of the two candidate teams inside a potential-matchup slot.
 function FeederTeam({ name, pathTeam }) {
@@ -66,8 +67,7 @@ function BracketMatch({ num, byNum, tz, hideScores, pathTeam, path }) {
   const venue = venueFor(m)
   // A final-phase game carries its slot LABEL until the teams are known, and its
   // tip-off time is announced only at the end of the previous round.
-  const side1 = m.t1 ?? m.label1
-  const side2 = m.t2 ?? m.label2
+  const [side1, side2] = sideNames(m)
   const date = m.ko
     ? new Date(m.ko).toLocaleDateString('en-US', {
         timeZone: tz,

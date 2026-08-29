@@ -14,6 +14,13 @@ export default defineConfig({
     // loaded CI runner (mount, several polls, a fake-timer refresh cycle). Give
     // them headroom so a busy runner doesn't flake a passing test.
     testTimeout: 15000,
+    // One test file at a time. v8's per-worker coverage is merged after the run,
+    // and with files in parallel that merge intermittently loses a function that
+    // only App.jsx's inline handlers exercise — the toast-merge updater shows as
+    // uncovered while its own test demonstrably renders the toast. Serialising
+    // the files makes the 100% gate deterministic. It is the same fix the
+    // sibling viewers carry.
+    fileParallelism: false,
     // Pin the suite's timezone so any test asserting a day heading, or what
     // counts as "today", is runner-independent.
     //
@@ -35,25 +42,11 @@ export default defineConfig({
       // metric slips below these. Genuinely unreachable defensive arms carry an
       // inline `/* v8 ignore next -- why */` with a justification rather than
       // lowering a threshold.
-      //
-      // THESE ARE BELOW THE FAMILY'S 100% STANDARD, DELIBERATELY AND TEMPORARILY.
-      // The six established viewers all enforce 100%; this one does not yet. The
-      // logic layer — where every FIBA-specific rule lives, and where a bug would
-      // silently produce a wrong table or a wrong bracket — is at 96% statements
-      // (src/utils) and 96% (src/services), with utils/asItStands, bracketResolve,
-      // eliminationCheck, opponentClinch, scenarios, slots, venue, week and
-      // services/scoreNotify all at 100%. The shortfall is concentrated in the
-      // presentational layer inherited from the sibling: App.jsx's filter and
-      // spoiler branches, the mobile variants, and the modal focus-trap plumbing.
-      //
-      // The numbers below are the current floor, so the gate RATCHETS: coverage
-      // can only go up. Raise them as the component tests fill in, and delete
-      // this note once they reach 100.
       thresholds: {
-        statements: 85,
-        branches: 70,
-        functions: 75,
-        lines: 87,
+        statements: 100,
+        branches: 100,
+        functions: 100,
+        lines: 100,
       },
     },
   },

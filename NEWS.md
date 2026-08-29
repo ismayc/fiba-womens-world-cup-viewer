@@ -109,21 +109,49 @@ score-free.
 - The standings team cell is a single non-wrapping row, so a long name ("United
   States", "South Korea") truncates instead of doubling the row height. This
   sport's PF/PA columns are wider than a football table's goal columns.
-- New identity: a **globe centered on Europe and Africa with a basketball**, on a
-  deep navy `#12233d`. The 🏀 ball alone is already worn by two siblings, and the family
-  icon doc records that ground alone proved too weak a differentiator.
+- New identity: the **German flag's three bands** (`#000000`, `#DD0000`, `#FFCE00`)
+  behind a white disc carrying the Noto basketball. The first attempt was a globe
+  centered on Europe and Africa, but at a browser-tab's 16px it read as the soccer
+  World Cup sibling's mark: both are a round blue-green world, and the ball riding
+  it is too small to separate them. The host nation is the one thing this edition
+  has that no sibling shares, and three flat horizontal bands survive the downscale
+  where continent outlines do not. The family icon doc records that a shared ground
+  alone is too weak a differentiator, so the ground *is* the identity here.
+- **A built social card.** `scripts/make-og-image.mjs` renders the 1200×630
+  link preview: the art layer from `public/og-image.svg`, then all 16 nations'
+  flags laid out in four group columns with their group letters. The script
+  verifies its own output (dimensions, the expected ground color, a stddev floor
+  that catches a blank render, and that no two flags came back byte-identical),
+  because ImageMagick fails silently in ways that leave the *previous* PNG in
+  place. Mali's flag is fetched by its own code: ESPN's Mali record points its
+  logo at `kor.png`, the same bad row that gives Mali the `KOR` abbreviation.
+
+### Watching it in the US
+
+- **"My services"**, ported from the WNBA sibling and re-fitted to this
+  tournament's US rights. Pick your providers and the schedule filters to what
+  you can actually watch. The catalog covers HBO Max, YouTube TV, Hulu + Live TV,
+  Fubo, Sling, DirecTV Stream and cable/satellite.
+- HBO Max is in **no** bundle, so it is selectable on its own rather than implied
+  by a live-TV service. And a game whose US coverage FIBA and ESPN have not yet
+  published is **kept**, never hidden: an unannounced broadcast is missing data,
+  not an absent one, and silently dropping those games would understate the
+  schedule right up to tip-off.
 
 ### Testing
 
-- 258 tests. The logic layer is at 96% statements; `asItStands`, `bracketResolve`,
-  `eliminationCheck`, `opponentClinch`, `scenarios`, `slots`, `venue`, `week` and
-  `scoreNotify` are at 100%.
+- 612 tests, and **100% coverage** on statements, branches, functions and lines,
+  matching the rest of the family. The gate in `vite.config.js` enforces all four.
 - The headline test plays all 36 games and asserts the bracket resolves end to end
   with **zero** unresolved slots, a coherent champion route, and the two beaten
   semi-finalists (and only they) in the third-place game.
-- The coverage gate is set **below the family's 100% standard** at the current
-  floor, so it ratchets. The shortfall is in the presentational layer inherited
-  from the sibling. See the note in `vite.config.js`.
+- Reaching 100% turned up a real reporting trap: v8 does not attribute coverage to
+  a state-updater arrow that React invokes from inside its own reducer, so App's
+  inline `setToasts` updater read as an uncovered function while the toast it
+  builds was demonstrably in the DOM. Suppressing it with an ignore would have
+  excluded four working functions from the gate, so the updater was extracted into
+  `mergeToasts` in `services/scoreNotify.js` and tested directly instead. The
+  totals went **up**, which is the proof nothing was hidden.
 - The suite's timezone is pinned to **UTC**, which is day-stable for this data;
   `test/guards.test.js` asserts the pin so it cannot be dropped unnoticed on an
   already-UTC CI runner.

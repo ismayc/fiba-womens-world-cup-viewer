@@ -161,6 +161,16 @@ async function scoreboardEvents(signal, dates = scoreboardDates()) {
       events.push(ev)
     }
   }
+  // An ABORT is not a failure. `Promise.allSettled` never rejects, so a
+  // cancelled request would otherwise fall through to the generic error below
+  // and the caller could not tell the two apart — which made App's
+  // `err.name !== 'AbortError'` guard permanently dead, and let a poll that was
+  // superseded on purpose flash "couldn't reach results feed" at the reader.
+  if (signal?.aborted) {
+    const err = new Error('Live request aborted')
+    err.name = 'AbortError'
+    throw err
+  }
   if (!reached) throw new Error('Live request failed (all scoreboard dates unreachable)')
   return events
 }

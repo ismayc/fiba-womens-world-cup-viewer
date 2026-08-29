@@ -133,7 +133,16 @@ Three fields on a game record deserve their own note:
 - **`teamNames.js`** — canonical-name normalization (`normalizeTeam`,
   `isRealTeam`, `pairKey`).
 - **`scoreNotify.js`** — opt-in result notifications (`detectFinals`, `isLiveish`,
-  `inScope`, `finalNotification`). Detects a game going FINAL, not each basket.
+  `inScope`, `finalNotification`, `mergeToasts`). Detects a game going FINAL, not
+  each basket.
+
+  `mergeToasts` folds new result events into the on-page toast list, keyed by
+  notification tag, and returns the **original** array when nothing is fresh so
+  React can skip the re-render. It reads like it belongs inline in App's
+  `setToasts` call, and it did: v8 does not attribute coverage to an updater arrow
+  that React invokes from inside its own reducer, so inline it registered as an
+  uncovered function while the toast it built was in the DOM. Extracted, it is
+  covered because it is tested directly. Do not fold it back in.
 
 `App.jsx` owns the fetch loop: it polls every ~2 min, dropping to ~30 s while any
 game is live, and recomputes the derived state below on each refresh.
@@ -228,7 +237,16 @@ Views: `Standings`, `Bracket`, `WeekView`, `ScenariosView`. Cards/modals:
 `Filters`, `NextMatch`, `ChampionBanner`, `LiveBadge`, `FeederPair`, `PathPicker`,
 `ScoreToasts`, `ScalesIcon`. Cross-cutting state lives in `context/`
 (`follow.jsx` for starred teams, `path.jsx` for the traced route, `detail.js` for
-the game-detail modal).
+the game-detail modal, `services.jsx` for the viewer's chosen US providers).
+
+`utils/watch.js` + `context/services.jsx` + `ServicesModal.jsx` are the "my
+services" feature, ported from the WNBA sibling. `SERVICE_CATALOG` maps each
+provider to the channels it carries; HBO Max belongs to **no** bundle, so it is
+selected on its own. `isWatchable` deliberately returns true for a game whose US
+broadcast has not been published yet: that is missing data rather than an absent
+broadcast, and hiding those games would understate the schedule. `services.jsx`
+drops any stored key the catalog no longer defines, so a retired provider cannot
+keep filtering invisibly.
 
 `ScalesIcon` exists because the ⚖️ emoji renders as a missing glyph on some
 devices; the tie-break marker is inline SVG, not a character.
@@ -253,6 +271,15 @@ refresh workflow runs them before any `npm install`.
   FIBA disagree about which teams meet, or about a tip-off in a way that is not
   already recorded.
 - **`coverage-badge.mjs`** — turns the coverage summary into the shields endpoint.
+- **`make-og-image.mjs`** (`npm run og:image`) — renders the 1200×630 social card:
+  the art layer from `public/og-image.svg`, then the 16 nations' flags in four
+  group columns. It **verifies its own output** (dimensions, ground color, a
+  stddev floor that catches a blank render, and that no two flags are
+  byte-identical), because ImageMagick fails silently in ways that leave the
+  previous PNG in place: a `<text>` element with a font stack aborts the command,
+  a `url(#gradient)` fill rasterizes to pure black, and `clipPath` is ignored.
+  Mali's flag is fetched as `mli` explicitly, since ESPN's Mali record points its
+  logo at `kor.png`.
 
 ## Outside `src`
 

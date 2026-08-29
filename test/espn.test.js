@@ -253,3 +253,203 @@ describe('matching a game to its feed record', () => {
     expect(liveRecordFor(num(GAMES, 25), new Map())).toBeNull()
   })
 })
+
+describe('malformed and one-off feed records', () => {
+  const g1 = num(GAMES, 1)
+
+  // A feed that returns junk must degrade to "no overlay", not take the app down.
+  it('skips an event with no competition or no competitors', async () => {
+    mockFeed({ events: [{ id: '1' }, { id: '2', competitions: [{}] }] })
+    expect((await fetchLive()).size).toBe(0)
+  })
+
+  it('skips an event missing one of its teams', async () => {
+    mockFeed({
+      events: [
+        {
+          id: '1',
+          date: '2026-09-04T09:30Z',
+          competitions: [{ competitors: [{ homeAway: 'home', team: { displayName: 'Japan' } }] }],
+        },
+      ],
+    })
+    expect((await fetchLive()).size).toBe(0)
+  })
+
+  it('handles a payload with no events array at all', async () => {
+    mockFeed({})
+    expect((await fetchLive()).size).toBe(0)
+  })
+
+  it('falls back to uid when an event has no id', async () => {
+    const feed = espnScoreboard([g1])
+    delete feed.events[0].id
+    feed.events[0].uid = 's:40~e:999'
+    mockFeed(feed)
+    const map = await fetchLive()
+    expect(map.get('id:s:40~e:999')).toBeTruthy()
+  })
+
+  it('keeps an event with neither id nor uid, keyed by pair and instant', async () => {
+    const feed = espnScoreboard([g1])
+    delete feed.events[0].id
+    mockFeed(feed)
+    const map = await fetchLive()
+    expect(map.get('pair:Japan|Mali')).toBeTruthy()
+    expect(map.get('pair:Japan|Mali').id).toBeNull()
+  })
+
+  it('reads the status off the competition when the event has none', async () => {
+    const feed = espnScoreboard([g1], { 1: { state: 'in', score: [40, 38], period: 2 } })
+    feed.events[0].competitions[0].status = feed.events[0].status
+    delete feed.events[0].status
+    mockFeed(feed)
+    const rec = (await fetchLive()).get('pair:Japan|Mali')
+    expect(rec.state).toBe('in')
+  })
+
+  it('defaults a status-less event to pre-game with an empty clock', async () => {
+    const feed = espnScoreboard([g1])
+    delete feed.events[0].status
+    delete feed.events[0].competitions[0].status
+    mockFeed(feed)
+    const rec = (await fetchLive()).get('pair:Japan|Mali')
+    expect(rec.state).toBe('pre')
+    expect(rec.clock).toBe('')
+    expect(rec.statusLabel).toBeNull()
+    expect(rec.paused).toBe(false)
+  })
+
+  it('records no instant for an event with no date', async () => {
+    const feed = espnScoreboard([g1])
+    delete feed.events[0].date
+    mockFeed(feed)
+    expect((await fetchLive()).get('pair:Japan|Mali').instant).toBeNull()
+  })
+
+  it('reads no score when a competitor has none', async () => {
+    const feed = espnScoreboard([g1], { 1: { state: 'post' } })
+    feed.events[0].competitions[0].competitors[0].score = ''
+    mockFeed(feed)
+    expect((await fetchLive()).get('pair:Japan|Mali').score).toBeNull()
+  })
+
+  it('labels each one-off status ESPN can report', async () => {
+    const cases = [
+      ['STATUS_SUSPENDED', 'Suspended'],
+      ['STATUS_DELAYED', 'Delayed'],
+      ['STATUS_ABANDONED', 'Abandoned'],
+      ['STATUS_POSTPONED', 'Postponed'],
+      ['STATUS_CANCELED', 'Canceled'],
+      ['STATUS_FORFEIT', 'Awarded'],
+    ]
+    for (const [name, label] of cases) {
+      mockFeed(espnScoreboard([g1], { 1: { state: 'post', score: [40, 38], statusName: name } }))
+      const rec = (await fetchLive()).get('pair:Japan|Mali')
+      expect(rec.statusLabel, name).toBe(label)
+    }
+  })
+
+  it('marks an awarded result on the merged game', async () => {
+    mockFeed(
+      espnScoreboard([g1], { 1: { state: 'post', score: [20, 0], statusName: 'STATUS_FORFEIT' } }),
+    )
+    const out = applyLive(GAMES, await fetchLive())
+    expect(num(out, 1).awarded).toBe(true)
+  })
+
+  it('voids an abandoned game that has no score at all', async () => {
+    const feed = espnScoreboard([g1], { 1: { state: 'post', statusName: 'STATUS_ABANDONED' } })
+    feed.events[0].competitions[0].competitors.forEach((c) => (c.score = ''))
+    mockFeed(feed)
+    const out = applyLive(GAMES, await fetchLive())
+    expect(num(out, 1).voided).toBe(true)
+    expect(num(out, 1).score).toBeUndefined()
+  })
+
+  // The committed schedule wins on the score, but an id it does not yet carry is
+  // still worth picking up, since the box-score fetch is keyed on it.
+  it('adds an ESPN id to a committed game that lacks one, and leaves one it has', async () => {
+    const committed = GAMES.map((g) =>
+      g.num === 1 ? { ...g, score: [88, 61], espnId: null } : g,
+    )
+    mockFeed(espnScoreboard([{ ...g1, espnId: '777' }], { 1: { state: 'post', score: [88, 61] } }))
+    const out = applyLive(committed, await fetchLive())
+    expect(num(out, 1).espnId).toBe('777')
+
+    const already = GAMES.map((g) => (g.num === 1 ? { ...g, score: [88, 61] } : g))
+    const same = applyLive(already, await fetchLive())
+    expect(num(same, 1)).toBe(already.find((g) => g.num === 1))
+  })
+
+  it('ignores a date query that returns nothing usable', async () => {
+    global.fetch = vi.fn(async () => ({ ok: true, json: async () => null }))
+    await expect(fetchLive()).rejects.toThrow(/Live request failed/)
+  })
+})
+
+describe('overlay guards', () => {
+  const g1 = num(GAMES, 1)
+
+  it('overlays a score even when the feed record carries no id', async () => {
+    const feed = espnScoreboard([g1], { 1: { state: 'post', score: [88, 61] } })
+    delete feed.events[0].id
+    mockFeed(feed)
+    const out = applyLive(GAMES, await fetchLive())
+    expect(num(out, 1).score).toEqual([88, 61])
+  })
+
+  // An unresolved slot only adopts a side ESPN names as a REAL team. A stray
+  // placeholder in the feed must not be written into the bracket as if it were
+  // a competitor.
+  it('refuses to adopt a feed side that is not one of the sixteen teams', async () => {
+    const qr = { ...num(GAMES, 25), ko: '2026-09-08T17:45:00+02:00', espnId: null }
+    const board = GAMES.map((g) => (g.num === 25 ? qr : g))
+    const feed = espnScoreboard(
+      [{ ...qr, t1: 'TBD', t2: 'To Be Determined', espnId: '999' }],
+      { 25: { state: 'post', score: [80, 70] } },
+    )
+    mockFeed(feed)
+    const out = applyLive(board, await fetchLive())
+    expect(num(out, 25).t1).toBeNull()
+    expect(num(out, 25).t2).toBeNull()
+  })
+
+  it('leaves a pre-game placeholder alone when the feed names no real teams', async () => {
+    const qr = { ...num(GAMES, 25), ko: '2026-09-08T17:45:00+02:00', espnId: null }
+    const board = GAMES.map((g) => (g.num === 25 ? qr : g))
+    mockFeed(espnScoreboard([{ ...qr, t1: 'TBD', t2: 'TBD 2', espnId: '999' }]))
+    const out = applyLive(board, await fetchLive())
+    expect(num(out, 25).t1).toBeNull()
+    expect(num(out, 25).espnId).toBe('999')
+  })
+})
+
+describe('aborting a poll', () => {
+  // Promise.allSettled never rejects, so an abort would otherwise be
+  // indistinguishable from "every date unreachable" — and the caller's
+  // AbortError guard would be dead code.
+  it('rethrows an abort as an AbortError, not a generic failure', async () => {
+    const ctrl = new AbortController()
+    global.fetch = vi.fn(
+      (url, opts) =>
+        new Promise((_, rej) => {
+          opts.signal.addEventListener('abort', () => {
+            const e = new Error('aborted')
+            e.name = 'AbortError'
+            rej(e)
+          })
+        }),
+    )
+    const pending = fetchLive(ctrl.signal)
+    ctrl.abort()
+    await expect(pending).rejects.toMatchObject({ name: 'AbortError' })
+  })
+
+  it('still reports a genuine outage as a plain failure', async () => {
+    global.fetch = vi.fn(async () => ({ ok: false }))
+    await expect(fetchLive(new AbortController().signal)).rejects.toMatchObject({
+      name: 'Error',
+    })
+  })
+})

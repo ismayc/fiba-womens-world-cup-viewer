@@ -1,6 +1,5 @@
 import { Fragment, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { GAMES } from './data/games.js'
-import { VENUES } from './data/venues.js'
 import Filters from './components/Filters.jsx'
 import MatchCard from './components/MatchCard.jsx'
 import Bracket from './components/Bracket.jsx'
@@ -15,12 +14,16 @@ import ScoreToasts from './components/ScoreToasts.jsx'
 import { groupStageArchived, stageArchived } from './utils/scenarios.js'
 import { detectTimezone, formatDateLong, dayKey, liveState, gameDayKey } from './utils/time.js'
 import { readState, writeState } from './utils/urlState.js'
+import { venueFor } from './utils/venue.js'
+import { isWatchable } from './utils/watch.js'
+import { useServices } from './context/services.jsx'
+import ServicesModal from './components/ServicesModal.jsx'
 import { parseQuery, matchesSearch } from './utils/search.js'
 import { fetchLive, applyLive, LIVE_SOURCE, historyDates } from './services/espn.js'
 import { computeClinch } from './utils/clinch.js'
 import { resolveBracket } from './utils/bracketResolve.js'
 import { BRACKET, groupSlotMap, gamesByNum } from './utils/bracket.js'
-import { detectFinals, finalNotification } from './services/scoreNotify.js'
+import { detectFinals, finalNotification, mergeToasts } from './services/scoreNotify.js'
 import { useFollow } from './context/follow.jsx'
 import { DetailContext } from './context/detail.js'
 
@@ -56,11 +59,10 @@ const INITIAL_FILTERS = {
   stages: [],
   group: 'all',
   team: 'all',
-  country: 'all',
-  region: 'all',
   venue: 'all',
   timeframe: 'all',
   myTeams: false,
+  onMyServices: false,
 }
 
 // Result-alert preferences, persisted to localStorage. Alerts do not require
@@ -81,8 +83,9 @@ function countActiveFilters(f) {
   let n = 0
   if (f.search.trim()) n++
   if (f.myTeams) n++
+  if (f.onMyServices) n++
   n += f.stages.length
-  for (const k of ['group', 'team', 'country', 'region', 'venue', 'timeframe']) {
+  for (const k of ['group', 'team', 'venue', 'timeframe']) {
     if (f[k] !== 'all') n++
   }
   return n
@@ -92,6 +95,7 @@ export default function App() {
   const detectedTz = useMemo(detectTimezone, [])
   const initial = useMemo(() => readState(detectedTz), [detectedTz])
   const { followed, count: followCount } = useFollow()
+  const { services, count: serviceCount } = useServices()
 
   const [theme, setTheme] = useState(
     () => (typeof document !== 'undefined' && document.documentElement.dataset.theme) || 'dark',
@@ -110,6 +114,7 @@ export default function App() {
 
   const [detailMatch, setDetailMatch] = useState(null)
   const [calendarOpen, setCalendarOpen] = useState(false)
+  const [servicesOpen, setServicesOpen] = useState(false)
 
   const [view, setView] = useState(initial.view)
   // A match number to focus in the bracket (set when an "As it stands" link is
@@ -304,13 +309,7 @@ export default function App() {
     // means the snapshot desynced; suppress rather than spam. The snapshot is
     // already advanced above, so these stay silent and will not re-fire.
     if (events.length > 5) return
-    setToasts((t) => {
-      const have = new Set(t.map((x) => x.id))
-      const fresh = events
-        .map((ev) => ({ id: `${finalNotification(ev).tag}`, ev }))
-        .filter((x) => !have.has(x.id))
-      return fresh.length ? [...t, ...fresh] : t
-    })
+    setToasts((t) => mergeToasts(t, events))
     if (typeof Notification === 'undefined' || Notification.permission !== 'granted') return
     const icon = `${import.meta.env.BASE_URL}icon-192.png`
     for (const ev of events) {
@@ -374,14 +373,19 @@ export default function App() {
   const filtered = useMemo(() => {
     const parsed = parseQuery(filters.search)
     return displayMatches.filter((m) => {
-      const venue = VENUES[m.venue]
+      // venueFor, not VENUES[…]: a final-phase game has no arena until FIBA
+      // assigns one, and matchesSearch reads the venue's fields unconditionally.
+      const venue = venueFor(m)
       if (filters.myTeams && followed.size && !(followed.has(m.t1) || followed.has(m.t2)))
         return false
+      // A game whose coverage ESPN has not published yet is KEPT rather than
+      // dropped: unknown is not the same as unwatchable, and hiding the whole
+      // final phase from a filtered schedule would read as a bug. See
+      // utils/watch.js.
+      if (filters.onMyServices && !isWatchable(m, services)) return false
       if (filters.stages.length && !filters.stages.includes(m.stage)) return false
       if (filters.group !== 'all' && m.group !== filters.group) return false
       if (filters.team !== 'all' && m.t1 !== filters.team && m.t2 !== filters.team) return false
-      if (filters.country !== 'all' && venue.country !== filters.country) return false
-      if (filters.region !== 'all' && venue.region !== filters.region) return false
       if (filters.venue !== 'all' && m.venue !== filters.venue) return false
       // liveState prefers real feed data: a scored match reads "finished" even
       // inside the time window, and only m.live (or a scoreless time-window
@@ -390,7 +394,7 @@ export default function App() {
       if (!matchesSearch(m, venue, parsed)) return false
       return true
     })
-  }, [filters, displayMatches, followed])
+  }, [filters, displayMatches, followed, services])
 
   // Once a stage is fully played it drops out of the Schedule by default, so the
   // list opens on what's still to come — unless the user picks that stage's filter
@@ -609,6 +613,22 @@ export default function App() {
               {activeCount > 0 && <span className="filter-count">{activeCount}</span>}
               <span className="chev">{filtersOpen ? '▲' : '▼'}</span>
             </button>
+            <button
+              className="services-btn"
+              onClick={() => setServicesOpen(true)}
+              title="Choose the streaming services and TV packages you have"
+            >
+              📺 {serviceCount > 0 ? `My services (${serviceCount})` : 'Choose my services'}
+            </button>
+            {serviceCount > 0 && (
+              <button
+                className={`myteams-btn${filters.onMyServices ? ' active' : ''}`}
+                onClick={() => setFilters((f) => ({ ...f, onMyServices: !f.onMyServices }))}
+                title="Show only games carried by a service you have"
+              >
+                📺 On my services
+              </button>
+            )}
             {followCount > 0 && (
               <button
                 className={`myteams-btn${filters.myTeams ? ' active' : ''}`}
@@ -769,6 +789,7 @@ export default function App() {
         </p>
       </footer>
 
+      {servicesOpen && <ServicesModal onClose={() => setServicesOpen(false)} />}
       <ScoreToasts items={toasts} onOpen={setDetailMatch} onDismiss={dismissToast} />
 
       {detailMatch && (

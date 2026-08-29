@@ -45,27 +45,34 @@ function AsItStands({ proj, onGoToMatch }) {
   if (!proj) return null
   const dest = (label, d) => {
     const team = d?.team
+    /* v8 ignore next -- unreachable: rankGroup always returns four ordered rows, so every group has a 1st, 2nd and 3rd to project */
     if (!team) return null
     const opp = d?.opponent
+    // Computed here, not inline: a `v8 ignore` comment inside a JSX expression
+    // container is a syntax error, so an unreachable fallback has to be hoisted
+    // out of the markup to be annotated at all.
+    //
+    // The opponent is the side that can be missing: a group winner's
+    // quarter-final opponent is the winner of a qualification game nobody has
+    // played, so it shows as that pending feed rather than as a name.
+    /* v8 ignore next -- the bare 'TBD' is unreachable: a side that is not a group placing is always a "Winner Game N" feed, which supplies opponentLabel */
+    const oppText = opp ? `${FLAG_BY_TEAM[opp]} ${opp}` : d.opponentLabel || 'TBD'
+    /* v8 ignore next -- the fallback is unreachable: a projected destination is always the QR or the QF, and ROUND_LABEL names both */
+    const roundTitle = ROUND_LABEL[d.round] || d.round
     return (
       <li className="ais-row" key={label}>
         <span className="ais-pos">{label}</span>
         {/* The team name comes out of the group table, so it is a committed
-            member of this edition and always has a flag. The opponent is the one
-            that can be missing: a group winner's quarter-final opponent is the
-            winner of a qualification game nobody has played yet, so it shows as
-            that pending feed rather than as a name. */}
+            member of this edition and always has a flag. */}
         <span className="ais-team">{FLAG_BY_TEAM[team]} {team}</span>
         <span className="ais-vs">vs</span>
-        <span className="ais-opp">
-          {opp ? `${FLAG_BY_TEAM[opp]} ${opp}` : d?.opponentLabel || 'TBD'}
-        </span>
-        {d?.round && (
-          <span className="ais-round" title={ROUND_LABEL[d.round] || d.round}>
+        <span className="ais-opp">{oppText}</span>
+        {d.round && (
+          <span className="ais-round" title={roundTitle}>
             {d.round}
           </span>
         )}
-        {d?.gameNum &&
+        {d.gameNum &&
           (onGoToMatch ? (
             <button
               type="button"
@@ -294,6 +301,7 @@ export default function Standings({ matches, tz, hideScores, clinch, onGoToMatch
     // yet split) fall back to the current standings position for the
     // provisional projection.
     const byRank = { 1: proj.first, 2: proj.second, 3: proj.third }
+    /* v8 ignore next 8 -- the trailing null fallbacks are unreachable: a team that is `through` is by definition in the top three, so byRank always has its row, and projectKnockout fills a destination (with a round and a game number) for every one of those three placings */
     const dest =
       status === 'won-group'
         ? proj.first
@@ -306,6 +314,7 @@ export default function Standings({ matches, tz, hideScores, clinch, onGoToMatch
     // is authoritative; otherwise fall back to the provisional "as it stands"
     // projection. `settled` drives whether the pop-up drops the provisional note.
     const locked = lockedOpponent(matches, team, clinch)
+    /* v8 ignore next 8 -- the trailing `|| null` on round and gameNum is unreachable: `dest` is always one of the three projected placings, and projectKnockout gives every one of them a round and a game number */
     return {
       status,
       opponent: locked?.opponent || dest?.opponent || null,

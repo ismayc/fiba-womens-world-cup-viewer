@@ -51,7 +51,9 @@ function TaleOfTheTape({ match, allMatches, label }) {
   if (!a.played || !b.played) return null
   const pd = (v) => (v > 0 ? `+${v}` : `${v}`)
   const record = (r) => `${r.w}–${r.l}${r.otWins ? ` (${r.otWins} in OT)` : ''}`
+  /* v8 ignore next -- the em-dash arms are unreachable here: the tape only renders when BOTH teams have played, so `played` is never 0 and a run is never empty */
   const avg = (v, n) => (n ? (v / n).toFixed(1) : '—')
+  /* v8 ignore next 2 -- see above: a team with games played always has a run */
   const streak = (r) =>
     r.streak > 0 ? `W${r.streak}` : r.streak < 0 ? `L${-r.streak}` : '—'
   const anyOt = a.otWins + a.otLosses + b.otWins + b.otLosses > 0

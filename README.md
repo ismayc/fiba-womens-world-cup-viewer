@@ -73,6 +73,11 @@ app was grown from.
   projected final phase recompute exactly.
 - **Bracket** — the full 12-game final phase with FIBA's slot labels, showing
   candidate pairs for unresolved feeds and tracing any team's path to the Final.
+- **My services** — pick your US providers (HBO Max, YouTube TV, Hulu + Live TV,
+  Fubo, Sling, DirecTV Stream, cable/satellite) and filter the schedule to what
+  you can actually watch. A game whose US coverage has not been published yet is
+  kept rather than hidden, since that is missing data rather than an absent
+  broadcast.
 - **Spoiler-free mode** — hide every score behind a tap-to-reveal.
 - **Calendar** — add a single game to your calendar, export a filtered set, or
   subscribe to an auto-updating `webcal://` feed that fills in teams and scores.
@@ -121,7 +126,12 @@ how data flows through it. [`NEWS.md`](./NEWS.md) is the dated changelog. Each
 module's header comment is the authoritative spec for that module. Read it
 before changing the code under it.
 
-Three things in this repo exist to stop a specific bug coming back, and should
+The suite runs at **100% coverage** on statements, branches, functions and lines,
+and `vite.config.js` enforces all four. A genuinely unreachable defensive arm
+carries an inline `/* v8 ignore next -- why */`; lowering a threshold is not an
+option.
+
+Four things in this repo exist to stop a specific bug coming back, and should
 not be "simplified":
 
 1. **`scripts/official.mjs`.** FIBA publishes no keyless JSON schedule API, so the
@@ -133,6 +143,11 @@ not be "simplified":
 3. **`site.web.api.espn.com`, not `site.api.espn.com`.** The two serve identical
    routes, but `site.api` returns 403 to datacenter IPs, which is every CI runner
    and every Netlify function.
+4. **`mergeToasts` in `services/scoreNotify.js`.** It looks like it belongs inline
+   in App's `setToasts` call, and it did. v8 does not attribute coverage to an
+   updater arrow React invokes from inside its own reducer, so inlining it makes
+   working code read as dead and tempts an ignore that would exclude the whole
+   block from the gate.
 
 ## Credits
 
@@ -140,7 +155,9 @@ An unofficial fan-made project. Not affiliated with, endorsed by, or sponsored b
 FIBA. "FIBA Women's Basketball World Cup", team, broadcaster and tournament names
 are trademarks of their respective owners. Schedule and results data compiled
 from [FIBA](https://www.fiba.basketball/) and [ESPN](https://www.espn.com/);
-live in-game scores are from ESPN. The app icon uses
-[Google Noto Emoji](https://github.com/googlefonts/noto-emoji) (Apache License 2.0).
+live in-game scores are from ESPN. The app icon (the German flag's bands, for the
+host nation, behind a basketball) and the social card use
+[Google Noto Emoji](https://github.com/googlefonts/noto-emoji) (Apache License 2.0);
+the social card's flags are ESPN's.
 
 Created by [Chester Ismay](https://github.com/ismayc) · MIT licensed.

@@ -33,7 +33,7 @@ function FixtureRow({ match, tz, team, scoreHidden, onOpen }) {
   const showScore = hasScore && !scoreHidden
   return (
     <li>
-      <button type="button" className="gg-fixture" onClick={() => onOpen(match)} title="Open match details">
+      <button type="button" className="gg-fixture" onClick={() => onOpen(match)} title="Open game details">
         <span className="gg-when">
           {shortDate(match.ko, tz)} · {formatTime(match.ko, tz)} {tzAbbrev(match.ko, tz)}
         </span>
@@ -43,7 +43,10 @@ function FixtureRow({ match, tz, team, scoreHidden, onOpen }) {
             {showScore ? (
               <span className="gg-score">
                 {match.score[0]}–{match.score[1]}
-                {match.pens && <span className="gg-pens"> (pens {match.pens[0]}–{match.pens[1]})</span>}
+                {/* Overtime, not a shootout. See DayMatchesModal. */}
+                {match.ot > 0 && (
+                  <span className="gg-pens"> {match.ot > 1 ? `${match.ot}OT` : 'OT'}</span>
+                )}
               </span>
             ) : hasScore ? (
               <span className="gg-score gg-score-hidden">•–•</span>
@@ -142,7 +145,7 @@ export default function GroupGamesModal({ group, team, matches, tz, hideScores, 
   const [revealed, setRevealed] = useState(false)
   const scoreHidden = hideScores && !revealed
 
-  // A team is selected → just that team's three group matches; otherwise (group
+  // A team is selected → just that team's three group games; otherwise (group
   // title clicked) the whole group's schedule.
   const fixtures = matches
     .filter((m) => m.stage === 'Group' && m.group === group)

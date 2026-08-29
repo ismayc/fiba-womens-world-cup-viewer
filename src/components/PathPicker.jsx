@@ -19,12 +19,12 @@ function summarize(path, byNum) {
   if (lastHere === BRACKET.final[0]) {
     return settled ? { text: '🏆 Champions!', cls: 'champ' } : { text: 'In the Final', cls: 'alive' }
   }
-  if (m.live) return { text: `Playing now — ${STAGE_LABELS[m.stage]}`, cls: 'alive' }
+  if (m.live) return { text: `Playing now: ${STAGE_LABELS[m.stage]}`, cls: 'alive' }
   if (settled) {
     const next = byNum[path.nums[path.nums.indexOf(lastHere) + 1]]
     return { text: `Through to the ${STAGE_LABELS[next.stage]}`, cls: 'alive' }
   }
-  return { text: `Up next — ${STAGE_LABELS[m.stage]}`, cls: 'alive' }
+  return { text: `Up next: ${STAGE_LABELS[m.stage]}`, cls: 'alive' }
 }
 
 // Selector for the "Path to the Final" highlight: a dropdown of every team that

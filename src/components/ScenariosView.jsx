@@ -105,21 +105,26 @@ function ProjectedTable({ rows, decided, ties }) {
 // "As it stands → final phase" line for a projected qualifier. `confirmed` is
 // true once the matchup is mathematically locked given the results set so far.
 function EntryLine({ label, dest, confirmed }) {
+  /* v8 ignore next -- unreachable: rankGroup always returns four ordered rows, so projectKnockout names a team for all three advancing placings */
   if (!dest?.team) return null
+  // Computed here rather than inline: a `v8 ignore` comment inside a JSX
+  // expression container is a syntax error.
+  //
+  // The opponent is the side that can be missing: a group winner's
+  // quarter-final opponent is the winner of a qualification game nobody has
+  // played, so it shows as that pending feed rather than as a name.
+  /* v8 ignore next -- the bare 'TBD' is unreachable: a side that is not a group placing is always a "Winner Game N" feed, which supplies opponentLabel */
+  const oppText = dest.opponent
+    ? `${FLAG_BY_TEAM[dest.opponent]} ${dest.opponent}`
+    : dest.opponentLabel || 'TBD'
   return (
     <li className={`sc-r32-row${confirmed ? ' sc-r32-confirmed' : ''}`}>
       <span className="sc-r32-pos">{label}</span>
       {/* The team name comes out of a group table, so it is a committed member
-          of this edition and always has a flag. The opponent is the one that can
-          be missing: a group winner's quarter-final opponent is the winner of a
-          qualification game, so it shows as that pending feed. */}
+          of this edition and always has a flag. */}
       <span className="sc-r32-team">{FLAG_BY_TEAM[dest.team]} {dest.team}</span>
       <span className="sc-r32-vs">vs</span>
-      <span className="sc-r32-opp">
-        {dest.opponent
-          ? `${FLAG_BY_TEAM[dest.opponent]} ${dest.opponent}`
-          : dest.opponentLabel || 'TBD'}
-      </span>
+      <span className="sc-r32-opp">{oppText}</span>
       {dest.round && <span className="sc-r32-round">{dest.round}</span>}
       {dest.gameNum && <span className="sc-r32-num">G{dest.gameNum}</span>}
       {confirmed && <span className="sc-r32-lock" title="This matchup is confirmed — it can no longer change" aria-label="Matchup confirmed">✔️</span>}
@@ -218,12 +223,13 @@ export default function ScenariosView({ matches }) {
             <div className="sc-card" key={g}>
               <h3 className="group-title">
                 Group {g}
+                {/* No "N to pick" fallback. The football sibling needs one
+                    because its scoreline enumeration can exceed its budget and
+                    return a null count; this one walks win/loss outcomes only,
+                    which is at most 64 for a group, so a count is ALWAYS
+                    available and that arm was dead. See utils/scenarios.js. */}
                 <span className={`sc-card-state${decided ? ' sc-decided' : ''}`}>
-                  {count == null
-                    ? `${open.filter((m) => !Array.isArray(picks[m.num])).length} to pick`
-                    : decided
-                      ? 'order decided'
-                      : `${count} possible orders`}
+                  {decided ? 'order decided' : `${count} possible orders`}
                 </span>
               </h3>
 

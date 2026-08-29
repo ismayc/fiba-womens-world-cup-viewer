@@ -65,6 +65,18 @@ export function slotLabels(g) {
   return [g.label1 ?? g.t1, g.label2 ?? g.t2]
 }
 
+// The two sides of a game AS DISPLAYED: the resolved team when there is one,
+// otherwise the slot label it was drawn with.
+//
+// Every view needs this, and getting it wrong is silent. A final-phase record
+// carries `t1: null` until the draw resolves it, so a component that reads
+// `game.t1` directly renders the whole final phase with BLANK team names — which
+// is exactly what the schedule, week and day views did while the bracket, which
+// had the fallback, looked fine. Read sides through here.
+export function sideNames(g) {
+  return [g.t1 ?? g.label1 ?? '', g.t2 ?? g.label2 ?? '']
+}
+
 // Every game whose slots are filled directly from a group table: the
 // qualification round AND the quarter-finals, since a quarter-final has one
 // group-winner slot and one qualification-round slot.

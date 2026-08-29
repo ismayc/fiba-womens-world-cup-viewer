@@ -2,6 +2,12 @@
 
 Dated changelog, newest first.
 
+## August 29, 2026 — the source link pointed at the wrong repo
+
+"View source on GitHub" in the footer linked to `ismayc/womens-world-cup-viewer`,
+the FIFA Women's World Cup sibling this viewer was scaffolded from. It was a
+rendered link on every page. Every other identity field here was already correct.
+
 ## August 29, 2026 — world ranking, not the alphabet
 
 Before a ball is thrown every team is 0-0, so the whole group is one tied block and

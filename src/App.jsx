@@ -780,7 +780,7 @@ export default function App() {
           </a>{' '}
           ·{' '}
           <a
-            href="https://github.com/ismayc/womens-world-cup-viewer"
+            href="https://github.com/ismayc/fiba-womens-world-cup-viewer"
             target="_blank"
             rel="noopener noreferrer"
           >

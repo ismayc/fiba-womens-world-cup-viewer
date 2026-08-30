@@ -334,7 +334,48 @@ export function applyLive(games, liveMap, now = Date.now()) {
       }
     }
     if (rec.awarded) out.awarded = true
+    // Same fill as the pre-game branch above: a qualification-round or semi-final
+    // record is committed with `tbdTip` and no kickoff, because FIBA announces
+    // those times only when the previous round ends. If the first thing we ever
+    // see of the game is a score, take the time from the same record, or the
+    // schedule has a played game with no day to file it under.
+    if (g.tbdTip && rec.instant != null) {
+      out.ko = new Date(rec.instant).toISOString()
+      out.tbdTip = false
+    }
     out.liveSource = true
     return out
   })
+}
+
+// The live records that no COMMITTED game already owns by ESPN id.
+//
+// Why this exists. A final-phase game is committed with `espnId: null`, because
+// FIBA publishes the bracket wiring long before ESPN publishes the fixture, so
+// the only handle it can be matched by is its team pair — and it has no pair
+// until `resolveBracket` fills one in from the group results. Resolution happens
+// downstream of the overlay, so the app runs the overlay a SECOND time over the
+// resolved schedule (see App.jsx). This filter is what makes that second pass
+// safe.
+//
+// The hazard it removes: `pairKey` is order-independent and NOT scoped to a
+// date, so if the same two teams meet twice in the tournament (impossible in the
+// quarter-finals by FIBA's double crossover, but perfectly possible in a
+// semi-final or the final) the second pass could match a knockout slot against
+// the GROUP game's record and show that game's score. Every group game carries a
+// committed `espnId` and therefore matches by id on the first pass, so dropping
+// the records those ids claim leaves only fixtures nothing has spoken for.
+//
+// Returns the map unchanged when there is nothing to drop, so the common case
+// allocates nothing and `applyLive`'s empty-map short-circuit still applies.
+export function unclaimedLive(liveMap, games) {
+  if (!liveMap || liveMap.size === 0) return liveMap
+  const claimed = new Set(games.map((g) => g.espnId).filter(Boolean).map(String))
+  if (claimed.size === 0) return liveMap
+  const out = new Map()
+  for (const [key, rec] of liveMap) {
+    if (rec.id != null && claimed.has(String(rec.id))) continue
+    out.set(key, rec)
+  }
+  return out
 }

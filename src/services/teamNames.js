@@ -34,7 +34,8 @@ export function normalizeTeam(name) {
   return ALIASES[name] || name
 }
 
-// A "real" team is one of the 32 qualified sides (not a placeholder like "2A").
+// A "real" team is one of the 16 qualified sides (not a placeholder like "2A").
+// Sixteen, not the football sibling's 32: this edition has four groups of four.
 export function isRealTeam(name) {
   return Boolean(FLAG_BY_TEAM[normalizeTeam(name)])
 }

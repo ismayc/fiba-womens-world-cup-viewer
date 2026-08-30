@@ -19,7 +19,7 @@ import { isWatchable } from './utils/watch.js'
 import { useServices } from './context/services.jsx'
 import ServicesModal from './components/ServicesModal.jsx'
 import { parseQuery, matchesSearch } from './utils/search.js'
-import { fetchLive, applyLive, LIVE_SOURCE, historyDates } from './services/espn.js'
+import { fetchLive, applyLive, unclaimedLive, LIVE_SOURCE, historyDates } from './services/espn.js'
 import { computeClinch } from './utils/clinch.js'
 import { resolveBracket } from './utils/bracketResolve.js'
 import { BRACKET, groupSlotMap, gamesByNum } from './utils/bracket.js'
@@ -265,7 +265,22 @@ export default function App() {
   // plays (the losers matter: they fill the third-place play-off) — so the
   // resolved team reaches every view consistently (schedule, week, bracket,
   // detail modal, calendar), not just the bracket's own rendering.
-  const displayMatches = useMemo(() => resolveBracket(matches, clinch), [matches, clinch])
+  //
+  // THEN OVERLAY THE FEED A SECOND TIME. A final-phase game is committed with no
+  // ESPN id and no teams, so the first overlay pass above has nothing to match it
+  // by; resolution is what gives it a team pair. Without this second pass a
+  // quarter-final would sit at "no score" all game and only pick up its result
+  // when the next scheduled refresh commits an espnId, which can be hours later
+  // (GitHub runs these crons 0.5-11h late and sometimes drops one). It also fills
+  // a `tbdTip` game's kickoff from ESPN once the round is announced.
+  //
+  // `unclaimedLive` drops every record a committed game already owns by id, so a
+  // resolved slot can never match the pair key of an earlier group meeting
+  // between the same two teams.
+  const displayMatches = useMemo(
+    () => applyLive(resolveBracket(matches, clinch), unclaimedLive(live, GAMES)),
+    [matches, clinch, live],
+  )
   // Lookup for expanding "Winner Match N" slots into their potential matchup on
   // the Schedule/Week cards (same as the Bracket).
   const byNum = useMemo(() => gamesByNum(displayMatches), [displayMatches])

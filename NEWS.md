@@ -2,6 +2,24 @@
 
 Dated changelog, newest first.
 
+## August 30, 2026 — the knockout rounds no longer wait on a data refresh
+
+The four qualification games on September 8 are the first test of this, and they would
+have failed it. A final-phase game ships with no ESPN id, no teams and (for the
+qualification round and semi-finals) no tip-off time, because FIBA publishes the bracket
+wiring long before ESPN publishes the fixture. The app fills the teams in itself as soon
+as the groups are decided, but it was doing that *after* the live overlay had already
+run, so there was never a moment when the feed had a team pair to match against. The
+result: a quarter-final could be in progress, with the correct two teams on screen, and
+show no score at all until a scheduled refresh committed its id. Those refreshes run
+hours behind their cron and are sometimes dropped entirely, so "hours late" was the
+realistic case, on the days people are most likely to be watching.
+
+The overlay now runs a second time, over the resolved bracket. A knockout game picks up
+its score, its clock and its tip-off time as soon as ESPN has them. Records that a
+committed game already owns by id are excluded from that second pass, so a slot can never
+adopt the score of an earlier group meeting between the same two teams.
+
 ## August 30, 2026 — the calendar feed put one game two hours early
 
 ESPN files South Korea v Nigeria on September 4 at 12:30 Berlin time; FIBA's published

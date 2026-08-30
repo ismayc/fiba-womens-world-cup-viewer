@@ -82,8 +82,14 @@ function esc(t) {
 // "FIBA Women's World Cup - Group A". The competition prefix is the same on
 // every game, so only the tail is interesting.
 function roundOf(comp) {
+  // Both fallbacks below are unreachable in practice and kept only so the helper
+  // is total: roundOf is called ONLY for a competition that isThisTournament()
+  // has already matched, which means notes[0].headline exists and begins with
+  // "FIBA Women's World Cup", so it is never absent and never empty.
+  /* v8 ignore next -- unreachable: isThisTournament guarantees notes[0].headline */
   const note = String((comp.notes || [])[0]?.headline || '')
   const tail = note.includes('-') ? note.slice(note.indexOf('-') + 1).trim() : note.trim()
+  /* v8 ignore next -- unreachable: a matching headline is non-empty, so tail is truthy */
   return tail || 'Group phase'
 }
 

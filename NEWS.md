@@ -2,6 +2,14 @@
 
 Dated changelog, newest first.
 
+## August 30, 2026 — the subscription endpoint joins the coverage gate
+
+`coverage.include` was `src/**`, so the `webcal://` function was measured by nothing while
+the badge read 100%. This is the file that served one game two hours early earlier today,
+which is a fair argument for measuring it. It is now in the gate at 100%, with tests for
+the defensive arms a malformed ESPN payload reaches, and two genuinely unreachable
+fallbacks in `roundOf` marked with justified ignores rather than a lowered threshold.
+
 ## August 30, 2026 — the knockout rounds no longer wait on a data refresh
 
 The four qualification games on September 8 are the first test of this, and they would

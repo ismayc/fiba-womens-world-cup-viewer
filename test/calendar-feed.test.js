@@ -187,3 +187,119 @@ describe('the feed URL', () => {
     expect(url).toContain('dates=20260904-20260913')
   })
 })
+
+// The defensive arms. A serverless endpoint has no supervisor: an unexpected
+// shape must degrade to "this game is skipped" or "this field is blank", never
+// to a 500 that leaves every subscriber without a calendar. These were all
+// uncovered while the function sat outside coverage.include.
+describe('malformed upstream payloads', () => {
+  const note = [{ headline: "FIBA Women's World Cup - Group A" }]
+  const comp = (over = {}) => ({
+    notes: note,
+    status: { type: {} },
+    venue: { fullName: 'Berlin Arena', address: { city: 'Berlin' } },
+    competitors: [
+      { homeAway: 'home', score: '70', team: { displayName: 'Mali' } },
+      { homeAway: 'away', score: '80', team: { displayName: 'Japan' } },
+    ],
+    ...over,
+  })
+  const wrap = (competitions) => ({ events: [{ id: 'x', date: '2026-09-05T12:00Z', competitions }] })
+
+  it('accepts the payload as a JSON string as well as an object', () => {
+    expect(parseScoreboard(JSON.stringify(wrap([comp()])))).toHaveLength(1)
+  })
+
+  it('reads an empty calendar out of a payload with no events at all', () => {
+    expect(parseScoreboard({})).toEqual([])
+    expect(parseScoreboard(null)).toEqual([])
+  })
+
+  it('skips an event whose competition carries no notes', () => {
+    expect(parseScoreboard(wrap([comp({ notes: undefined })]))).toEqual([])
+    expect(parseScoreboard(wrap([comp({ notes: [{}] })]))).toEqual([])
+  })
+
+  it('leaves the location blank rather than throwing when the venue is missing', () => {
+    expect(parseScoreboard(wrap([comp({ venue: undefined })]))[0].venue).toBe('')
+    expect(parseScoreboard(wrap([comp({ venue: { fullName: 'Berlin Arena' } })]))[0].venue).toBe(
+      'Berlin Arena',
+    )
+  })
+
+  it('treats a competitor with no team as unnamed rather than crashing', () => {
+    const g = parseScoreboard(
+      wrap([
+        comp({
+          competitors: [
+            { homeAway: 'home', score: '70', team: undefined },
+            { homeAway: 'away', score: '80', team: { displayName: 'Japan' } },
+          ],
+        }),
+      ]),
+    )[0]
+    expect(g.home).toBe('')
+    expect(g.away).toBe('Japan')
+  })
+
+  it('shows no score when a completed game reports an empty one', () => {
+    // ESPN sends "" rather than a number for a game with no box score yet, and a
+    // completed game with a missing side must not render as "(0–0)".
+    const g = parseScoreboard(
+      wrap([
+        comp({
+          status: { period: 4, type: { completed: true } },
+          competitors: [
+            { homeAway: 'home', score: '', team: { displayName: 'Mali' } },
+            { homeAway: 'away', score: '80', team: { displayName: 'Japan' } },
+          ],
+        }),
+      ]),
+    )[0]
+    expect(g.result).toBe('')
+  })
+
+  it('labels a single overtime without a number', () => {
+    const g = parseScoreboard(
+      wrap([comp({ status: { period: 5, type: { completed: true } } })]),
+    )[0]
+    expect(g.result).toMatch(/ OT\)$/)
+    expect(g.result).not.toMatch(/1OT/)
+  })
+})
+
+describe('note headlines and periods at their edges', () => {
+  const wrap = (headline, status) => ({
+    events: [
+      {
+        id: 'x',
+        date: '2026-09-05T12:00Z',
+        competitions: [
+          {
+            notes: [{ headline }],
+            status,
+            venue: { fullName: 'Berlin Arena', address: { city: 'Berlin' } },
+            competitors: [
+              { homeAway: 'home', score: '70', team: { displayName: 'Mali' } },
+              { homeAway: 'away', score: '80', team: { displayName: 'Japan' } },
+            ],
+          },
+        ],
+      },
+    ],
+  })
+
+  it('uses the whole headline as the round when it carries no dash', () => {
+    // ESPN writes "FIBA Women's World Cup - Group A" for the group phase, but the
+    // final-phase headlines are not published yet, so do not assume the dash.
+    const [g] = parseScoreboard(wrap("FIBA Women's World Cup", { type: {} }))
+    expect(g.round).toBe("FIBA Women's World Cup")
+  })
+
+  it('adds no overtime label to a game that reports no period', () => {
+    const [g] = parseScoreboard(
+      wrap("FIBA Women's World Cup - Group A", { type: { completed: true } }),
+    )
+    expect(g.result).toBe(' (80–70)')
+  })
+})

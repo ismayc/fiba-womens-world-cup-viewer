@@ -17,9 +17,13 @@ export default defineConfig({
     // One test file at a time. v8's per-worker coverage is merged after the run,
     // and with files in parallel that merge intermittently loses a function that
     // only App.jsx's inline handlers exercise — the toast-merge updater shows as
-    // uncovered while its own test demonstrably renders the toast. Serialising
-    // the files makes the 100% gate deterministic. It is the same fix the
-    // sibling viewers carry.
+    // uncovered while its own test demonstrably renders the toast. Serializing
+    // the files makes the 100% gate deterministic.
+    //
+    // Only premier-league and the hub carry this as well (verified 2026-08-30).
+    // The other nine repos still run their test files in parallel and are still
+    // exposed to that merge race; this comment used to claim the whole family
+    // had the fix, which would have stopped anyone checking.
     fileParallelism: false,
     // Pin the suite's timezone so any test asserting a day heading, or what
     // counts as "today", is runner-independent.

@@ -8,6 +8,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { handler, parseScoreboard } from '../netlify/functions/calendar.js'
 import { VENUES } from '../src/data/venues.js'
 import { ALL_TEAMS } from '../src/data/teams.js'
+import { GAMES } from '../src/data/games.js'
 import feed from './fixtures/espn-scoreboard.json'
 
 beforeEach(() => {
@@ -65,6 +66,23 @@ describe('parseScoreboard', () => {
     // Specifically: ESPN's sponsor name must have been translated.
     expect(games.some((g) => g.venue.startsWith('Berlin Arena'))).toBe(true)
     expect(games.every((g) => !g.venue.includes('Uber'))).toBe(true)
+  })
+
+  // ESPN files South Korea v Nigeria two hours early (it subtracts the Berlin
+  // offset a second time), and the build-time pipeline corrects that from
+  // KNOWN_ESPN_TIME_BUGS. This feed reads ESPN directly, so it needs the same
+  // correction or a subscriber turns up two hours early to one game.
+  //
+  // Asserting every game against the committed schedule, rather than just the
+  // one, is what catches the two tables drifting apart later.
+  it('tips off every game when the app says it does', () => {
+    for (const g of games) {
+      const committed = GAMES.find((c) => c.t1 === g.away && c.t2 === g.home)
+      expect(committed, `no committed game for ${g.away} v ${g.home}`).toBeDefined()
+      expect(g.start.toISOString(), `${g.away} v ${g.home}`).toBe(
+        new Date(committed.ko).toISOString(),
+      )
+    }
   })
 
   it('labels the round from the note headline', () => {

@@ -2,6 +2,20 @@
 
 Dated changelog, newest first.
 
+## August 30, 2026 — the calendar feed put one game two hours early
+
+ESPN files South Korea v Nigeria on September 4 at 12:30 Berlin time; FIBA's published
+schedule says 14:30, and FIBA is the organizer. The app has always shown 14:30, because
+the build corrects that one record on the way in. The `webcal://` subscription feed did
+not: it reads ESPN directly on every request, so anyone subscribed would have had the
+game in their calendar two hours early, disagreeing with the app on the opening day of
+the tournament.
+
+The feed now carries the same correction, keyed by ESPN event id so an upstream rename
+cannot move it onto a different game. A test checks every game in the feed against the
+committed schedule rather than just this one, so the two copies of the table cannot
+drift apart unnoticed.
+
 ## August 29, 2026 — the guard that guards the family
 
 `test/guards.test.js` was the only one of its kind in the family, so nothing stopped the

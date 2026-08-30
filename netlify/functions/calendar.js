@@ -38,6 +38,27 @@ const VENUE_ALIASES = {
   'Uber Arena': 'Berlin Arena',
 }
 
+// ESPN files ONE game of this tournament two hours early: it stores FIBA's GMT
+// figure with the Berlin offset subtracted a second time. The other 23 group
+// games agree to the minute, so it is a single bad record, and FIBA is the
+// organizer and therefore the authority.
+//
+// The build-time pipeline already corrects this (KNOWN_ESPN_TIME_BUGS in
+// scripts/official.mjs), so the app shows FIBA's time. This feed reads ESPN
+// directly on every request, so without the same correction a subscriber's
+// calendar disagrees with the app by two hours on the day of the game.
+//
+// Keyed by ESPN EVENT ID, never by team names, so a rename upstream cannot
+// silently move the correction onto a different game. Values are the corrected
+// start as a UTC instant. That table in official.mjs is the one to edit first;
+// keep this in step with it, and delete both entries together if ESPN ever
+// fixes the record.
+const KNOWN_ESPN_TIME_BUGS = {
+  // South Korea v Nigeria, 4 September: FIBA's published 14:30 Berlin (CEST) is
+  // correct; ESPN says 12:30 Berlin.
+  401907391: '2026-09-04T12:30:00Z',
+}
+
 // Only this tournament's games. ESPN files every FIBA competition under one
 // league slug, so a note headline check keeps another event out of the feed.
 const EVENT_NOTE = /^FIBA Women's World Cup\b/
@@ -106,7 +127,7 @@ export function parseScoreboard(json) {
     const away = competitors.find((c) => c.homeAway === 'away') || competitors[1]
     if (!home || !away) continue
 
-    const start = new Date(event.date)
+    const start = new Date(KNOWN_ESPN_TIME_BUGS[event.id] || event.date)
     if (Number.isNaN(start.getTime())) continue
 
     const h = sideOf(home)

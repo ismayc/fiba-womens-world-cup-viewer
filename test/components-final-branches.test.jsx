@@ -2,9 +2,18 @@
 // ever takes one way, plus the guards that keep a half-built board from
 // crashing a view.
 
-import { describe, it, expect, vi, beforeEach } from 'vitest'
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import { render, screen, within, fireEvent, act } from '@testing-library/react'
-import { GAMES } from '../src/data/games.js'
+
+// This file mounts App as well as the individual components, and App reads the
+// committed board directly. Serve the frozen pre-tournament board so a refresh
+// cannot change what these branch tests exercise.
+vi.mock('../src/data/games.js', async (importOriginal) => ({
+  ...(await importOriginal()),
+  GAMES: (await import('./fixtures/pretournament-games.js')).GAMES,
+}))
+
+import { GAMES } from './fixtures/pretournament-games.js'
 import { computeClinch } from '../src/utils/clinch.js'
 import { resolveBracket } from '../src/utils/bracketResolve.js'
 import { gamesByNum } from '../src/utils/bracket.js'
@@ -20,7 +29,7 @@ import { FollowProvider } from '../src/context/follow.jsx'
 import { PathProvider } from '../src/context/path.jsx'
 import { ServicesProvider } from '../src/context/services.jsx'
 import { DetailContext } from '../src/context/detail.js'
-import { allGroupsPlayed, espnScoreboard, withGroupScores } from './helpers/tournament.js'
+import { allGroupsPlayed, espnScoreboard, pinClock, withGroupScores } from './helpers/tournament.js'
 
 const TZ = 'Europe/Berlin'
 const num = (games, n) => games.find((g) => g.num === n)
@@ -51,6 +60,10 @@ beforeEach(() => {
   localStorage.clear()
   Element.prototype.scrollIntoView = vi.fn()
 })
+
+// Individual tests here pin the clock; hand it back afterwards so the ones that
+// do not are unaffected.
+afterEach(() => vi.useRealTimers())
 
 describe('followed teams and traced routes in the bracket', () => {
   const board = playedOut()
@@ -210,6 +223,10 @@ describe('NextMatch remaining arms', () => {
   })
 
   it('jumps to the day from a stacked live row', () => {
+    // Games 21 and 22 are the ones this test marks live. On a real clock, once
+    // the tournament is under way the panel stacks whatever is ACTUALLY live
+    // too, and the first row is no longer one of them.
+    pinClock()
     const scroll = vi.fn()
     Element.prototype.scrollIntoView = scroll
     const day = document.createElement('div')
@@ -592,6 +609,9 @@ describe('the very last arms', () => {
 
 describe('defensive arms in the last components', () => {
   it('offers a jump button on the single next-game card', () => {
+    // The single-card arm only exists while there is a next game and nothing
+    // live, so the clock has to be held before tip-off.
+    pinClock()
     const scroll = vi.fn()
     Element.prototype.scrollIntoView = scroll
     const day = document.createElement('div')

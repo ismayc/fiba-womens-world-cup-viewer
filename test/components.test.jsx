@@ -5,7 +5,7 @@
 
 import { describe, it, expect, vi } from 'vitest'
 import { render, screen, within, fireEvent } from '@testing-library/react'
-import { GAMES } from '../src/data/games.js'
+import { GAMES } from './fixtures/pretournament-games.js'
 import { computeClinch } from '../src/utils/clinch.js'
 import { resolveBracket } from '../src/utils/bracketResolve.js'
 import { gamesByNum, groupSlotMap } from '../src/utils/bracket.js'

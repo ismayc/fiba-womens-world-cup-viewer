@@ -6,7 +6,7 @@
 // degradation is the one intended.
 
 import { describe, it, expect, vi, afterEach } from 'vitest'
-import { GAMES } from '../src/data/games.js'
+import { GAMES } from './fixtures/pretournament-games.js'
 import { projectKnockout } from '../src/utils/asItStands.js'
 import { gamesByNum, pathToFinal } from '../src/utils/bracket.js'
 import { resolveKnockoutSlots } from '../src/utils/bracketResolve.js'

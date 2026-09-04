@@ -2,6 +2,39 @@
 
 Dated changelog, newest first.
 
+## September 4, 2026 — the suite stops asserting that the tournament has not started
+
+Japan beat Mali 102-97 at 11:30 Berlin time, and the refresh workflow went red on the
+first data change of the tournament (run 33897746389): 48 tests failed at once. None of
+them were about basketball. The suite asserted against `src/data/games.js`, which the
+refresh rewrites three times a day, so almost every test was quietly asserting "no game
+has been played yet", and the app said "No results yet" in enough places to take a dozen
+unrelated tests down with it. Seven more had already been failing since that morning on
+the wall clock alone, with no commit behind them.
+
+Two changes, both about what a test is allowed to depend on:
+
+* **A frozen board.** `test/fixtures/pretournament-games.js` is a literal copy of the 36
+  records as they stood before tip-off, and it is never regenerated. The derived-logic
+  tests build on it, through `test/helpers/tournament.js`, whose builders used to overlay
+  one group's results on top of whatever the last refresh had landed in the other three.
+  Two files still read the live committed data on purpose, and they are the real gate on
+  a refresh: `data.test.js` for shape and scores, `official-schedule.test.js` for
+  agreement with FIBA's sheet.
+* **A pinned clock.** `pinClock()` holds the time at 09:00 on September 4, faking `Date`
+  only so real timers and `waitFor` keep working. Everything that asks "what is next",
+  "is this live" or "has this tipped off" now gets a fixed answer instead of one that
+  changes by the hour. One of these tests put the Final an hour out and expected it to be
+  the earliest thing on the board, which stopped being true at 19:15 Berlin time,
+  mid-session.
+
+Two data-integrity tests were also written for a tournament that had not started:
+final-phase records were required to have null teams, and exactly six games were required
+to carry a TBC tip. Both become false on September 8, when ESPN publishes the
+qualification-round fixtures. They now assert what survives that transition: labels
+always present and teams either both open or both real, no game outside the six ever
+flagged TBC, and a game that has dropped the flag carrying a real Berlin tip-off.
+
 ## August 30, 2026 — the subscription endpoint joins the coverage gate
 
 `coverage.include` was `src/**`, so the `webcal://` function was measured by nothing while

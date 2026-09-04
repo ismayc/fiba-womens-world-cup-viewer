@@ -2,7 +2,15 @@
 
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { render, screen, within, fireEvent, act } from '@testing-library/react'
-import { GAMES } from '../src/data/games.js'
+
+// ServicesModal reads the committed board directly to summarize coverage, and
+// that board changes with every refresh. Serve the frozen pre-tournament board.
+vi.mock('../src/data/games.js', async (importOriginal) => ({
+  ...(await importOriginal()),
+  GAMES: (await import('./fixtures/pretournament-games.js')).GAMES,
+}))
+
+import { GAMES } from './fixtures/pretournament-games.js'
 import { computeClinch } from '../src/utils/clinch.js'
 import { resolveBracket } from '../src/utils/bracketResolve.js'
 import { gamesByNum } from '../src/utils/bracket.js'

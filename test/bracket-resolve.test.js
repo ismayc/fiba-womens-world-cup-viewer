@@ -7,7 +7,7 @@
 // the topology are right.
 
 import { describe, it, expect } from 'vitest'
-import { GAMES } from '../src/data/games.js'
+import { GAMES } from './fixtures/pretournament-games.js'
 import { computeClinch } from '../src/utils/clinch.js'
 import { decideGame, resolveBracket, resolveKnockoutSlots } from '../src/utils/bracketResolve.js'
 import { FLAG_BY_TEAM } from '../src/data/teams.js'

@@ -4,12 +4,21 @@
 
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import { render, screen, within, fireEvent, act, waitFor } from '@testing-library/react'
+// App reads the committed board directly, and the refresh workflow rewrites that
+// board three times a day for the whole tournament window. Serve it the frozen
+// pre-tournament board instead, so what this file asserts about the shell does
+// not change every time a game goes final.
+vi.mock('../src/data/games.js', async (importOriginal) => ({
+  ...(await importOriginal()),
+  GAMES: (await import('./fixtures/pretournament-games.js')).GAMES,
+}))
+
 import App from '../src/App.jsx'
-import { GAMES } from '../src/data/games.js'
+import { GAMES } from './fixtures/pretournament-games.js'
 import { FollowProvider } from '../src/context/follow.jsx'
 import { PathProvider } from '../src/context/path.jsx'
 import { ServicesProvider } from '../src/context/services.jsx'
-import { espnScoreboard, allGroupsPlayed } from './helpers/tournament.js'
+import { espnScoreboard, allGroupsPlayed, pinClock } from './helpers/tournament.js'
 
 const num = (n) => GAMES.find((g) => g.num === n)
 
@@ -34,6 +43,12 @@ beforeEach(() => {
   window.history.replaceState({}, '', '/')
   localStorage.clear()
   feed()
+  // Hold the clock before the first tip-off. Several things App renders are
+  // clock-derived rather than score-derived (the When filter's fallback, the
+  // next-game panel, which days are collapsed), so on a real clock they mean
+  // something different every hour of the tournament and something different
+  // again once it is over. Only Date is faked, so waitFor still works.
+  pinClock()
   // jsdom performs no layout and has no scrollIntoView.
   Element.prototype.scrollIntoView = vi.fn()
   // jsdom has no IntersectionObserver; the sticky view strip needs one.

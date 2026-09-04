@@ -2,7 +2,7 @@
 // week bucketing, search, URL state and the calendar file.
 
 import { describe, it, expect, vi } from 'vitest'
-import { GAMES } from '../src/data/games.js'
+import { GAMES } from './fixtures/pretournament-games.js'
 import {
   dayKey,
   detectTimezone,

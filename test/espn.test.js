@@ -6,7 +6,7 @@
 // treat a live score as final.
 
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { GAMES } from '../src/data/games.js'
+import { GAMES } from './fixtures/pretournament-games.js'
 import {
   ESPN_ALIASES,
   LIVE_SOURCE,

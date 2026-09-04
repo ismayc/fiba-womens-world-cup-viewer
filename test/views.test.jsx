@@ -1,8 +1,8 @@
 // The remaining views, modals and shared plumbing.
 
-import { describe, it, expect, vi, beforeEach } from 'vitest'
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import { render, screen, within, fireEvent, renderHook, act } from '@testing-library/react'
-import { GAMES } from '../src/data/games.js'
+import { GAMES } from './fixtures/pretournament-games.js'
 import { computeClinch } from '../src/utils/clinch.js'
 import { gamesByNum } from '../src/utils/bracket.js'
 import { resolveBracket } from '../src/utils/bracketResolve.js'
@@ -19,7 +19,7 @@ import { FollowProvider, useFollow } from '../src/context/follow.jsx'
 import { PathProvider, usePath } from '../src/context/path.jsx'
 import { DetailContext } from '../src/context/detail.js'
 import { DEFAULT_FILTERS } from '../src/utils/urlState.js'
-import { withGroupScores } from './helpers/tournament.js'
+import { pinClock, withGroupScores } from './helpers/tournament.js'
 
 const TZ = 'Europe/Berlin'
 const num = (n) => GAMES.find((g) => g.num === n)
@@ -201,13 +201,31 @@ describe('LiveBadge', () => {
 })
 
 describe('NextMatch', () => {
+  // This panel answers "what is next", which is a question about the clock, so
+  // every test here pins it. Left on the real clock, the first one passed until
+  // September 4, 2026 and then reported "Live now" instead of a countdown.
+  afterEach(() => vi.useRealTimers())
+
   it('counts down to the first game of the tournament', () => {
+    pinClock()
     wrap(<NextMatch matches={GAMES} tz={TZ} />)
     // Two games tip at 11:30 on day one, so the panel stacks both.
     expect(document.querySelector('.nm-label').textContent).toMatch(/Next games/)
     expect(document.querySelector('.nm-label').textContent).not.toMatch(/matches/)
     expect(screen.getByText('Japan')).toBeInTheDocument()
     expect(screen.getByText('Australia')).toBeInTheDocument()
+    // Two and a half hours out: hours, minutes and seconds, but no days chunk.
+    expect(document.querySelector('.nm-countdown').textContent).not.toMatch(/d/)
+  })
+
+  // The days chunk of the stacked countdown only exists more than 24 hours out.
+  // It used to be reached by accident, because the suite ran on a real clock
+  // that was months from the tournament; once the clock is pinned to the eve of
+  // tip-off it has to be asked for.
+  it('counts the days as well, from further out', () => {
+    pinClock(new Date('2026-09-01T09:00:00+02:00'))
+    wrap(<NextMatch matches={GAMES} tz={TZ} />)
+    expect(document.querySelector('.nm-countdown').textContent).toMatch(/^\d+d/)
   })
 
   // Once the tournament is over every tip-off is in the past, so there is no

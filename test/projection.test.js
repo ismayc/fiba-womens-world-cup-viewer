@@ -2,7 +2,7 @@
 // opponent-lock check.
 
 import { describe, it, expect } from 'vitest'
-import { GAMES } from '../src/data/games.js'
+import { GAMES } from './fixtures/pretournament-games.js'
 import { projectKnockout } from '../src/utils/asItStands.js'
 import { computeClinch } from '../src/utils/clinch.js'
 import { lockedOpponent } from '../src/utils/opponentClinch.js'

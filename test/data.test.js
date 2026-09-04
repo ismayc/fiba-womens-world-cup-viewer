@@ -10,6 +10,7 @@ import { VENUES } from '../src/data/venues.js'
 const GROUPS = ['A', 'B', 'C', 'D']
 const group = GAMES.filter((g) => g.stage === 'Group')
 const final = GAMES.filter((g) => g.stage !== 'Group')
+const byNum = new Map(GAMES.map((g) => [g.num, g]))
 
 describe('tournament shape', () => {
   it('has 36 games: 24 group + 12 final phase', () => {
@@ -184,12 +185,22 @@ describe('venues and times', () => {
 })
 
 describe('final-phase records', () => {
-  it('carries slot labels and no teams until the draw resolves them', () => {
+  // The labels are permanent; the teams are not. A final-phase record ships with
+  // null teams and gains real ones the moment ESPN publishes that fixture, which
+  // for the qualification round is September 8. So assert the invariant that
+  // survives the transition: labels always, and teams either both still open or
+  // both real. Asserting `t1` is null would have failed the refresh mid-week.
+  it('carries slot labels, and teams only once the draw resolves them', () => {
     for (const g of final) {
       expect(g.label1).toBeTruthy()
       expect(g.label2).toBeTruthy()
-      expect(g.t1).toBeNull()
-      expect(g.t2).toBeNull()
+      if (g.t1 === null) {
+        expect(g.t2).toBeNull()
+      } else {
+        expect(ALL_TEAMS).toContain(g.t1)
+        expect(ALL_TEAMS).toContain(g.t2)
+        expect(g.t1).not.toBe(g.t2)
+      }
     }
   })
 
@@ -216,10 +227,21 @@ describe('final-phase records', () => {
 
   // FIBA announces the qualification-round and semi-final tips at the end of the
   // previous round; the quarter-finals, third-place game and Final are fixed.
-  it('marks exactly the qualification round and semi-finals as time-TBC', () => {
-    expect(final.filter((g) => g.tbdTip).map((g) => g.num).sort((a, b) => a - b)).toEqual([
-      25, 26, 27, 28, 33, 34,
-    ])
+  // Those six drop their TBC flag one round at a time as the times are
+  // confirmed, so the standing rule is that no OTHER game may ever carry it, and
+  // that a game which has dropped it came away with a real tip-off.
+  const TBC_ROUNDS = [25, 26, 27, 28, 33, 34]
+
+  it('marks only the qualification round and semi-finals as time-TBC', () => {
+    const tbc = final.filter((g) => g.tbdTip).map((g) => g.num)
+    for (const n of tbc) expect(TBC_ROUNDS).toContain(n)
+  })
+
+  it('gives a confirmed qualification or semi-final tip a real time', () => {
+    for (const n of TBC_ROUNDS) {
+      const g = byNum.get(n)
+      if (!g.tbdTip) expect(g.ko).toMatch(/^2026-09-\d\dT\d\d:\d\d:\d\d\+02:00$/)
+    }
   })
 })
 

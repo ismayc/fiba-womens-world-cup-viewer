@@ -3,11 +3,19 @@
 
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import { render, screen, within, fireEvent, act, waitFor } from '@testing-library/react'
+// See test/fixtures/pretournament-games.js: App imports the committed board, and
+// that board grows scores three times a day while the tournament is on. Mock it
+// to the frozen board so these assertions describe the shell, not the results.
+vi.mock('../src/data/games.js', async (importOriginal) => ({
+  ...(await importOriginal()),
+  GAMES: (await import('./fixtures/pretournament-games.js')).GAMES,
+}))
+
 import App from '../src/App.jsx'
-import { GAMES } from '../src/data/games.js'
+import { GAMES } from './fixtures/pretournament-games.js'
 import { FollowProvider } from '../src/context/follow.jsx'
 import { PathProvider } from '../src/context/path.jsx'
-import { espnScoreboard } from './helpers/tournament.js'
+import { espnScoreboard, pinClock } from './helpers/tournament.js'
 
 const mount = () =>
   render(
@@ -28,6 +36,10 @@ beforeEach(() => {
   window.history.replaceState({}, '', '/')
   localStorage.clear()
   feed()
+  // Hold the clock before the first tip-off, so what App renders here is a
+  // function of the frozen board and nothing else. Only Date is faked, so
+  // waitFor and the fetch loop keep running on real timers.
+  pinClock()
 })
 
 afterEach(() => {

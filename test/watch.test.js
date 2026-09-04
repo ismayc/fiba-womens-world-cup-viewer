@@ -6,7 +6,7 @@
 // a filtered schedule.
 
 import { describe, it, expect } from 'vitest'
-import { GAMES } from '../src/data/games.js'
+import { GAMES } from './fixtures/pretournament-games.js'
 import {
   SERVICE_BY_KEY,
   SERVICE_CATALOG,

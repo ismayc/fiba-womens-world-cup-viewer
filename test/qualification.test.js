@@ -7,7 +7,7 @@
 // prevent.
 
 import { describe, it, expect } from 'vitest'
-import { GAMES } from '../src/data/games.js'
+import { GAMES } from './fixtures/pretournament-games.js'
 import {
   ADVANCING_PER_GROUP,
   DIRECT_TO_QF,

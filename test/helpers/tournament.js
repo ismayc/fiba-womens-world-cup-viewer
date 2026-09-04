@@ -1,22 +1,42 @@
 // Shared fixture helpers.
 //
-// This edition has NOT been played, so src/data/games.js ships score-free and a
-// test that wants results has to state them. That is the opposite of the
-// finished FIFA sibling this repo was grown from, where the helper's job was to
-// STRIP results to get a pre-tournament board.
+// Every builder here starts from the FROZEN pre-tournament board in
+// test/fixtures/pretournament-games.js, never from src/data/games.js. The
+// committed board is regenerated three times a day for the whole 4-13 September
+// window, so a builder based on it would quietly inherit real results: overlay
+// one group's scores and the other three groups would still carry whatever the
+// last refresh landed. That is what turned the suite red on September 4, 2026.
 //
 // Two consequences worth knowing before writing a test here:
 //
-//   * `GAMES` is already the "nothing played yet" board. There is no `unscored()`
+//   * `GAMES` here is the "nothing played yet" board. There is no `unscored()`
 //     and no need for one.
 //   * The twelve final-phase records carry `label1`/`label2` and null teams from
 //     the start, so bracket code must be exercised through the resolver rather
 //     than by handing it a board that already names teams.
 
-import { GAMES } from '../../src/data/games.js'
+import { vi } from 'vitest'
+import { GAMES } from '../fixtures/pretournament-games.js'
 import { TEAMS } from '../../src/data/teams.js'
 
 export const groupTeams = (g) => TEAMS[g].map((t) => t.name)
+
+// A fixed instant two and a half hours before the tournament's first tip-off
+// (game 1, 11:30 CEST on September 4, 2026).
+export const BEFORE_TIPOFF = new Date('2026-09-04T09:00:00+02:00')
+
+// Pin the clock, for anything that asks "what is next", "has this tipped off"
+// or "is this game live". Those answers come from Date.now(), so on a real clock
+// they change by the hour for the whole tournament window and then change again
+// forever once it ends. Six tests here went red on September 4, 2026 with no
+// commit behind them, purely because the day arrived.
+//
+// Only Date is faked, so real timers and @testing-library's waitFor keep
+// working. A test that also wants to drive setInterval should call
+// vi.useFakeTimers({ now: BEFORE_TIPOFF }) itself and fake everything.
+export function pinClock(when = BEFORE_TIPOFF) {
+  vi.useFakeTimers({ now: when, toFake: ['Date'] })
+}
 
 // Overlay scores on one group's real fixtures, matching by team pair so the
 // caller states results the natural way round regardless of which side the

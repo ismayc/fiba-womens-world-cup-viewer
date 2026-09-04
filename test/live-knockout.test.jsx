@@ -15,10 +15,19 @@
 
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import { render, screen, waitFor } from '@testing-library/react'
+
+// App reads the committed board, which the refresh workflow rewrites while the
+// tournament is on. Serve the frozen pre-tournament board so the second overlay
+// pass is exercised from a known starting point.
+vi.mock('../src/data/games.js', async (importOriginal) => ({
+  ...(await importOriginal()),
+  GAMES: (await import('./fixtures/pretournament-games.js')).GAMES,
+}))
+
 import App from '../src/App.jsx'
 import { FollowProvider } from '../src/context/follow.jsx'
 import { PathProvider } from '../src/context/path.jsx'
-import { GAMES } from '../src/data/games.js'
+import { GAMES } from './fixtures/pretournament-games.js'
 import { computeClinch } from '../src/utils/clinch.js'
 import { resolveBracket } from '../src/utils/bracketResolve.js'
 import { applyLive, fetchLive, unclaimedLive } from '../src/services/espn.js'

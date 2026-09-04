@@ -5,7 +5,8 @@
 // set shipped "city: Sydney", which matches no venue in Berlin.
 
 import { describe, it, expect } from 'vitest'
-import { GAMES, STAGE_LABELS } from '../src/data/games.js'
+import { STAGE_LABELS } from '../src/data/games.js'
+import { GAMES } from './fixtures/pretournament-games.js'
 import { VENUES } from '../src/data/venues.js'
 import { matchesSearch, parseQuery } from '../src/utils/search.js'
 import { venueFor } from '../src/utils/venue.js'

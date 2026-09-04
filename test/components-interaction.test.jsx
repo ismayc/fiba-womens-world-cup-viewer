@@ -2,9 +2,9 @@
 // pop-ups, spoiler reveals, live badges, the path picker, and the paths that only
 // appear once a game is live, paused, voided or awarded.
 
-import { describe, it, expect, vi, beforeEach } from 'vitest'
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import { render, screen, within, fireEvent, act } from '@testing-library/react'
-import { GAMES } from '../src/data/games.js'
+import { GAMES } from './fixtures/pretournament-games.js'
 import { computeClinch } from '../src/utils/clinch.js'
 import { resolveBracket } from '../src/utils/bracketResolve.js'
 import { gamesByNum, groupSlotMap } from '../src/utils/bracket.js'
@@ -28,7 +28,7 @@ import { FollowProvider } from '../src/context/follow.jsx'
 import { PathProvider } from '../src/context/path.jsx'
 import { ServicesProvider } from '../src/context/services.jsx'
 import { DetailContext } from '../src/context/detail.js'
-import { withGroupScores, allGroupsPlayed } from './helpers/tournament.js'
+import { BEFORE_TIPOFF, pinClock, withGroupScores, allGroupsPlayed } from './helpers/tournament.js'
 
 const TZ = 'Europe/Berlin'
 const num = (games, n) => games.find((g) => g.num === n)
@@ -451,6 +451,12 @@ describe('WeekView interaction', () => {
 })
 
 describe('NextMatch interaction', () => {
+  // What this panel shows is a function of the clock, so pin it: on a real
+  // clock these tests describe a different panel every hour of the tournament,
+  // and three of them went red on September 4, 2026 with no commit behind them.
+  beforeEach(() => pinClock())
+  afterEach(() => vi.useRealTimers())
+
   it('jumps to the day of the next game', () => {
     const scroll = vi.fn()
     Element.prototype.scrollIntoView = scroll
@@ -489,7 +495,9 @@ describe('NextMatch interaction', () => {
   })
 
   it('ticks the countdown', () => {
-    vi.useFakeTimers()
+    // This one drives the interval as well as the clock, so it fakes everything
+    // rather than using pinClock's Date-only mode.
+    vi.useFakeTimers({ now: BEFORE_TIPOFF })
     wrap(<NextMatch matches={GAMES} tz={TZ} />)
     const before = document.querySelector('.nm-countdown').textContent
     act(() => vi.advanceTimersByTime(2000))

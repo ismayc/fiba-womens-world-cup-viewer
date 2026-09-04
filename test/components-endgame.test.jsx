@@ -5,9 +5,9 @@
 // These are the branches a suite built only on the committed (unplayed) schedule
 // can never reach, so they are driven from synthetic end-states.
 
-import { describe, it, expect, vi, beforeEach } from 'vitest'
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import { render, screen, within, fireEvent, act } from '@testing-library/react'
-import { GAMES } from '../src/data/games.js'
+import { GAMES } from './fixtures/pretournament-games.js'
 import { computeClinch } from '../src/utils/clinch.js'
 import { resolveBracket } from '../src/utils/bracketResolve.js'
 import { gamesByNum } from '../src/utils/bracket.js'
@@ -24,7 +24,7 @@ import { FollowProvider } from '../src/context/follow.jsx'
 import { PathProvider } from '../src/context/path.jsx'
 import { ServicesProvider } from '../src/context/services.jsx'
 import { DetailContext } from '../src/context/detail.js'
-import { allGroupsPlayed } from './helpers/tournament.js'
+import { allGroupsPlayed, pinClock } from './helpers/tournament.js'
 
 const TZ = 'Europe/Berlin'
 const num = (games, n) => games.find((g) => g.num === n)
@@ -310,6 +310,15 @@ describe('spoiler-free and follow paths in the detail modal', () => {
 })
 
 describe('NextMatch late states', () => {
+  // Pin the clock. NextMatch asks "what is live" and "what is next" of
+  // Date.now(), and the last test here leans on it twice over: it puts the
+  // Final an hour out and expects that to be the earliest thing on the board.
+  // On a real clock that holds only while "an hour from now" still lands before
+  // the next real fixture, which on September 4, 2026 stopped being true at
+  // 19:15 Berlin time, mid-session, with no commit behind it.
+  beforeEach(() => pinClock())
+  afterEach(() => vi.useRealTimers())
+
   it('prefers a followed team among several live games', () => {
     localStorage.setItem('fwwc:followed', JSON.stringify(['Italy']))
     const live = GAMES.map((g) =>

@@ -5,7 +5,7 @@
 // therefore about what it refuses to say as much as what it says.
 
 import { describe, it, expect } from 'vitest'
-import { GAMES } from '../src/data/games.js'
+import { GAMES } from './fixtures/pretournament-games.js'
 import {
   clinchBadge,
   clinchHeadline,

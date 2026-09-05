@@ -516,6 +516,7 @@ describe('the last conditional arms', () => {
   })
 
   it('does not scroll when the target day is not on the page', () => {
+    pinClock()
     const scroll = vi.fn()
     Element.prototype.scrollIntoView = scroll
     wrap(<NextMatch matches={GAMES} tz={TZ} />)
@@ -585,6 +586,7 @@ describe('the very last arms', () => {
   })
 
   it('jumps to the day from the single next-game card', () => {
+    pinClock()
     const scroll = vi.fn()
     Element.prototype.scrollIntoView = scroll
     const day = document.createElement('div')

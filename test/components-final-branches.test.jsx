@@ -56,13 +56,18 @@ function playedOut() {
   return board
 }
 
+// Pin the clock for the whole file, not test by test. See the same block in
+// components-endgame.test.jsx: pinning one test at a time has failed twice, and
+// the WeekView tests below all assert on a September 4 game while WeekView opens
+// on the calendar week containing today, so they would have gone red on Sunday
+// September 6, 2026 with no commit behind them.
 beforeEach(() => {
   localStorage.clear()
   Element.prototype.scrollIntoView = vi.fn()
+  pinClock()
 })
 
-// Individual tests here pin the clock; hand it back afterwards so the ones that
-// do not are unaffected.
+// Hand the clock back, so a test that set its own instant does not leak it.
 afterEach(() => vi.useRealTimers())
 
 describe('followed teams and traced routes in the bracket', () => {

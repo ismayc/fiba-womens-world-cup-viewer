@@ -31,7 +31,7 @@ import { GAMES } from './fixtures/pretournament-games.js'
 import { computeClinch } from '../src/utils/clinch.js'
 import { resolveBracket } from '../src/utils/bracketResolve.js'
 import { applyLive, fetchLive, unclaimedLive } from '../src/services/espn.js'
-import { allGroupsPlayed, espnScoreboard } from './helpers/tournament.js'
+import { allGroupsPlayed, espnScoreboard, pinClock } from './helpers/tournament.js'
 
 const num = (games, n) => games.find((g) => g.num === n)
 
@@ -76,7 +76,21 @@ function qrEvent(away, home, score, state = 'in') {
   }
 }
 
+// The qualification round is played on September 8, and the app collapses a past
+// day's section, so the card these tests look for leaves the DOM the moment the
+// real clock passes that date. Pin the clock to the middle of the qualification
+// round instead: verified that without this the App test below went red from
+// September 9, 2026 onwards with no commit behind it.
+//
+// Only Date is faked, so waitFor still runs on real timers.
+const DURING_THE_QR = new Date('2026-09-08T13:00:00Z')
+
+beforeEach(() => {
+  pinClock(DURING_THE_QR)
+})
+
 afterEach(() => {
+  vi.useRealTimers()
   vi.restoreAllMocks()
 })
 

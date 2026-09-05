@@ -53,10 +53,26 @@ function playedOut() {
   return board
 }
 
+// Pin the clock for the whole file, not test by test.
+//
+// Almost everything here renders a component that asks Date.now() what is live,
+// what is next, or which week "today" falls in, and then asserts on a fixture
+// game. Pinning one test at a time has now failed twice: six tests went red when
+// September 4 arrived, and two more when the qualification round did. WeekView
+// is the sharpest case, because it opens on the calendar week containing today
+// and weeks run Sunday to Saturday: every WeekView test that asserts on a
+// September 4 game would have gone red on Sunday September 6, 2026 with no
+// commit behind it.
+//
+// Only Date is faked, so waitFor and real timers still work. A test that wants a
+// different instant sets its own, and the afterEach hands the clock back.
 beforeEach(() => {
   localStorage.clear()
   Element.prototype.scrollIntoView = vi.fn()
+  pinClock()
 })
+
+afterEach(() => vi.useRealTimers())
 
 describe('a finished tournament', () => {
   const board = playedOut()

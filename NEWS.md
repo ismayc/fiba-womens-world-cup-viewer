@@ -2,6 +2,34 @@
 
 Dated changelog, newest first.
 
+## September 4, 2026 (evening) — the suite is rehearsed against every future day of the tournament
+
+The refresh workflow went red again overnight (run 33929038511): one test in
+`test/components-final-branches.test.jsx` clicked a `.nm-live-row` that was no longer on
+the page. Copilot pinned that test's clock, and the one below it, in PR #1. This entry is
+about what that fix left standing.
+
+Yesterday's repair froze the DATA the tests read. It did nothing about the CLOCK they read,
+and the two fail in different ways. A rehearsal harness was built to separate them: it
+writes a future board into `src/data/games.js`, shifts `Date` to a chosen instant, runs the
+full coverage gate, and puts the committed board back. Run against nine points between
+September 5 and September 20, it found seven more tests that would have gone red on a day
+nobody was going to commit anything:
+
+* **Six WeekView tests, breaking on Sunday September 6.** `WeekView` opens on the calendar
+  week containing today, weeks run Sunday to Saturday, and every one of these tests asserts
+  on a September 4 game. They pass today because today is still in that week. Confirmed by
+  rehearsal: green on September 5, six failures on September 6, with the committed data
+  untouched.
+* **One App test, breaking on September 9.** The app collapses a past day's section, so the
+  card for the September 8 qualification game leaves the DOM the day after it is played.
+
+All seven are now pinned. Two of the three files pin the clock for the whole file rather
+than test by test, which is the point: pinning one test at a time has now failed twice.
+
+The rehearsal is the part worth keeping. A green suite says the tests pass against today's
+data on today's date, and that is a much smaller claim than it looks.
+
 ## September 4, 2026 — the suite stops asserting that the tournament has not started
 
 Japan beat Mali 102-97 at 11:30 Berlin time, and the refresh workflow went red on the

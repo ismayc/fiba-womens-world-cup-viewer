@@ -27,8 +27,11 @@
 // a finished game always has a winner, which is why there is no aet/pens
 // pair here and why the bracket can always resolve a completed game.
 //
-// `tv` lists the US broadcasters carrying the game, from ESPN's own
-// broadcast field. This edition is on the Warner Bros. Discovery package.
+// `tv` lists the US platforms carrying the game, from Warner Bros.
+// Discovery's published table (frozen in scripts/official.mjs), NOT from
+// ESPN's broadcast field. HBO Max and DAZN (Courtside 1891) carry all 36
+// games; only the linear channel varies. `tvNote` carries a round-level
+// window WBD announced without saying which game of the round gets it.
 //
 // `espnId` is the ESPN event id, used to fetch that game's box score on
 // demand and to match the live overlay. It is null on a final-phase game
@@ -46,40 +49,40 @@ export const STAGE_LABELS = {
 export const STAGE_ORDER = ['Group', 'QR', 'QF', 'SF', '3rd', 'Final']
 
 export const GAMES = [
-  { num: 1, stage: 'Group', group: 'A', t1: 'Japan', t2: 'Mali', venue: 'berlinarena', ko: '2026-09-04T11:30:00+02:00', espnId: '401907390', tv: ['HBO Max'], score: [102, 97] },
-  { num: 2, stage: 'Group', group: 'C', t1: 'Australia', t2: 'Puerto Rico', venue: 'maxschmeling', ko: '2026-09-04T11:30:00+02:00', espnId: '401907392', tv: ['HBO Max'], score: [70, 54] },
-  { num: 3, stage: 'Group', group: 'D', t1: 'United States', t2: 'China', venue: 'maxschmeling', ko: '2026-09-04T14:15:00+02:00', espnId: '401907393', tv: ['TNT', 'truTV'], score: [94, 61] },
-  { num: 4, stage: 'Group', group: 'B', t1: 'South Korea', t2: 'Nigeria', venue: 'berlinarena', ko: '2026-09-04T14:30:00+02:00', espnId: '401907391', tv: ['HBO Max'], score: [99, 81] },
-  { num: 5, stage: 'Group', group: 'C', t1: 'Belgium', t2: 'Türkiye', venue: 'maxschmeling', ko: '2026-09-04T17:30:00+02:00', espnId: '401907436', tv: ['HBO Max'], score: [89, 75] },
-  { num: 6, stage: 'Group', group: 'A', t1: 'Spain', t2: 'Germany', venue: 'berlinarena', ko: '2026-09-04T17:45:00+02:00', espnId: '401907394', tv: ['truTV'], score: [83, 53] },
-  { num: 7, stage: 'Group', group: 'D', t1: 'Czechia', t2: 'Italy', venue: 'maxschmeling', ko: '2026-09-04T20:15:00+02:00', espnId: '401907437', tv: ['HBO Max'], score: [54, 63] },
-  { num: 8, stage: 'Group', group: 'B', t1: 'Hungary', t2: 'France', venue: 'berlinarena', ko: '2026-09-04T21:00:00+02:00', espnId: '401907435', tv: ['truTV'], score: [53, 99] },
-  { num: 9, stage: 'Group', group: 'A', t1: 'Mali', t2: 'Spain', venue: 'maxschmeling', ko: '2026-09-05T11:30:00+02:00', espnId: '401907438', tv: ['HBO Max'], score: [82, 73] },
-  { num: 10, stage: 'Group', group: 'B', t1: 'Nigeria', t2: 'Hungary', venue: 'maxschmeling', ko: '2026-09-05T14:15:00+02:00', espnId: '401907439', tv: ['HBO Max'], score: [67, 71] },
-  { num: 11, stage: 'Group', group: 'A', t1: 'Germany', t2: 'Japan', venue: 'maxschmeling', ko: '2026-09-05T18:00:00+02:00', espnId: '401907440', tv: ['HBO Max'], score: [74, 58] },
-  { num: 12, stage: 'Group', group: 'B', t1: 'France', t2: 'South Korea', venue: 'maxschmeling', ko: '2026-09-05T20:45:00+02:00', espnId: '401907441', tv: ['HBO Max'] },
-  { num: 13, stage: 'Group', group: 'C', t1: 'Türkiye', t2: 'Australia', venue: 'berlinarena', ko: '2026-09-06T11:30:00+02:00', espnId: '401907442', tv: ['HBO Max'] },
-  { num: 14, stage: 'Group', group: 'D', t1: 'China', t2: 'Czechia', venue: 'berlinarena', ko: '2026-09-06T14:30:00+02:00', espnId: '401907443', tv: ['HBO Max'] },
-  { num: 15, stage: 'Group', group: 'C', t1: 'Puerto Rico', t2: 'Belgium', venue: 'berlinarena', ko: '2026-09-06T17:45:00+02:00', espnId: '401907444', tv: ['truTV'] },
-  { num: 16, stage: 'Group', group: 'D', t1: 'Italy', t2: 'United States', venue: 'berlinarena', ko: '2026-09-06T20:45:00+02:00', espnId: '401907445', tv: ['TNT'] },
-  { num: 17, stage: 'Group', group: 'C', t1: 'Belgium', t2: 'Australia', venue: 'berlinarena', ko: '2026-09-07T11:30:00+02:00', espnId: '401907446', tv: ['HBO Max'] },
-  { num: 18, stage: 'Group', group: 'C', t1: 'Puerto Rico', t2: 'Türkiye', venue: 'maxschmeling', ko: '2026-09-07T11:30:00+02:00', espnId: '401907450', tv: ['HBO Max'] },
-  { num: 19, stage: 'Group', group: 'B', t1: 'Hungary', t2: 'South Korea', venue: 'maxschmeling', ko: '2026-09-07T14:30:00+02:00', espnId: '401907451', tv: ['HBO Max'] },
-  { num: 20, stage: 'Group', group: 'B', t1: 'Nigeria', t2: 'France', venue: 'berlinarena', ko: '2026-09-07T14:30:00+02:00', espnId: '401907447', tv: ['truTV'] },
-  { num: 21, stage: 'Group', group: 'A', t1: 'Germany', t2: 'Mali', venue: 'berlinarena', ko: '2026-09-07T17:50:00+02:00', espnId: '401907448', tv: ['HBO Max'] },
-  { num: 22, stage: 'Group', group: 'A', t1: 'Japan', t2: 'Spain', venue: 'maxschmeling', ko: '2026-09-07T17:50:00+02:00', espnId: '401907452', tv: ['truTV'] },
-  { num: 23, stage: 'Group', group: 'D', t1: 'Italy', t2: 'China', venue: 'maxschmeling', ko: '2026-09-07T20:45:00+02:00', espnId: '401907453', tv: ['HBO Max'] },
-  { num: 24, stage: 'Group', group: 'D', t1: 'United States', t2: 'Czechia', venue: 'berlinarena', ko: '2026-09-07T20:45:00+02:00', espnId: '401907449', tv: ['TNT', 'truTV'] },
-  { num: 25, stage: 'QR', t1: null, t2: null, label1: '2nd Group A', label2: '3rd Group B', venue: null, ko: null, tbdTip: true, date: '2026-09-08', espnId: null },
-  { num: 26, stage: 'QR', t1: null, t2: null, label1: '2nd Group B', label2: '3rd Group A', venue: null, ko: null, tbdTip: true, date: '2026-09-08', espnId: null },
-  { num: 27, stage: 'QR', t1: null, t2: null, label1: '3rd Group C', label2: '2nd Group D', venue: null, ko: null, tbdTip: true, date: '2026-09-09', espnId: null },
-  { num: 28, stage: 'QR', t1: null, t2: null, label1: '3rd Group D', label2: '2nd Group C', venue: null, ko: null, tbdTip: true, date: '2026-09-09', espnId: null },
-  { num: 29, stage: 'QF', t1: null, t2: null, label1: 'Winner Group A', label2: 'Winner Game 27', venue: null, ko: '2026-09-10T11:30:00+02:00', espnId: null },
-  { num: 30, stage: 'QF', t1: null, t2: null, label1: 'Winner Group B', label2: 'Winner Game 28', venue: null, ko: '2026-09-10T14:30:00+02:00', espnId: null },
-  { num: 31, stage: 'QF', t1: null, t2: null, label1: 'Winner Group C', label2: 'Winner Game 25', venue: null, ko: '2026-09-10T17:45:00+02:00', espnId: null },
-  { num: 32, stage: 'QF', t1: null, t2: null, label1: 'Winner Group D', label2: 'Winner Game 26', venue: null, ko: '2026-09-10T20:45:00+02:00', espnId: null },
-  { num: 33, stage: 'SF', t1: null, t2: null, label1: 'Winner Game 29', label2: 'Winner Game 32', venue: null, ko: null, tbdTip: true, date: '2026-09-12', espnId: null },
-  { num: 34, stage: 'SF', t1: null, t2: null, label1: 'Winner Game 30', label2: 'Winner Game 31', venue: null, ko: null, tbdTip: true, date: '2026-09-12', espnId: null },
-  { num: 35, stage: '3rd', t1: null, t2: null, label1: 'Loser Game 33', label2: 'Loser Game 34', venue: null, ko: '2026-09-13T16:30:00+02:00', espnId: null },
-  { num: 36, stage: 'Final', t1: null, t2: null, label1: 'Winner Game 33', label2: 'Winner Game 34', venue: null, ko: '2026-09-13T20:00:00+02:00', espnId: null },
+  { num: 1, stage: 'Group', group: 'A', t1: 'Japan', t2: 'Mali', venue: 'berlinarena', ko: '2026-09-04T11:30:00+02:00', espnId: '401907390', tv: ['DAZN', 'HBO Max'], score: [102, 97] },
+  { num: 2, stage: 'Group', group: 'C', t1: 'Australia', t2: 'Puerto Rico', venue: 'maxschmeling', ko: '2026-09-04T11:30:00+02:00', espnId: '401907392', tv: ['DAZN', 'HBO Max'], score: [70, 54] },
+  { num: 3, stage: 'Group', group: 'D', t1: 'United States', t2: 'China', venue: 'maxschmeling', ko: '2026-09-04T14:15:00+02:00', espnId: '401907393', tv: ['TNT', 'truTV', 'DAZN', 'HBO Max'], score: [94, 61] },
+  { num: 4, stage: 'Group', group: 'B', t1: 'South Korea', t2: 'Nigeria', venue: 'berlinarena', ko: '2026-09-04T14:30:00+02:00', espnId: '401907391', tv: ['DAZN', 'HBO Max'], score: [99, 81] },
+  { num: 5, stage: 'Group', group: 'C', t1: 'Belgium', t2: 'Türkiye', venue: 'maxschmeling', ko: '2026-09-04T17:30:00+02:00', espnId: '401907436', tv: ['DAZN', 'HBO Max'], score: [89, 75] },
+  { num: 6, stage: 'Group', group: 'A', t1: 'Spain', t2: 'Germany', venue: 'berlinarena', ko: '2026-09-04T17:45:00+02:00', espnId: '401907394', tv: ['truTV', 'DAZN', 'HBO Max'], score: [83, 53] },
+  { num: 7, stage: 'Group', group: 'D', t1: 'Czechia', t2: 'Italy', venue: 'maxschmeling', ko: '2026-09-04T20:15:00+02:00', espnId: '401907437', tv: ['DAZN', 'HBO Max'], score: [54, 63] },
+  { num: 8, stage: 'Group', group: 'B', t1: 'Hungary', t2: 'France', venue: 'berlinarena', ko: '2026-09-04T21:00:00+02:00', espnId: '401907435', tv: ['DAZN', 'HBO Max'], score: [53, 99] },
+  { num: 9, stage: 'Group', group: 'A', t1: 'Mali', t2: 'Spain', venue: 'maxschmeling', ko: '2026-09-05T11:30:00+02:00', espnId: '401907438', tv: ['DAZN', 'HBO Max'], score: [82, 73] },
+  { num: 10, stage: 'Group', group: 'B', t1: 'Nigeria', t2: 'Hungary', venue: 'maxschmeling', ko: '2026-09-05T14:15:00+02:00', espnId: '401907439', tv: ['DAZN', 'HBO Max'], score: [67, 71] },
+  { num: 11, stage: 'Group', group: 'A', t1: 'Germany', t2: 'Japan', venue: 'maxschmeling', ko: '2026-09-05T18:00:00+02:00', espnId: '401907440', tv: ['DAZN', 'HBO Max'], score: [74, 58] },
+  { num: 12, stage: 'Group', group: 'B', t1: 'France', t2: 'South Korea', venue: 'maxschmeling', ko: '2026-09-05T20:45:00+02:00', espnId: '401907441', tv: ['DAZN', 'HBO Max'], score: [95, 69] },
+  { num: 13, stage: 'Group', group: 'C', t1: 'Türkiye', t2: 'Australia', venue: 'berlinarena', ko: '2026-09-06T11:30:00+02:00', espnId: '401907442', tv: ['DAZN', 'HBO Max'] },
+  { num: 14, stage: 'Group', group: 'D', t1: 'China', t2: 'Czechia', venue: 'berlinarena', ko: '2026-09-06T14:30:00+02:00', espnId: '401907443', tv: ['DAZN', 'HBO Max'] },
+  { num: 15, stage: 'Group', group: 'C', t1: 'Puerto Rico', t2: 'Belgium', venue: 'berlinarena', ko: '2026-09-06T17:45:00+02:00', espnId: '401907444', tv: ['truTV', 'DAZN', 'HBO Max'] },
+  { num: 16, stage: 'Group', group: 'D', t1: 'Italy', t2: 'United States', venue: 'berlinarena', ko: '2026-09-06T20:45:00+02:00', espnId: '401907445', tv: ['TNT', 'DAZN', 'HBO Max'] },
+  { num: 17, stage: 'Group', group: 'C', t1: 'Belgium', t2: 'Australia', venue: 'berlinarena', ko: '2026-09-07T11:30:00+02:00', espnId: '401907446', tv: ['DAZN', 'HBO Max'] },
+  { num: 18, stage: 'Group', group: 'C', t1: 'Puerto Rico', t2: 'Türkiye', venue: 'maxschmeling', ko: '2026-09-07T11:30:00+02:00', espnId: '401907450', tv: ['DAZN', 'HBO Max'] },
+  { num: 19, stage: 'Group', group: 'B', t1: 'Hungary', t2: 'South Korea', venue: 'maxschmeling', ko: '2026-09-07T14:30:00+02:00', espnId: '401907451', tv: ['DAZN', 'HBO Max'] },
+  { num: 20, stage: 'Group', group: 'B', t1: 'Nigeria', t2: 'France', venue: 'berlinarena', ko: '2026-09-07T14:30:00+02:00', espnId: '401907447', tv: ['truTV', 'DAZN', 'HBO Max'] },
+  { num: 21, stage: 'Group', group: 'A', t1: 'Germany', t2: 'Mali', venue: 'berlinarena', ko: '2026-09-07T17:50:00+02:00', espnId: '401907448', tv: ['DAZN', 'HBO Max'] },
+  { num: 22, stage: 'Group', group: 'A', t1: 'Japan', t2: 'Spain', venue: 'maxschmeling', ko: '2026-09-07T17:50:00+02:00', espnId: '401907452', tv: ['truTV', 'DAZN', 'HBO Max'] },
+  { num: 23, stage: 'Group', group: 'D', t1: 'Italy', t2: 'China', venue: 'maxschmeling', ko: '2026-09-07T20:45:00+02:00', espnId: '401907453', tv: ['DAZN', 'HBO Max'] },
+  { num: 24, stage: 'Group', group: 'D', t1: 'United States', t2: 'Czechia', venue: 'berlinarena', ko: '2026-09-07T20:45:00+02:00', espnId: '401907449', tv: ['TNT', 'truTV', 'DAZN', 'HBO Max'] },
+  { num: 25, stage: 'QR', t1: null, t2: null, label1: '2nd Group A', label2: '3rd Group B', venue: null, ko: null, tbdTip: true, date: '2026-09-08', espnId: null, tv: ['DAZN', 'HBO Max'], tvNote: 'Some qualification games also on truTV' },
+  { num: 26, stage: 'QR', t1: null, t2: null, label1: '2nd Group B', label2: '3rd Group A', venue: null, ko: null, tbdTip: true, date: '2026-09-08', espnId: null, tv: ['DAZN', 'HBO Max'], tvNote: 'Some qualification games also on truTV' },
+  { num: 27, stage: 'QR', t1: null, t2: null, label1: '3rd Group C', label2: '2nd Group D', venue: null, ko: null, tbdTip: true, date: '2026-09-09', espnId: null, tv: ['DAZN', 'HBO Max'], tvNote: 'Some qualification games also on truTV' },
+  { num: 28, stage: 'QR', t1: null, t2: null, label1: '3rd Group D', label2: '2nd Group C', venue: null, ko: null, tbdTip: true, date: '2026-09-09', espnId: null, tv: ['DAZN', 'HBO Max'], tvNote: 'Some qualification games also on truTV' },
+  { num: 29, stage: 'QF', t1: null, t2: null, label1: 'Winner Group A', label2: 'Winner Game 27', venue: null, ko: '2026-09-10T11:30:00+02:00', espnId: null, tv: ['DAZN', 'HBO Max'], tvNote: 'Also on TNT and/or truTV' },
+  { num: 30, stage: 'QF', t1: null, t2: null, label1: 'Winner Group B', label2: 'Winner Game 28', venue: null, ko: '2026-09-10T14:30:00+02:00', espnId: null, tv: ['DAZN', 'HBO Max'], tvNote: 'Also on TNT and/or truTV' },
+  { num: 31, stage: 'QF', t1: null, t2: null, label1: 'Winner Group C', label2: 'Winner Game 25', venue: null, ko: '2026-09-10T17:45:00+02:00', espnId: null, tv: ['DAZN', 'HBO Max'], tvNote: 'Also on TNT and/or truTV' },
+  { num: 32, stage: 'QF', t1: null, t2: null, label1: 'Winner Group D', label2: 'Winner Game 26', venue: null, ko: '2026-09-10T20:45:00+02:00', espnId: null, tv: ['DAZN', 'HBO Max'], tvNote: 'Also on TNT and/or truTV' },
+  { num: 33, stage: 'SF', t1: null, t2: null, label1: 'Winner Game 29', label2: 'Winner Game 32', venue: null, ko: null, tbdTip: true, date: '2026-09-12', espnId: null, tv: ['DAZN', 'HBO Max'], tvNote: 'Also on TBS and truTV' },
+  { num: 34, stage: 'SF', t1: null, t2: null, label1: 'Winner Game 30', label2: 'Winner Game 31', venue: null, ko: null, tbdTip: true, date: '2026-09-12', espnId: null, tv: ['DAZN', 'HBO Max'], tvNote: 'Also on TBS and truTV' },
+  { num: 35, stage: '3rd', t1: null, t2: null, label1: 'Loser Game 33', label2: 'Loser Game 34', venue: null, ko: '2026-09-13T16:30:00+02:00', espnId: null, tv: ['truTV', 'DAZN', 'HBO Max'] },
+  { num: 36, stage: 'Final', t1: null, t2: null, label1: 'Winner Game 33', label2: 'Winner Game 34', venue: null, ko: '2026-09-13T20:00:00+02:00', espnId: null, tv: ['TNT', 'truTV', 'DAZN', 'HBO Max'] },
 ]

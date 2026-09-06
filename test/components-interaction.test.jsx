@@ -567,7 +567,8 @@ describe('ServicesModal interaction', () => {
     expect(screen.getByText(/Nothing selected/)).toBeInTheDocument()
     fireEvent.click(screen.getByRole('checkbox', { name: /HBO Max/ }))
     expect(screen.getByText(/You can watch/)).toBeInTheDocument()
-    expect(screen.getByText('16')).toBeInTheDocument()
+    // Either streamer buys the whole tournament.
+    expect(screen.getByText('36')).toBeInTheDocument()
     expect(screen.getByText('1 selected')).toBeInTheDocument()
     fireEvent.click(screen.getByRole('button', { name: /Clear all/ }))
     expect(screen.getByText(/Nothing selected/)).toBeInTheDocument()

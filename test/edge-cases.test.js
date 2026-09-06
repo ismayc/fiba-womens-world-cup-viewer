@@ -265,8 +265,16 @@ describe('ics edges', () => {
   })
 
   it('omits the TV line when coverage is not announced', () => {
-    const ics = buildICS({ ...num(29), t1: 'Japan', t2: 'Australia' })
+    // No committed game is in this state now that coverage comes from WBD's
+    // published table, so the empty case is stated explicitly.
+    const ics = buildICS({ ...num(29), t1: 'Japan', t2: 'Australia', tv: [], tvNote: null })
     expect(ics).not.toContain('US TV:')
+  })
+
+  it('carries the round-level window into the calendar entry', () => {
+    const ics = buildICS({ ...num(29), t1: 'Japan', t2: 'Australia' })
+    expect(ics).toContain('US TV: DAZN / HBO Max')
+    expect(ics).toContain('Also on TNT and/or truTV')
   })
 
   it('includes the score in a collection entry once a game is played', async () => {

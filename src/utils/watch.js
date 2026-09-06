@@ -1,34 +1,41 @@
 // The streaming services and TV packages a viewer can tell us they have, so the
 // schedule can flag which games they can actually watch, and filter to them.
 //
-// US rights to this edition sit with Warner Bros. Discovery, and ESPN's per-game
-// broadcast field names exactly three outlets: HBO Max, TNT and truTV. That is a
-// far smaller catalog than the football and WNBA siblings need, but the question
-// it answers is sharper, because the split is lopsided:
+// US rights to this edition sit with Warner Bros. Discovery, whose published
+// table (frozen in scripts/official.mjs) names five outlets: TNT, TBS, truTV,
+// HBO Max and DAZN. The shape of the split is what makes the question worth
+// asking at all:
 //
-//   16 of the 24 group games are HBO MAX ONLY
-//    8 are on TNT and/or truTV
+//   BOTH STREAMERS CARRY ALL 36 GAMES. DAZN sells FIBA's own Courtside 1891 as
+//   a standalone subscription; HBO Max carries the same 36 but only on a
+//   Standard or Premium plan, so a Basic With Ads subscriber sees none of them
+//   without upgrading. That is a real difference between two entries that would
+//   otherwise look identical, and it is why both are listed.
 //
-// So a viewer with a cable package and no HBO Max can watch a third of the group
-// phase, and one with HBO Max and no cable can watch two thirds. "Can I watch
-// this?" is a real question here rather than a formality.
+//   ONLY 9 OF THE 36 GAMES ARE ON LINEAR TV (7 of the 24 group games, plus the
+//   third-place game and the Final; three more rounds have a truTV/TNT/TBS
+//   window announced without a per-game split, which rides on `tvNote` rather
+//   than being claimed here). So a viewer with a cable package and no streaming
+//   subscription can watch a quarter of the tournament, and either streamer
+//   covers all of it.
 //
 // A live-TV BUNDLE (YouTube TV, Hulu + Live TV, Fubo, Sling, DirecTV Stream,
-// cable) never appears in ESPN's list by name: it carries a game whenever the
+// cable) never appears in the table by name: it carries a game whenever the
 // game airs on a linear network the bundle carries. Each bundle is therefore
 // defined by the networks it carries. Carriage differs by bundle and, in
 // reality, by market and over time; these are the national defaults and are
 // deliberately approximate.
 //
-// HBO MAX IS NOT IN ANY BUNDLE. It is a separate subscription, so a bundle
-// matches only the TNT/truTV games. Warner Bros. Discovery does often simulcast
-// its linear sports on HBO Max, but ESPN's per-game field is what we have and
-// what we can verify, so the matching follows the data rather than an assumption
-// about simulcast rights. The modal says so.
+// NEITHER STREAMER IS IN ANY BUNDLE. Both are separate subscriptions, so a
+// bundle matches only the TNT/TBS/truTV games. Warner Bros. Discovery does
+// simulcast its linear sports on HBO Max, which is precisely why HBO Max is
+// listed on every game in the data rather than being inferred from a bundle.
 
 const TNT = 'TNT'
+const TBS = 'TBS'
 const TRUTV = 'truTV'
 const HBOMAX = 'HBO Max'
+const DAZN = 'DAZN'
 
 // carries(...names) -> a matcher that is true when a game's broadcast list names
 // any of them.
@@ -40,13 +47,14 @@ const carries = (...names) => {
 // Ordered streaming first, then live-TV bundles. This is also the display order
 // for badges and for the picker. `kind` only labels the picker.
 export const SERVICE_CATALOG = [
+  { key: 'dazn', label: 'DAZN', kind: 'stream', match: carries(DAZN) },
   { key: 'hbomax', label: 'HBO Max', kind: 'stream', match: carries(HBOMAX) },
-  { key: 'youtubetv', label: 'YouTube TV', kind: 'bundle', match: carries(TNT, TRUTV) },
-  { key: 'hulu', label: 'Hulu + Live TV', kind: 'bundle', match: carries(TNT, TRUTV) },
-  { key: 'fubo', label: 'Fubo', kind: 'bundle', match: carries(TNT, TRUTV) },
-  { key: 'sling', label: 'Sling TV', kind: 'bundle', match: carries(TNT, TRUTV) },
-  { key: 'directv', label: 'DirecTV Stream', kind: 'bundle', match: carries(TNT, TRUTV) },
-  { key: 'cable', label: 'Cable / Satellite', kind: 'bundle', match: carries(TNT, TRUTV) },
+  { key: 'youtubetv', label: 'YouTube TV', kind: 'bundle', match: carries(TNT, TBS, TRUTV) },
+  { key: 'hulu', label: 'Hulu + Live TV', kind: 'bundle', match: carries(TNT, TBS, TRUTV) },
+  { key: 'fubo', label: 'Fubo', kind: 'bundle', match: carries(TNT, TBS, TRUTV) },
+  { key: 'sling', label: 'Sling TV', kind: 'bundle', match: carries(TNT, TBS, TRUTV) },
+  { key: 'directv', label: 'DirecTV Stream', kind: 'bundle', match: carries(TNT, TBS, TRUTV) },
+  { key: 'cable', label: 'Cable / Satellite', kind: 'bundle', match: carries(TNT, TBS, TRUTV) },
 ]
 
 // THERE IS NO LOCAL-CHANNEL PICKER. The WNBA sibling derives one from the market
@@ -59,12 +67,14 @@ export const SERVICE_BY_KEY = Object.fromEntries(SERVICE_CATALOG.map((s) => [s.k
 
 export const SERVICE_KEYS = SERVICE_CATALOG.map((s) => s.key)
 
-// Does ESPN know where this game is on yet?
+// Is there a published platform for this game?
 //
-// FALSE for all twelve final-phase games until ESPN publishes those fixtures.
-// That is genuinely UNKNOWN, not "not on your services", and the two must not be
-// conflated: hiding the Final from a viewer who filtered to their own services
-// would be worse than showing it with the coverage still to be confirmed.
+// TRUE for all 36 now that coverage comes from WBD's own table rather than from
+// ESPN's per-fixture field: the knockout platforms were announced in August, so
+// a game with no ESPN id still knows where it will be shown. It stays a real
+// question rather than a constant because a game whose `tv` is empty must not be
+// read as "not on your services": hiding the Final from a viewer who filtered to
+// their own services would be worse than showing it with coverage unconfirmed.
 export function hasKnownBroadcast(game) {
   return Boolean(game?.tv?.length)
 }

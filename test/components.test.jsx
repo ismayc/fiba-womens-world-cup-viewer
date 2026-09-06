@@ -191,6 +191,41 @@ describe('MatchCard', () => {
     expect(document.querySelector('.venue-local').textContent).toMatch(/local$/)
   })
 
+  // Every game has a platform now, so no card should ever fall back to "TV TBC",
+  // and a quarter-final says what WBD announced for the round instead.
+  it('shows the streamers on every card and the round window on a knockout', () => {
+    wrap(<MatchCard match={num(GAMES, 29)} tz={TZ} byNum={byNum} slotMap={slotMap} />)
+    expect(screen.getByText('DAZN')).toBeInTheDocument()
+    expect(screen.getByText('Also on TNT and/or truTV')).toBeInTheDocument()
+    expect(screen.queryByText('TV TBC')).not.toBeInTheDocument()
+  })
+
+  it('marks the outlet that carries the game only on a paid-up tier', () => {
+    wrap(<MatchCard match={num(GAMES, 1)} tz={TZ} byNum={byNum} slotMap={slotMap} />)
+    const hbo = screen.getByText('HBO Max').closest('[title]')
+    expect(hbo.getAttribute('title')).toMatch(/Standard or Premium/)
+    expect(screen.getByText('DAZN').closest('[title]').getAttribute('title')).toMatch(
+      /all 36 games/,
+    )
+  })
+
+  it('spells the streamers’ conditions out in the how-to-watch panel', () => {
+    wrap(<MatchCard match={num(GAMES, 1)} tz={TZ} byNum={byNum} slotMap={slotMap} />)
+    fireEvent.click(screen.getByRole('button', { name: /How to watch/ }))
+    const notes = document.querySelector('.feed-notes')
+    expect(notes.textContent).toMatch(/Standard or Premium/)
+    expect(notes.textContent).toMatch(/Courtside 1891/)
+    expect(notes.querySelectorAll('li')).toHaveLength(2)
+  })
+
+  // No committed game reaches this state now that coverage comes from WBD's
+  // table, but a regeneration that emptied `tv` must say so rather than showing
+  // a card with no coverage line at all.
+  it('says TV TBC for a game with no platform at all', () => {
+    wrap(<MatchCard match={{ ...num(GAMES, 1), tv: [] }} tz={TZ} byNum={byNum} slotMap={slotMap} />)
+    expect(screen.getByText('TV TBC')).toBeInTheDocument()
+  })
+
   it('falls back to a Berlin arena placeholder when none is assigned', () => {
     wrap(<MatchCard match={num(GAMES, 25)} tz={TZ} byNum={byNum} slotMap={slotMap} />)
     expect(screen.getByText('Arena TBC')).toBeInTheDocument()
@@ -255,6 +290,18 @@ describe('MatchDetail', () => {
     // The Berlin-local row is a second clock on the same instant: with no
     // instant there is nothing for it to say.
     expect(screen.queryByText('Berlin local')).not.toBeInTheDocument()
+  })
+
+  it('spells out the HBO Max tier condition on a game it carries', () => {
+    wrap(<MatchDetail match={num(GAMES, 1)} tz={TZ} allMatches={GAMES} onClose={() => {}} />)
+    expect(screen.getByText(/Standard or Premium/)).toBeInTheDocument()
+    expect(screen.getByText(/Courtside 1891/)).toBeInTheDocument()
+  })
+
+  it('shows the round-level window on a game whose split is unpublished', () => {
+    wrap(<MatchDetail match={num(GAMES, 29)} tz={TZ} allMatches={GAMES} onClose={() => {}} />)
+    expect(screen.getByText('Also on TNT and/or truTV')).toBeInTheDocument()
+    expect(screen.getAllByText(/DAZN · HBO Max/).length).toBeGreaterThan(0)
   })
 
   // The draw fills these slots at the end of the group phase; until then the

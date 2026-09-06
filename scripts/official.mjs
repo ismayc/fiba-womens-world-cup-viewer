@@ -231,6 +231,105 @@ export const KNOWN_ESPN_TIME_BUGS = [
   },
 ]
 
+// ---------------------------------------------------------------------------
+// US coverage (Warner Bros. Discovery)
+// ---------------------------------------------------------------------------
+//
+// The other authority in this file. Structure and tip-off times come from FIBA's
+// sheet above; where a game can be WATCHED in the US comes from Warner Bros.
+// Discovery, which holds exclusive US English-language rights to the edition.
+//
+// Source: the TNT Sports media release of August 6, 2026, "TNT Sports to Present
+// Exclusive Wall-to-Wall Coverage of FIBA Women's Basketball World Cup 2026",
+// https://press.wbd.com/us/media-release/tnt-sports-present-exclusive-wall-wall-coverage-fiba-womens-basketball-world-cup-2026
+// and its game-by-game table, transcribed below. The release is headed "Dates,
+// times, matchups and platforms are subject to change", which is why one entry
+// already deviates: see the Hungary-France note.
+//
+// WHY THIS IS FROZEN HERE rather than read from the feed. ESPN carries a
+// per-game `broadcasts` field, and for the group phase it agrees with the table
+// below outlet for outlet. It is still the wrong source to build on:
+//
+//   * It has nothing at all for the twelve final-phase games until ESPN
+//     publishes each fixture, so the whole knockout stage read "TV TBC" while
+//     WBD had in fact announced its platforms in August.
+//   * It flaps on older games (see the football siblings, where the same field
+//     drops and returns on games that old and is therefore not committed).
+//   * It cannot record a game that did not air where it was announced to.
+//
+// Games are keyed by MATCHUP, not by number: group-game numbers are derived by
+// sorting, so keying on them would silently re-point every row if that sort ever
+// changed.
+
+// HBO Max and Courtside 1891 (sold in the US through DAZN) carry ALL 36 games.
+// Only the linear channel varies from game to game, so the streaming pair is
+// stated once and every game gets it.
+//
+// Order matters: DAZN leads because it is the one entry that carries every game
+// on its own base subscription. Live sports on HBO Max need a Standard or
+// Premium plan; a Basic With Ads subscriber has to upgrade, which is what
+// HBO_MAX_TIER_NOTE says on the card.
+export const STREAMS_EVERY_GAME = ['DAZN', 'HBO Max']
+
+export const HBO_MAX_TIER_NOTE =
+  'Live sports need HBO Max Standard or Premium; not included on Basic With Ads'
+
+export const DAZN_NOTE = 'Courtside 1891 on DAZN carries all 36 games'
+
+// The linear (cable) window for a group game, transcribed from the WBD table.
+// A matchup absent from this list is streaming-only, which is 16 of the 24.
+// `pair` is unordered: FIBA and WBD do not always name the sides the same way
+// round.
+export const US_LINEAR_BY_PAIR = [
+  { pair: ['United States', 'China'], tv: ['TNT', 'truTV'] },
+  { pair: ['Spain', 'Germany'], tv: ['truTV'] },
+  // WBD announced truTV for this one and ESPN still reports truTV, but it did
+  // not air there: watched live on September 4, 2026, and reported the same day.
+  // The release is explicitly "subject to change", so a game that has already
+  // been played is described by what happened, not by the plan. If a source
+  // later shows it DID air on truTV, restore ['truTV'] and delete this note.
+  { pair: ['Hungary', 'France'], tv: [], announced: ['truTV'], why: 'did not air on truTV' },
+  { pair: ['Puerto Rico', 'Belgium'], tv: ['truTV'] },
+  { pair: ['Italy', 'United States'], tv: ['TNT'] },
+  { pair: ['Nigeria', 'France'], tv: ['truTV'] },
+  { pair: ['Japan', 'Spain'], tv: ['truTV'] },
+  { pair: ['United States', 'Czechia'], tv: ['TNT', 'truTV'] },
+]
+
+// The final phase. WBD gave the third-place game and the Final a definite
+// channel list; for the three rounds above them it named the platforms without
+// saying which game goes where ("truTV and/or HBO Max", "TNT and/or truTV, and
+// HBO Max", "TBS, truTV, HBO Max"). Those go in a NOTE rather than in `tv`,
+// because putting truTV on all four quarter-finals would claim four windows out
+// of a release that promises 17 televised games in total and has already spent
+// eight of them on the group phase.
+export const US_LINEAR_BY_STAGE = {
+  '3rd': ['truTV'],
+  Final: ['TNT', 'truTV'],
+}
+
+export const US_TV_NOTE_BY_STAGE = {
+  QR: 'Some qualification games also on truTV',
+  QF: 'Also on TNT and/or truTV',
+  SF: 'Also on TBS and truTV',
+}
+
+const samePair = (a, b) => (a[0] === b[0] && a[1] === b[1]) || (a[0] === b[1] && a[1] === b[0])
+
+// Where a game can be watched in the US: the confirmed platform list, plus the
+// round-level note where WBD announced a linear window without saying which game
+// of the round gets it. Every game streams, so `tv` is never empty.
+export function usCoverage(game) {
+  const linear =
+    game.stage === 'Group'
+      ? (US_LINEAR_BY_PAIR.find((e) => samePair(e.pair, [game.t1, game.t2]))?.tv ?? [])
+      : (US_LINEAR_BY_STAGE[game.stage] ?? [])
+  return {
+    tv: [...linear, ...STREAMS_EVERY_GAME],
+    tvNote: US_TV_NOTE_BY_STAGE[game.stage] || null,
+  }
+}
+
 // --------------------------------------------------------------------------
 // Assembly
 // --------------------------------------------------------------------------

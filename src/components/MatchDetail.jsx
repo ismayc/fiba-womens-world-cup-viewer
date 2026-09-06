@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { FLAG_BY_TEAM } from '../data/teams.js'
 import { STAGE_LABELS } from '../data/games.js'
-import { US_BROADCAST } from '../data/broadcast.js'
+import { OUTLET_NOTES, US_BROADCAST } from '../data/broadcast.js'
 import { teamRecord } from '../utils/tournamentStats.js'
 import { formatTime, formatDateLong, formatDayKeyLong, tzAbbrev, liveState, statusFlag, teamKickoffTooltip } from '../utils/time.js'
 import { downloadICS } from '../utils/ics.js'
@@ -210,7 +210,7 @@ export default function MatchDetail({ match, tz, hideScores, allMatches, onClose
         <div className="md-section">
           <h4>How to watch (US)</h4>
           <div className="md-watch">
-            {/* This game's own channel when ESPN filed one, then the
+            {/* This game's own platforms, from WBD's published table, then the
                 tournament-wide picture. Unlike the football siblings there is no
                 Spanish-language row: the US rights to this edition sit with a
                 single family, so listing a second language would be inventing
@@ -218,10 +218,23 @@ export default function MatchDetail({ match, tz, hideScores, allMatches, onClose
             {match.tv?.length > 0 && (
               <div><span className="md-lang">This game</span> {match.tv.join(' · ')}</div>
             )}
+            {match.tvNote && (
+              <div><span className="md-lang">Round</span> {match.tvNote}</div>
+            )}
             <div>
               <span className="md-lang">Edition</span> {US_BROADCAST.english.tv.join(' / ')} ·{' '}
-              {US_BROADCAST.english.streaming.join(', ')}
+              {US_BROADCAST.english.streaming.join(', ')} · via{' '}
+              {US_BROADCAST.english.bundles.join(', ')}
             </div>
+            {/* Naming an outlet without its condition is the same mistake as not
+                naming it: a Basic With Ads subscriber does not get these games. */}
+            {Object.entries(OUTLET_NOTES)
+              .filter(([outlet]) => match.tv?.includes(outlet))
+              .map(([outlet, note]) => (
+                <div key={outlet} className="md-watch-note">
+                  <span className="md-lang">{outlet}</span> {note}
+                </div>
+              ))}
           </div>
         </div>
 

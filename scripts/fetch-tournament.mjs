@@ -34,6 +34,7 @@ import {
   TZ,
   VENUE_META,
   canon,
+  usCoverage,
 } from './official.mjs'
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..')
@@ -171,19 +172,15 @@ function normalizeEvent(event) {
   const period = Number(c.status?.period || 0)
   const ot = completed && period > 4 ? period - 4 : 0
 
-  // US broadcast, per game. ESPN carries this for the whole edition (the
-  // Warner Bros. Discovery package: TNT, truTV and HBO Max), so unlike the
-  // football siblings, where the channel field flaps on and off for old
-  // matches and is therefore stated tournament-wide. Here it is committed per
-  // game, which is what lets a card say where THIS game is on.
-  const tv = [
-    ...new Set((c.broadcasts || []).flatMap((b) => b.names || [])),
-  ].sort()
+  // US coverage is NOT read from ESPN. `c.broadcasts` agrees with Warner Bros.
+  // Discovery's published table for the group phase, but it is empty for every
+  // final-phase game ESPN has not published yet, it flaps on older games, and it
+  // cannot record a game that did not air where it was announced to. The
+  // authority is US_LINEAR_BY_PAIR in scripts/official.mjs; see usCoverage().
 
   return {
     espnId: event.id,
     group: groupOf(c),
-    tv,
     espnKo: toBerlin(c.date),
     venue: VENUE_META[venueId].key,
     t1,
@@ -252,7 +249,7 @@ function buildGames(espnEvents) {
         ...g,
         espnId: hit.espnId,
         venue: hit.venue,
-        tv: hit.tv,
+        ...usCoverage(g),
         score: hit.score,
         ot: hit.ot,
       }
@@ -266,7 +263,10 @@ function buildGames(espnEvents) {
     )
     if (!resolved) {
       report.pendingFinal += 1
-      return { ...g, espnId: null, venue: null, tv: [], score: null, ot: 0 }
+      // The FIXTURE is unpublished, the COVERAGE is not: WBD announced the
+      // knockout platforms in August, so a game with no ESPN id still knows
+      // where it will be shown.
+      return { ...g, espnId: null, venue: null, ...usCoverage(g), score: null, ot: 0 }
     }
     report.matchedFinal += 1
     return {
@@ -275,7 +275,7 @@ function buildGames(espnEvents) {
       t2: resolved.t2,
       espnId: resolved.espnId,
       venue: resolved.venue,
-      tv: resolved.tv,
+      ...usCoverage(g),
       ko: resolved.espnKo,
       tbdTip: false,
       score: resolved.score,
@@ -366,6 +366,7 @@ function gameLiteral(g) {
   if (g.tbdTip) bits.push('tbdTip: true', `date: ${q(g.date)}`)
   bits.push(`espnId: ${g.espnId ? q(g.espnId) : 'null'}`)
   if (g.tv && g.tv.length) bits.push(`tv: [${g.tv.map(q).join(', ')}]`)
+  if (g.tvNote) bits.push(`tvNote: ${q(g.tvNote)}`)
   if (g.score) bits.push(`score: [${g.score.join(', ')}]`)
   if (g.ot) bits.push(`ot: ${g.ot}`)
   return `  { ${bits.join(', ')} },`
@@ -397,8 +398,11 @@ function renderGames(games) {
     `// a finished game always has a winner, which is why there is no aet/pens\n` +
     `// pair here and why the bracket can always resolve a completed game.\n` +
     `//\n` +
-    `// \`tv\` lists the US broadcasters carrying the game, from ESPN's own\n` +
-    `// broadcast field. This edition is on the Warner Bros. Discovery package.\n` +
+    `// \`tv\` lists the US platforms carrying the game, from Warner Bros.\n` +
+    `// Discovery's published table (frozen in scripts/official.mjs), NOT from\n` +
+    `// ESPN's broadcast field. HBO Max and DAZN (Courtside 1891) carry all 36\n` +
+    `// games; only the linear channel varies. \`tvNote\` carries a round-level\n` +
+    `// window WBD announced without saying which game of the round gets it.\n` +
     `//\n` +
     `// \`espnId\` is the ESPN event id, used to fetch that game's box score on\n` +
     `// demand and to match the live overlay. It is null on a final-phase game\n` +

@@ -769,6 +769,23 @@ select {
 .chip-stream {
   color: var(--text-dim);
 }
+.chip-bundle {
+  color: var(--text-faint);
+  background: transparent;
+  border-style: dashed;
+}
+/* What each streamer actually gets you: HBO Max needs a Standard or Premium
+   plan, DAZN carries all 36 through Courtside 1891. Spelled out rather than
+   hidden behind a mark, since it is the difference between the two. */
+.feed-notes {
+  list-style: none;
+  margin: 0 0 6px;
+  padding: 0 0 0 42px;
+  font-size: 0.68rem;
+  line-height: 1.45;
+  color: var(--text-faint);
+}
+.feed-notes strong { color: var(--text-dim); font-weight: 700; }
 
 .empty {
   text-align: center;
@@ -1936,6 +1953,8 @@ select {
 .md-section h4 { margin: 0 0 8px; font-size: 0.82rem; color: var(--text); }
 .md-watch { display: grid; gap: 6px; font-size: 0.82rem; color: var(--text-dim); }
 .md-lang { font-weight: 700; color: var(--text); margin-right: 6px; }
+.md-watch-note { font-size: 0.76rem; color: var(--text-faint); }
+.md-watch-note .md-lang { color: var(--text-dim); }
 .md-nogoals { color: var(--text-faint); font-size: 0.84rem; margin: 0; }
 .md-cal {
   width: 100%;
@@ -2690,4 +2709,13 @@ td.pd-num { color: var(--text-dim); font-weight: 600; }
   font-weight: 600;
 }
 .tv-badge.tv-tbc { border-style: dashed; color: var(--text-faint); cursor: help; }
+/* A round-level window WBD announced without a per-game split: shown as a
+   possibility, so it must not read like a confirmed channel chip. */
+.tv-badge.tv-note {
+  border-style: dashed;
+  color: var(--text-faint);
+  font-style: italic;
+  cursor: help;
+  white-space: normal;
+}
 .watch-line.watch-mine strong { color: var(--accent); }

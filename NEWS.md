@@ -2,6 +2,45 @@
 
 Dated changelog, newest first.
 
+## September 5, 2026 (evening) — where every game actually is, on the record
+
+Hungary v France was listed on truTV. It was not on truTV. Warner Bros. Discovery
+announced it for truTV in August and ESPN still reports truTV, but the game was watched
+on the day and it did not air there, and the release itself is stamped "subject to
+change". A game that has been played is described by what happened.
+
+Chasing that one game turned up a bigger problem: **the app was reading US coverage from
+ESPN's per-fixture broadcast field**, which had nothing at all for the twelve knockout
+games. The whole final phase read "TV TBC" while WBD had published its platforms in
+August. Coverage is now frozen in `scripts/official.mjs` alongside FIBA's schedule, from
+WBD's own game-by-game table, and the feed is no longer consulted for it.
+
+What the schedule says now, checked game by game against that table:
+
+* **Both streamers, on all 36 games.** DAZN sells FIBA's own Courtside 1891 as a
+  standalone US subscription. HBO Max streams the same 36, but live sports need a
+  Standard or Premium plan: a Basic With Ads subscriber gets none of them. Every card
+  says which, because "it's on HBO Max" is not the whole answer for someone who has
+  HBO Max.
+* **Nine games reach linear TV**, named individually rather than counted: the three USA
+  group games, four more group games on truTV, the third-place game and the Final.
+* **Three rounds have a window without a split.** WBD named the platforms for the
+  qualification round, quarter-finals and semi-finals without saying which game gets
+  which ("truTV and/or HBO Max", "TNT and/or truTV", "TBS, truTV"). Those show as an
+  italic note, not as a channel: claiming truTV on all four quarter-finals would spend
+  four of the seventeen televised windows the release promises, and the release has
+  already spent eight of them on the group phase.
+* **TBS joined the picture** with the semi-finals, and every live-TV bundle now matches
+  it. Without that, both semis would have been hidden from every cable viewer.
+
+"TV TBC" no longer appears anywhere in the schedule, because there is no longer a game
+nobody has placed. The code path that shows it stays, with its own test: a regeneration
+that emptied a game's platforms has to say so rather than quietly dropping the game from
+a filtered schedule.
+
+Twenty-three tests cover the change, including the exact nine linear windows written out
+game by game, so a future regeneration cannot move one silently.
+
 ## September 5, 2026 — the days FIBA has not timed yet stop reading December 31, 1969
 
 Three day headings in the Schedule read **"Wednesday, December 31, 1969"**: the two

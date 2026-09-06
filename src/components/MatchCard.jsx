@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { FLAG_BY_TEAM } from '../data/teams.js'
 import { STAGE_LABELS } from '../data/games.js'
-import { US_BROADCAST } from '../data/broadcast.js'
+import { OUTLET_NOTES, US_BROADCAST } from '../data/broadcast.js'
 import { formatTime, tzAbbrev, liveState, statusFlag, teamKickoffTooltip } from '../utils/time.js'
 import { downloadICS } from '../utils/ics.js'
 import { useFollow } from '../context/follow.jsx'
@@ -99,8 +99,28 @@ function Channels({ feed }) {
       <div className="feed-detail">
         <span className="feed-label">Stream</span>
         {feed.streaming.map((s) => (
-          <span key={s} className="chip chip-stream">
+          <span key={s} className="chip chip-stream" title={OUTLET_NOTES[s]}>
             {s}
+          </span>
+        ))}
+      </div>
+      {/* "It's on HBO Max" is not the whole answer for someone who HAS HBO Max:
+          live sports are excluded from Basic With Ads. Every streamer named for
+          this edition carries a condition or a scope worth stating, which
+          test/data.test.js holds as an invariant, so this list has no empty
+          case to handle. */}
+      <ul className="feed-notes">
+        {feed.streaming.map((s) => (
+          <li key={s}>
+            <strong>{s}</strong> {OUTLET_NOTES[s]}
+          </li>
+        ))}
+      </ul>
+      <div className="feed-detail">
+        <span className="feed-label">Via</span>
+        {feed.bundles.map((b) => (
+          <span key={b} className="chip chip-bundle">
+            {b}
           </span>
         ))}
       </div>
@@ -247,10 +267,19 @@ export default function MatchCard({ match, tz, hidden = false, clinch, slotMap, 
             </span>
           ))}
           {broadcastNotBadged(match.tv, watched).map((n) => (
-            <span key={n} className="tv-badge">
+            <span key={n} className="tv-badge" title={OUTLET_NOTES[n]}>
               {n}
             </span>
           ))}
+          {/* A round whose linear window WBD announced without saying which game
+              of the round gets it. Claiming truTV on all four quarter-finals
+              would spend four of the seventeen televised windows the release
+              promises, so the possibility is stated instead. */}
+          {match.tvNote && (
+            <span className="tv-badge tv-note" title="Announced for the round; the per-game split is not published yet">
+              {match.tvNote}
+            </span>
+          )}
           {!hasKnownBroadcast(match) && (
             <span className="tv-badge tv-tbc" title="FIBA and the broadcaster confirm coverage when the fixture is set">
               TV TBC

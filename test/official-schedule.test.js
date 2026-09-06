@@ -20,7 +20,10 @@ import {
   GROUPS,
   KNOWN_ESPN_TIME_BUGS,
   OFFICIAL,
+  STREAMS_EVERY_GAME,
   TIP_WINDOWS,
+  US_LINEAR_BY_PAIR,
+  usCoverage,
 } from '../scripts/official.mjs'
 import espnFeed from './fixtures/espn-scoreboard.json'
 import espnNames from './fixtures/espn-team-names.json'
@@ -135,6 +138,56 @@ describe('team-name resolution', () => {
     expect([...espnNames].sort()).toEqual([...ALL_TEAMS].sort())
     for (const key of Object.keys(ESPN_ALIASES)) {
       expect(espnNames).toContain(key)
+    }
+  })
+})
+
+// usCoverage() is the function that decides what every card says about where a
+// game is on, so it is asserted directly rather than only through the data it
+// produced.
+describe('usCoverage', () => {
+  it('gives a streaming-only group game exactly the two streamers', () => {
+    expect(usCoverage({ stage: 'Group', t1: 'Japan', t2: 'Mali' })).toEqual({
+      tv: [...STREAMS_EVERY_GAME],
+      tvNote: null,
+    })
+  })
+
+  it('reads a pair in either order, because FIBA and WBD disagree on the order', () => {
+    const a = usCoverage({ stage: 'Group', t1: 'Italy', t2: 'United States' })
+    const b = usCoverage({ stage: 'Group', t1: 'United States', t2: 'Italy' })
+    expect(a).toEqual(b)
+    expect(a.tv).toEqual(['TNT', ...STREAMS_EVERY_GAME])
+  })
+
+  it('drops the linear channel from a game that did not air on it', () => {
+    expect(usCoverage({ stage: 'Group', t1: 'Hungary', t2: 'France' }).tv).toEqual([
+      ...STREAMS_EVERY_GAME,
+    ])
+  })
+
+  it('turns an unsplit round into a note and a definite one into channels', () => {
+    expect(usCoverage({ stage: 'QF' })).toEqual({
+      tv: [...STREAMS_EVERY_GAME],
+      tvNote: 'Also on TNT and/or truTV',
+    })
+    expect(usCoverage({ stage: 'Final' })).toEqual({
+      tv: ['TNT', 'truTV', ...STREAMS_EVERY_GAME],
+      tvNote: null,
+    })
+  })
+
+  // Every row of the frozen table has to describe a real matchup, or a rename
+  // upstream would silently stop applying a channel to the game it belongs to.
+  it('names a real matchup in every row of the frozen table', () => {
+    for (const row of US_LINEAR_BY_PAIR) {
+      const hit = OFFICIAL.find(
+        (g) =>
+          g.stage === 'Group' &&
+          ((g.t1 === row.pair[0] && g.t2 === row.pair[1]) ||
+            (g.t1 === row.pair[1] && g.t2 === row.pair[0])),
+      )
+      expect(hit, row.pair.join(' v ')).toBeTruthy()
     }
   })
 })

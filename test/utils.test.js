@@ -386,6 +386,12 @@ describe('calendar files', () => {
     expect(ics).not.toContain('VALUE=DATE')
   })
 
+  it('leaves the TV line out of a collection entry with no platform', () => {
+    const ics = buildICSCollection([{ ...num(1), tv: [], tvNote: null }])
+    expect(ics).not.toContain('US TV:')
+    expect(ics).toContain('SUMMARY:FIBA WWC: Japan vs Mali')
+  })
+
   it('exports every game of the tournament, TBC ones included', () => {
     const ics = buildICSCollection(GAMES)
     expect(ics.match(/BEGIN:VEVENT/g)).toHaveLength(GAMES.length)

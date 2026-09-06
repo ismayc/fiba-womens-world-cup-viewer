@@ -137,8 +137,10 @@ describe('services filtering', () => {
     expect(screen.getByRole('button', { name: /My services \(1\)/ })).toBeInTheDocument()
 
     fireEvent.click(screen.getByRole('button', { name: /On my services/ }))
-    // 8 watchable group games plus the 12 whose coverage is not announced.
-    expect(document.querySelectorAll('.card')).toHaveLength(20)
+    // The 9 games with a confirmed linear window: 7 group games, the
+    // third-place game and the Final. Nothing rides in on "coverage unknown"
+    // any more, because WBD has published every round.
+    expect(document.querySelectorAll('.card')).toHaveLength(9)
     expect(window.location.search).toContain('svc=1')
   })
 

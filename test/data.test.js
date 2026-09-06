@@ -6,6 +6,8 @@ import { describe, it, expect } from 'vitest'
 import { GAMES, STAGE_LABELS, STAGE_ORDER } from '../src/data/games.js'
 import { TEAMS, FLAG_BY_TEAM, ABBR_BY_TEAM, ALL_TEAMS, RANK_BY_TEAM } from '../src/data/teams.js'
 import { VENUES } from '../src/data/venues.js'
+import { OUTLET_NOTES, US_BROADCAST } from '../src/data/broadcast.js'
+import { US_LINEAR_BY_PAIR, US_LINEAR_BY_STAGE, US_TV_NOTE_BY_STAGE } from '../scripts/official.mjs'
 
 const GROUPS = ['A', 'B', 'C', 'D']
 const group = GAMES.filter((g) => g.stage === 'Group')
@@ -255,6 +257,108 @@ describe('scores', () => {
   it('only marks overtime on a game that has a score', () => {
     for (const g of GAMES) {
       if (g.ot) expect(Array.isArray(g.score)).toBe(true)
+    }
+  })
+})
+
+// US coverage. The app tells a viewer where a game is on, which is only worth
+// doing if it is right: an outlet named on a card that did not carry the game is
+// worse than no card at all. These assert the committed data against Warner
+// Bros. Discovery's published table, frozen in scripts/official.mjs.
+describe('US coverage', () => {
+  const LINEAR = ['TNT', 'TBS', 'truTV']
+  const linearOf = (g) => g.tv.filter((n) => LINEAR.includes(n))
+
+  it('puts both streamers on all 36 games', () => {
+    for (const g of GAMES) {
+      expect(g.tv, `game ${g.num}`).toContain('DAZN')
+      expect(g.tv, `game ${g.num}`).toContain('HBO Max')
+    }
+  })
+
+  it('leads with DAZN among the streamers, since it needs no upgrade', () => {
+    for (const g of GAMES) {
+      expect(g.tv.indexOf('DAZN'), `game ${g.num}`).toBeLessThan(g.tv.indexOf('HBO Max'))
+      // Linear first, streaming after: that is how a listing reads.
+      for (const n of linearOf(g)) expect(g.tv.indexOf(n)).toBeLessThan(g.tv.indexOf('DAZN'))
+    }
+  })
+
+  // The exact nine. This is the assertion that would have caught the wrong
+  // channel on Hungary v France, and it is written out game by game rather than
+  // as a count so a future regeneration cannot quietly move a window.
+  it('names the nine games with a confirmed linear window', () => {
+    const linear = Object.fromEntries(
+      GAMES.filter((g) => linearOf(g).length).map((g) => [g.num, linearOf(g)]),
+    )
+    expect(linear).toEqual({
+      3: ['TNT', 'truTV'], // United States v China
+      6: ['truTV'], // Spain v Germany
+      15: ['truTV'], // Puerto Rico v Belgium
+      16: ['TNT'], // Italy v United States
+      20: ['truTV'], // Nigeria v France
+      22: ['truTV'], // Japan v Spain
+      24: ['TNT', 'truTV'], // United States v Czechia
+      35: ['truTV'], // third-place game
+      36: ['TNT', 'truTV'], // Final
+    })
+  })
+
+  // WBD announced truTV for this one and ESPN still reports truTV. It did not
+  // air there. A game that has been played is described by what happened.
+  it('keeps truTV off Hungary v France', () => {
+    const g = byNum.get(8)
+    expect(g.t1).toBe('Hungary')
+    expect(g.t2).toBe('France')
+    expect(g.tv).toEqual(['DAZN', 'HBO Max'])
+    // And the deviation stays documented next to the source it deviates from.
+    const row = US_LINEAR_BY_PAIR.find((e) => e.pair.includes('Hungary') && e.pair.includes('France'))
+    expect(row.tv).toEqual([])
+    expect(row.announced).toEqual(['truTV'])
+    expect(row.why).toBeTruthy()
+  })
+
+  // A round whose linear window WBD named without saying which game gets it.
+  // Claiming truTV on all four quarter-finals would spend four of the seventeen
+  // televised windows the release promises.
+  it('states an unsplit round as a note, never as a channel', () => {
+    for (const g of GAMES) {
+      if (US_TV_NOTE_BY_STAGE[g.stage]) {
+        expect(g.tvNote, `game ${g.num}`).toBe(US_TV_NOTE_BY_STAGE[g.stage])
+        expect(linearOf(g), `game ${g.num}`).toEqual([])
+      } else {
+        expect(g.tvNote, `game ${g.num}`).toBeUndefined()
+      }
+    }
+    expect(Object.keys(US_TV_NOTE_BY_STAGE).sort()).toEqual(['QF', 'QR', 'SF'])
+  })
+
+  it('gives the third-place game and the Final the channels WBD named', () => {
+    expect(byNum.get(35).tv).toEqual([...US_LINEAR_BY_STAGE['3rd'], 'DAZN', 'HBO Max'])
+    expect(byNum.get(36).tv).toEqual([...US_LINEAR_BY_STAGE.Final, 'DAZN', 'HBO Max'])
+  })
+
+  it('names every outlet the games use in the edition-wide summary', () => {
+    const used = new Set(GAMES.flatMap((g) => g.tv))
+    const stated = new Set([...US_BROADCAST.english.tv, ...US_BROADCAST.english.streaming])
+    for (const outlet of used) expect(stated, outlet).toContain(outlet)
+    // TBS is named for the semi-finals, which have no per-game split yet, so it
+    // is stated for the edition without appearing on any single game.
+    expect(US_BROADCAST.english.tv).toContain('TBS')
+  })
+
+  // Naming an outlet without its condition is the same mistake as not naming it.
+  it('attaches the tier condition to HBO Max', () => {
+    expect(OUTLET_NOTES['HBO Max']).toMatch(/Standard or Premium/)
+    expect(OUTLET_NOTES['HBO Max']).toMatch(/Basic With Ads/)
+    expect(OUTLET_NOTES.DAZN).toMatch(/Courtside 1891/)
+    for (const outlet of Object.keys(OUTLET_NOTES)) {
+      expect(US_BROADCAST.english.streaming).toContain(outlet)
+    }
+    // And the other direction, which the "How to watch" panel relies on: it
+    // prints one note per streamer with no empty case.
+    for (const outlet of US_BROADCAST.english.streaming) {
+      expect(OUTLET_NOTES[outlet], outlet).toBeTruthy()
     }
   })
 })

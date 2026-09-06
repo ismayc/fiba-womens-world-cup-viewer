@@ -74,6 +74,7 @@ export function buildICS(match) {
   const description = [
     `${stageLabel} · Game ${match.num}`,
     match.tv?.length ? `US TV: ${match.tv.join(' / ')}` : null,
+    match.tvNote || null,
     `US: ${US_BROADCAST.english.tv.join(' / ')} (stream: ${US_BROADCAST.english.streaming.join(', ')})`,
   ]
     .filter(Boolean)
@@ -109,6 +110,7 @@ function buildVEvent(match) {
   const description = [
     `${stageLabel} · Game ${match.num}`,
     match.tv?.length ? `US TV: ${match.tv.join(' / ')}` : null,
+    match.tvNote || null,
   ]
     .filter(Boolean)
     .join('\\n')

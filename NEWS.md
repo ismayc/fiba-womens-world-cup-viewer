@@ -4,6 +4,16 @@ Dated changelog, newest first.
 
 ## 2026-09-06
 
+- **Box scores.** Opening a played or in-progress game now shows its quarter line score,
+  a full player table for each side (MIN, PTS, FG, 3PT, FT, REB, AST, TO, STL, BLK, PF,
+  +/-; starters above the bench, totals beneath) and a team-stat comparison with the
+  better side in bold. One request to ESPN's summary endpoint per open, on the same
+  browser-safe host the live overlay uses; nothing is committed, so it works
+  retroactively for every game already played. Under spoiler-free mode the whole section
+  sits behind its own reveal, like the tale of the tape. Sides are matched to the game
+  by team name through the same alias table as the live overlay, so a feed that spells
+  a team differently still lands on the right side. Ported from the WNBA viewer, with
+  flags where that app has crests.
 - **A red refresh now says which of three things it means.** Fourteen days of Refresh
   data failures across the family sorted into a fetch that did not land (ESPN 5xx, or a
   guard correctly refusing bad data; the site is fine), a red gate (a test asserted a

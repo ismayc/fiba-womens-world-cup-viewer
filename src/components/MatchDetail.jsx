@@ -1,5 +1,7 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { FLAG_BY_TEAM } from '../data/teams.js'
+import { fetchGameSummary } from '../services/summary.js'
+import BoxScoreSection from './BoxScore.jsx'
 import { STAGE_LABELS } from '../data/games.js'
 import { OUTLET_NOTES, US_BROADCAST } from '../data/broadcast.js'
 import { teamRecord } from '../utils/tournamentStats.js'
@@ -90,7 +92,28 @@ function TaleOfTheTape({ match, allMatches, label }) {
 export default function MatchDetail({ match, tz, hideScores, allMatches, onClose }) {
   const [reveal, setReveal] = useState(false)
   const [revealStats, setRevealStats] = useState(false)
+  const [revealBox, setRevealBox] = useState(false)
+  const [summary, setSummary] = useState({ status: 'idle', data: null })
   const cardRef = useModalA11y(onClose)
+
+  // The box score is fetched on open, once the game has tipped: a final score, or a
+  // tip-off that is already behind us (live). Keyed on the ESPN id so an unmatched
+  // final-phase slot never fires a request. Aborted on close or on switching games.
+  const espnId = match?.espnId ?? null
+  const started =
+    !!espnId && (Array.isArray(match.score) || (!!match.ko && Date.parse(match.ko) <= Date.now()))
+  useEffect(() => {
+    if (!started) {
+      setSummary({ status: 'idle', data: null })
+      return undefined
+    }
+    const ctl = new AbortController()
+    setSummary({ status: 'loading', data: null })
+    fetchGameSummary(espnId, { signal: ctl.signal }).then((data) => {
+      if (!ctl.signal.aborted) setSummary({ status: data ? 'ready' : 'failed', data })
+    })
+    return () => ctl.abort()
+  }, [espnId, started])
 
   if (!match) return null
   const venue = venueFor(match)
@@ -206,6 +229,18 @@ export default function MatchDetail({ match, tz, hideScores, allMatches, onClose
               label={hasScore ? 'Going into this game' : 'Tournament so far'}
             />
           ))}
+
+        {/* Box score, line score and team stats, fetched on open once the game has
+            tipped. A box score gives the result away, so spoiler-free mode keeps it
+            behind its own reveal, like the tale of the tape above. */}
+        {started && (
+          <BoxScoreSection
+            summary={summary}
+            match={match}
+            hidden={hideScores && !revealBox}
+            onReveal={() => setRevealBox(true)}
+          />
+        )}
 
         <div className="md-section">
           <h4>How to watch (US)</h4>

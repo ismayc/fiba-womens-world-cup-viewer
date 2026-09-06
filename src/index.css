@@ -2876,3 +2876,143 @@ td.pd-num { color: var(--text-dim); font-weight: 600; }
   white-space: normal;
 }
 .watch-line.watch-mine strong { color: var(--accent); }
+
+/* ---------- Box score ----------
+   Fetched on open from ESPN's summary endpoint (services/summary.js), so it is not
+   in the committed snapshot. Three tables in the results-board voice: the quarter
+   line score, one player table per side, then the team-stat comparison. Prefix is
+   `bs-`, not `bx-`, which the Bracket already owns. */
+.bs-scroll {
+  overflow-x: auto;
+}
+.bs-note {
+  margin: 2px 0 0;
+  font-size: 0.8rem;
+  color: var(--text-dim);
+}
+.bs-line,
+.boxscore,
+.bs-stats {
+  width: 100%;
+  border-collapse: collapse;
+  font-variant-numeric: tabular-nums;
+  font-size: 0.78rem;
+  white-space: nowrap;
+}
+.bs-line th,
+.bs-line td,
+.boxscore th,
+.boxscore td {
+  padding: 4px 7px;
+  text-align: right;
+}
+.bs-line thead th,
+.boxscore thead th {
+  color: var(--text-faint);
+  font-weight: 600;
+  font-size: 0.66rem;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  border-bottom: 1px solid var(--border);
+}
+/* Team and player names stay put while the stat columns scroll under them on a
+   phone. */
+.bs-line .bs-name,
+.boxscore .bs-name {
+  text-align: left;
+  position: sticky;
+  left: 0;
+  background: var(--card);
+  min-width: 116px;
+}
+.boxscore tbody .bs-name {
+  font-weight: 500;
+}
+.bs-total {
+  font-stretch: 118%;
+  font-weight: 800;
+}
+.bs-line {
+  margin-bottom: 12px;
+}
+.bs-sides {
+  display: grid;
+  gap: 14px;
+}
+.bs-head {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  padding-bottom: 5px;
+  margin-bottom: 6px;
+  border-bottom: 1px solid var(--border);
+}
+.bs-head strong {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.bs-player {
+  margin-right: 5px;
+}
+.bs-pos {
+  color: var(--text-faint);
+  font-size: 0.66rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+.boxscore tbody tr.bs-bench th,
+.boxscore tbody tr.bs-bench td {
+  border-top: 1px solid var(--border);
+}
+.boxscore tfoot th,
+.boxscore tfoot td {
+  border-top: 2px solid var(--rule);
+  font-weight: 600;
+  color: var(--text-dim);
+}
+/* The team comparison: a value each side of a centered label, the better side bold. */
+.bs-stats {
+  margin-top: 14px;
+}
+.bs-stats th,
+.bs-stats td {
+  padding: 4px 7px;
+}
+.bs-stats thead th {
+  font-size: 0.72rem;
+  font-weight: 700;
+  border-bottom: 1px solid var(--border);
+}
+.bs-stats thead th:first-child,
+.bs-stats td:first-child {
+  text-align: left;
+}
+.bs-stats thead th:last-child,
+.bs-stats td:last-child {
+  text-align: right;
+}
+.bs-stats tbody th {
+  text-align: center;
+  font-weight: 600;
+  font-size: 0.66rem;
+  color: var(--text-faint);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+.bs-stats td {
+  color: var(--text-dim);
+}
+.bs-stats td.bs-better {
+  color: var(--text);
+  font-weight: 700;
+}
+
+/* A box score is fourteen columns wide. The modal keeps its reading width for
+   everything else and opens out only when one is present, so the player table
+   fits on a laptop without the columns scrolling under the names. */
+.md-card:has(.bs-section) {
+  width: min(840px, 96vw);
+}

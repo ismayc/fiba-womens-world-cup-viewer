@@ -271,7 +271,9 @@ describe('spoiler-free and follow paths in the detail modal', () => {
   it('hides the score behind a reveal', () => {
     wrap(<MatchDetail match={played} tz={TZ} hideScores allMatches={GAMES} onClose={() => {}} />)
     expect(document.body.textContent).not.toMatch(/88/)
-    fireEvent.click(screen.getByRole('button', { name: /reveal/ }))
+    // The score's own reveal, not the box score's: a played game in spoiler-free mode
+    // now carries two reveal buttons, so the bare /reveal/ query became ambiguous.
+    fireEvent.click(screen.getByRole('button', { name: /^🙈 reveal$/ }))
     expect(document.body.textContent).toMatch(/88/)
   })
 

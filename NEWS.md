@@ -4,6 +4,10 @@ Dated changelog, newest first.
 
 ## 2026-09-06
 
+- **Added a stage-search coverage test.** It walks `STAGE_ORDER` and asserts every stage
+  is findable by its own code and by its full label, and that a code resolves to exactly
+  one stage. This viewer already passed; it now runs in all five tournament viewers, one
+  of which was missing a synonym for a stage it actually plays.
 - **The new clock rehearsal caught its first real exposure, an hour after landing.** The
   WeekView test added on September 5 to prove a missing tip-off reads "TBC" (not the
   epoch's wall clock) counted six such cells. WeekView opens on the calendar week

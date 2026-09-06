@@ -55,6 +55,18 @@ describe('WeekView', () => {
     // 1970 would be the give-away that a null tip-off fell through to new Date(null).
     expect(document.body.textContent).not.toMatch(/1970/)
   })
+
+  // The cell has a time slot to fill and no time to put in it. Formatting the
+  // null tip-off put the epoch's wall clock there: a plausible-looking
+  // "5:00 PM" that FIBA has not announced and that shifts with the viewer's zone.
+  it('says TBC in a cell whose tip-off is not set, never an epoch time', () => {
+    wrap(<WeekView allMatches={GAMES} shown={GAMES} tz={TZ} dayHidden={() => false} />)
+    const times = [...document.querySelectorAll('.wc-time')].map((n) => n.textContent)
+    // Every TBC game (four qualification-round, two semi-final) says so.
+    expect(times.filter((t) => t === 'TBC')).toHaveLength(6)
+    expect(times).not.toContain('12:00 AM')
+    expect(times).not.toContain('1:00 AM')
+  })
 })
 
 describe('DayMatchesModal', () => {
@@ -62,10 +74,42 @@ describe('DayMatchesModal', () => {
 
   it('lists a day’s games and closes', () => {
     const onClose = vi.fn()
-    wrap(<DayMatchesModal matches={day} tz={TZ} byNum={gamesByNum(GAMES)} onClose={onClose} />)
+    wrap(
+      <DayMatchesModal
+        matches={day}
+        dayKey="2026-09-04"
+        tz={TZ}
+        byNum={gamesByNum(GAMES)}
+        onClose={onClose}
+      />,
+    )
     expect(screen.getByText('Japan')).toBeInTheDocument()
+    expect(screen.getByText('Friday, September 4')).toBeInTheDocument()
     fireEvent.keyDown(document, { key: 'Escape' })
     expect(onClose).toHaveBeenCalled()
+  })
+
+  // Every game on this day is awaiting its tip-off, so the first game's kickoff,
+  // which is what titled this pop-up, was null and read "Wednesday, December 31".
+  it('titles a TBC day from the day itself, not from a missing tip-off', () => {
+    const qrDay = GAMES.filter((g) => g.date === '2026-09-08')
+    wrap(
+      <DayMatchesModal
+        matches={qrDay}
+        dayKey="2026-09-08"
+        tz={TZ}
+        byNum={gamesByNum(GAMES)}
+        onClose={() => {}}
+      />,
+    )
+    expect(screen.getByText('Tuesday, September 8')).toBeInTheDocument()
+    expect(document.body.textContent).not.toMatch(/December 31|1969|1970/)
+    expect(screen.getAllByText('TBC')).toHaveLength(qrDay.length)
+  })
+
+  it('falls back to a generic title with no day to name', () => {
+    wrap(<DayMatchesModal matches={[]} tz={TZ} byNum={gamesByNum(GAMES)} onClose={() => {}} />)
+    expect(screen.getByText('Schedule')).toBeInTheDocument()
   })
 })
 

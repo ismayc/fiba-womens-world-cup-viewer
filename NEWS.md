@@ -2,6 +2,46 @@
 
 Dated changelog, newest first.
 
+## September 5, 2026 — the days FIBA has not timed yet stop reading December 31, 1969
+
+Three day headings in the Schedule read **"Wednesday, December 31, 1969"**: the two
+qualification-round days (September 8 and 9) and the semi-final day (September 12).
+
+`new Date(null)` is not an Invalid Date, it is the Unix epoch, and it formats without
+complaint. FIBA sets the qualification-round and semi-final tip-offs only at the end of the
+previous round, so those eight games ship with `ko: null` and the Berlin date they are
+played on. The day heading was formatted from `matches[0].ko`, and on a day where EVERY
+game is awaiting a tip that is null. The quarter-finals, third-place game and Final have
+confirmed times, which is why the other three final-phase days looked right and this read
+as "some of the non-group games".
+
+The heading now formats the day KEY its section groups, which is what the heading actually
+names, and the same bug is closed everywhere else it had landed:
+
+* **Week view** printed the epoch's wall clock, a plausible "5:00 PM" that no one had
+  announced and that moved with the viewer's timezone. It says `TBC`.
+* **The day pop-up** was titled from the first game's kickoff, so it opened on
+  "Wednesday, December 31". It is titled from the day it was opened for.
+* **The game details modal** read "When Wednesday, December 31, 1969 · 4:00 PM" and a
+  Berlin-local clock for the same non-instant. It reads "When Tuesday, September 8, 2026 ·
+  Time TBC", with no second clock.
+* **A card** carried "· 1:00 AM GMT+1 local" under an arena, directly below its own
+  "Time TBC" pill.
+* **The .ics export** filed a TBC game on January 1, 1970. It exports an all-day event on
+  the date FIBA has fixed, which is exactly what is known about the game.
+
+Two things found alongside it, both on the same records:
+
+* The details modal headed an undrawn game **"• vs •"**. It read `match.t1`/`match.t2`
+  directly while the cards and the bracket read through `sideNames()`, which falls back to
+  the slot label. It now names the slots: "2nd Group A vs 3rd Group B".
+* The .ics summary for the same game read **"FIBA WWC: null vs null"**.
+
+`formatTime`, `formatDateLong` and `tzAbbrev` now return an empty string rather than
+formatting a missing instant, so a call site that forgets the TBC case shows nothing
+instead of a 1969 date. Twelve tests cover the fixes; ten of them fail against the code as
+it stood.
+
 ## September 4, 2026 (evening) — the suite is rehearsed against every future day of the tournament
 
 The refresh workflow went red again overnight (run 33929038511): one test in

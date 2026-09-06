@@ -224,7 +224,11 @@ export default function MatchCard({ match, tz, hidden = false, clinch, slotMap, 
           <span className="venue-city">
             {venue.city}, {venue.country}
           </span>
-          {!sameClock && (
+          {/* The Berlin clock only differs from the viewer's once there IS a
+              tip-off time. A TBC game has none, and rendering it anyway put
+              "1:00 AM GMT+1 local" (the epoch in Berlin) on every
+              qualification-round and semi-final card. */}
+          {!tbd && !sameClock && (
             <span className="venue-local">
               · {localTime} {localAbbr} local
             </span>

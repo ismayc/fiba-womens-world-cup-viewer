@@ -3,12 +3,13 @@ import { FLAG_BY_TEAM } from '../data/teams.js'
 import { STAGE_LABELS } from '../data/games.js'
 import { US_BROADCAST } from '../data/broadcast.js'
 import { teamRecord } from '../utils/tournamentStats.js'
-import { formatTime, formatDateLong, tzAbbrev, liveState, statusFlag, teamKickoffTooltip } from '../utils/time.js'
+import { formatTime, formatDateLong, formatDayKeyLong, tzAbbrev, liveState, statusFlag, teamKickoffTooltip } from '../utils/time.js'
 import { downloadICS } from '../utils/ics.js'
 import { useFollow } from '../context/follow.jsx'
 import { useModalA11y } from '../hooks/useModalA11y.js'
 import LiveBadge from './LiveBadge.jsx'
 import { venueFor } from '../utils/venue.js'
+import { sideNames } from '../utils/slots.js'
 
 // Minute label including stoppage time, e.g. "45+3'".
 
@@ -93,6 +94,11 @@ export default function MatchDetail({ match, tz, hideScores, allMatches, onClose
 
   if (!match) return null
   const venue = venueFor(match)
+  // A final-phase game carries its slot LABEL ("2nd Group A") until the draw
+  // fills the slot, so both sides read through the same fallback the cards and
+  // the bracket use. Reading match.t1/t2 directly left this modal titled
+  // "• vs •" for every unresolved game.
+  const [side1, side2] = sideNames(match)
   const stage = match.stage === 'Group' ? `Group ${match.group}` : STAGE_LABELS[match.stage]
   const status = liveState(match)
   const flag = statusFlag(match)
@@ -123,7 +129,7 @@ export default function MatchDetail({ match, tz, hideScores, allMatches, onClose
         <div className="md-teams">
           <div className="md-team" title={teamKickoffTooltip(match.ko, match.t1) || undefined}>
             <span className="md-flag">{FLAG_BY_TEAM[match.t1] || '•'}</span>
-            <span className="md-name">{match.t1}</span>
+            <span className="md-name">{side1}</span>
             <FollowStar name={match.t1} />
           </div>
           <div className="md-score">
@@ -150,14 +156,28 @@ export default function MatchDetail({ match, tz, hideScores, allMatches, onClose
           </div>
           <div className="md-team" title={teamKickoffTooltip(match.ko, match.t2) || undefined}>
             <span className="md-flag">{FLAG_BY_TEAM[match.t2] || '•'}</span>
-            <span className="md-name">{match.t2}</span>
+            <span className="md-name">{side2}</span>
             <FollowStar name={match.t2} />
           </div>
         </div>
 
         <div className="md-meta">
-          <div><strong>When</strong> {formatDateLong(match.ko, tz)} · {formatTime(match.ko, tz)} {tzAbbrev(match.ko, tz)}</div>
-          <div><strong>Berlin local</strong> {formatTime(match.ko, venue.tz)} {tzAbbrev(match.ko, venue.tz)}</div>
+          {/* Without a tip-off time there is no instant to render, only the
+              Berlin calendar date FIBA has already fixed. Formatting the missing
+              `ko` anyway read "Wednesday, December 31, 1969 · 4:00 PM" here. */}
+          {match.ko ? (
+            <>
+              <div><strong>When</strong> {formatDateLong(match.ko, tz)} · {formatTime(match.ko, tz)} {tzAbbrev(match.ko, tz)}</div>
+              <div><strong>Berlin local</strong> {formatTime(match.ko, venue.tz)} {tzAbbrev(match.ko, venue.tz)}</div>
+            </>
+          ) : (
+            <div>
+              <strong>When</strong> {formatDayKeyLong(match.date)} ·{' '}
+              <span className="kickoff-tbd" title="FIBA announces this tip-off time at the end of the previous round">
+                Time TBC
+              </span>
+            </div>
+          )}
           <div><strong>Arena</strong> {venue.countryFlag} {venue.name}, {venue.city}, {venue.country}</div>
           {match.tv?.length > 0 && (
             <div><strong>US TV</strong> {match.tv.join(' · ')}</div>

@@ -53,7 +53,17 @@ export function timezoneOptions(detected) {
   return [...set]
 }
 
+// A game whose tip-off FIBA has not announced yet ships with `ko: null`, and
+// `new Date(null)` is the Unix EPOCH, not an Invalid Date: it formats happily as
+// "December 31, 1969" / "4:00 PM" instead of failing loudly. Every formatter
+// here therefore refuses a missing instant and returns an empty string, so a
+// caller that forgets the TBC case renders nothing rather than a 1969 date.
+function hasInstant(iso) {
+  return iso != null && iso !== ''
+}
+
 export function formatTime(iso, tz) {
+  if (!hasInstant(iso)) return ''
   return new Date(iso).toLocaleTimeString('en-US', {
     timeZone: tz,
     hour: 'numeric',
@@ -63,12 +73,36 @@ export function formatTime(iso, tz) {
 
 // Long date in a given timezone, e.g. "Thursday, June 20, 2024".
 export function formatDateLong(iso, tz) {
+  if (!hasInstant(iso)) return ''
   return new Date(iso).toLocaleDateString('en-US', {
     timeZone: tz,
     weekday: 'long',
     month: 'long',
     day: 'numeric',
     year: 'numeric',
+  })
+}
+
+// Long form of a calendar-day KEY ("2026-09-08" -> "Tuesday, September 8, 2026"),
+// with `year: false` for the shorter heading the day pop-up uses.
+//
+// A day heading names the DAY its section groups, so it formats the key itself
+// rather than the first game's kickoff. Reading a kickoff is what put
+// "Wednesday, December 31, 1969" at the head of the qualification-round and
+// semi-final days: every game on those days is awaiting a tip-off time, so
+// `matches[0].ko` was null and formatted as the epoch.
+//
+// The key is a plain calendar date with no instant behind it, so it is parsed at
+// noon UTC and rendered in UTC - any timezone conversion here would shift the
+// date the key already states.
+export function formatDayKeyLong(key, { year = true } = {}) {
+  if (!key) return ''
+  return new Date(`${key}T12:00:00Z`).toLocaleDateString('en-US', {
+    timeZone: 'UTC',
+    weekday: 'long',
+    month: 'long',
+    day: 'numeric',
+    ...(year ? { year: 'numeric' } : null),
   })
 }
 
@@ -96,6 +130,7 @@ export function gameDayKey(game, tz) {
 
 // Short timezone abbreviation for a given instant, e.g. "CDT", "GMT+1".
 export function tzAbbrev(iso, tz) {
+  if (!hasInstant(iso)) return ''
   const parts = new Intl.DateTimeFormat('en-US', {
     timeZone: tz,
     timeZoneName: 'short',

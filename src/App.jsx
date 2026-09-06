@@ -12,7 +12,7 @@ import MatchDetail from './components/MatchDetail.jsx'
 import CalendarModal from './components/CalendarModal.jsx'
 import ScoreToasts from './components/ScoreToasts.jsx'
 import { groupStageArchived, stageArchived } from './utils/scenarios.js'
-import { detectTimezone, formatDateLong, dayKey, liveState, gameDayKey } from './utils/time.js'
+import { detectTimezone, formatDayKeyLong, dayKey, liveState, gameDayKey } from './utils/time.js'
 import { readState, writeState } from './utils/urlState.js'
 import { venueFor } from './utils/venue.js'
 import { isWatchable } from './utils/watch.js'
@@ -722,7 +722,12 @@ export default function App() {
                       aria-expanded={!collapsed}
                     >
                       <span className="day-chev" aria-hidden="true">{collapsed ? '▸' : '▾'}</span>
-                      <h2>{formatDateLong(matches[0].ko, tz)}</h2>
+                      {/* The heading names the day this section groups, so it
+                          formats the day KEY. Formatting matches[0].ko instead
+                          read null on the qualification-round and semi-final
+                          days (FIBA has not set those tip-offs yet) and printed
+                          the Unix epoch: "Wednesday, December 31, 1969". */}
+                      <h2>{formatDayKeyLong(key)}</h2>
                       <span className="day-count">
                         {matches.length} game{matches.length === 1 ? '' : 's'}
                       </span>

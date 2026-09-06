@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { FLAG_BY_TEAM } from '../data/teams.js'
 import { STAGE_LABELS } from '../data/games.js'
 import { colorForGame } from '../data/groupColors.js'
-import { formatTime, tzAbbrev, liveState, statusFlag } from '../utils/time.js'
+import { formatTime, tzAbbrev, liveState, statusFlag, formatDayKeyLong } from '../utils/time.js'
 import { feederTeams } from '../utils/bracket.js'
 import { sideNames } from '../utils/slots.js'
 import { useModalA11y } from '../hooks/useModalA11y.js'
@@ -10,16 +10,6 @@ import { useDetail } from '../context/detail.js'
 import LiveBadge from './LiveBadge.jsx'
 import FeederPair from './FeederPair.jsx'
 import { venueFor } from '../utils/venue.js'
-
-// Full weekday + date for the popup title, e.g. "Saturday, June 27".
-function longDate(iso, tz) {
-  return new Date(iso).toLocaleDateString('en-US', {
-    timeZone: tz,
-    weekday: 'long',
-    month: 'long',
-    day: 'numeric',
-  })
-}
 
 // One compact row per match — kickoff, teams, score/status, stage, venue. Clicking
 // opens the existing full match-detail modal.
@@ -39,7 +29,15 @@ function DayRow({ match, tz, scoreHidden, onOpen, byNum }) {
     <li>
       <button type="button" className="dm-row" onClick={() => onOpen(match)} title="Open game details">
         <span className="dm-time">
-          {formatTime(match.ko, tz)} <span className="dm-tz">{tzAbbrev(match.ko, tz)}</span>
+          {/* A game whose tip-off FIBA has not announced has no instant to
+              format; showing "TBC" beats the epoch time a null `ko` renders. */}
+          {match.ko ? (
+            <>
+              {formatTime(match.ko, tz)} <span className="dm-tz">{tzAbbrev(match.ko, tz)}</span>
+            </>
+          ) : (
+            <span className="kickoff-tbd" title="FIBA announces this tip-off time at the end of the previous round">TBC</span>
+          )}
         </span>
         <span className="dm-matchup">
           <span className="dm-team">
@@ -103,7 +101,7 @@ function DayRow({ match, tz, scoreHidden, onOpen, byNum }) {
 
 // Pop-up listing every match scheduled on one day, opened from the Week-view date
 // header. Each row drills into the full match-detail modal.
-export default function DayMatchesModal({ matches, tz, hideScores, byNum, onClose }) {
+export default function DayMatchesModal({ matches, dayKey, tz, hideScores, byNum, onClose }) {
   const cardRef = useModalA11y(onClose)
   const openDetail = useDetail()
   const [revealed, setRevealed] = useState(false)
@@ -121,7 +119,10 @@ export default function DayMatchesModal({ matches, tz, hideScores, byNum, onClos
         <button className="md-close" onClick={onClose} aria-label="Close">✕</button>
 
         <div className="md-head">
-          <span className="md-stage">{fixtures.length ? longDate(fixtures[0].ko, tz) : 'Schedule'}</span>
+          {/* Titled from the day KEY the pop-up was opened for, not from the
+              first game's kickoff: on a day whose games are all awaiting a
+              tip-off time that kickoff is null and formats as the epoch. */}
+          <span className="md-stage">{formatDayKeyLong(dayKey, { year: false }) || 'Schedule'}</span>
           <span className="gg-head-team">
             {fixtures.length} game{fixtures.length === 1 ? '' : 's'}
           </span>

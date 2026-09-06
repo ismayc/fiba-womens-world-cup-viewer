@@ -6,8 +6,37 @@
 import { STAGE_LABELS } from '../data/games.js'
 import { US_BROADCAST } from '../data/broadcast.js'
 import { venueFor } from './venue.js'
+import { sideNames } from './slots.js'
 
 const MATCH_MINUTES = 135
+
+// A game FIBA has not given a tip-off time yet has `ko: null` but a known Berlin
+// calendar date. `new Date(null)` is the Unix epoch, so writing it out as an
+// instant files the game on January 1, 1970. It goes into the calendar as an
+// ALL-DAY event on its real date instead, which is exactly what is known about
+// it, and it gains a time the moment ESPN publishes the fixture.
+function toICSDay(dateKey) {
+  return dateKey.replace(/-/g, '')
+}
+
+function nextDay(dateKey) {
+  const d = new Date(`${dateKey}T12:00:00Z`)
+  d.setUTCDate(d.getUTCDate() + 1)
+  return toICSDate(d).slice(0, 8)
+}
+
+// The DTSTART/DTEND pair for a game: timed when the tip-off is known, all-day
+// when it is not. Every game carries one or the other - a TBC game ships with
+// the Berlin date it is played on, which test/data.test.js holds as an
+// invariant - so there is no third case to handle here.
+function timing(match) {
+  if (match.ko) {
+    const start = new Date(match.ko)
+    const end = new Date(start.getTime() + MATCH_MINUTES * 60 * 1000)
+    return [`DTSTART:${toICSDate(start)}`, `DTEND:${toICSDate(end)}`]
+  }
+  return [`DTSTART;VALUE=DATE:${toICSDay(match.date)}`, `DTEND;VALUE=DATE:${nextDay(match.date)}`]
+}
 
 function toICSDate(date) {
   const p = (n) => String(n).padStart(2, '0')
@@ -34,11 +63,13 @@ function esc(text) {
 
 export function buildICS(match) {
   const venue = venueFor(match)
-  const start = new Date(match.ko)
-  const end = new Date(start.getTime() + MATCH_MINUTES * 60 * 1000)
+  const when = timing(match)
   const stageLabel = match.stage === 'Group' ? `Group ${match.group}` : STAGE_LABELS[match.stage]
 
-  const summary = `FIBA WWC: ${match.t1} vs ${match.t2}`
+  // A final-phase game names its slots ("2nd Group A") until the draw resolves
+  // them; `match.t1` alone exported "FIBA WWC: null vs null".
+  const [side1, side2] = sideNames(match)
+  const summary = `FIBA WWC: ${side1} vs ${side2}`
   const location = `${venue.name}, ${venue.city}, ${venue.country}`
   const description = [
     `${stageLabel} · Game ${match.num}`,
@@ -56,8 +87,7 @@ export function buildICS(match) {
     'BEGIN:VEVENT',
     `UID:fibawwc2026-game-${match.num}@fibawomensworldcupviewer`,
     `DTSTAMP:${toICSDate(new Date())}`,
-    `DTSTART:${toICSDate(start)}`,
-    `DTEND:${toICSDate(end)}`,
+    ...when,
     `SUMMARY:${esc(summary)}`,
     `LOCATION:${esc(location)}`,
     `DESCRIPTION:${description}`,
@@ -70,11 +100,11 @@ export function buildICS(match) {
 // One VEVENT block (without the calendar wrapper) for a match.
 function buildVEvent(match) {
   const venue = venueFor(match)
-  const start = new Date(match.ko)
-  const end = new Date(start.getTime() + MATCH_MINUTES * 60 * 1000)
+  const when = timing(match)
   const stageLabel = match.stage === 'Group' ? `Group ${match.group}` : STAGE_LABELS[match.stage]
   const score = Array.isArray(match.score) ? ` (${match.score[0]}–${match.score[1]})` : ''
-  const summary = `FIBA WWC: ${match.t1} vs ${match.t2}${score}`
+  const [side1, side2] = sideNames(match)
+  const summary = `FIBA WWC: ${side1} vs ${side2}${score}`
   const location = `${venue.name}, ${venue.city}, ${venue.country}`
   const description = [
     `${stageLabel} · Game ${match.num}`,
@@ -86,8 +116,7 @@ function buildVEvent(match) {
     'BEGIN:VEVENT',
     `UID:fibawwc2026-game-${match.num}@fibawomensworldcupviewer`,
     `DTSTAMP:${toICSDate(new Date())}`,
-    `DTSTART:${toICSDate(start)}`,
-    `DTEND:${toICSDate(end)}`,
+    ...when,
     `SUMMARY:${esc(summary)}`,
     `LOCATION:${esc(location)}`,
     `DESCRIPTION:${description}`,

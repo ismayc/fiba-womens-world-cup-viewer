@@ -179,6 +179,18 @@ describe('MatchCard', () => {
     expect(screen.getByText('Time TBC')).toBeInTheDocument()
   })
 
+  // The "· 1:15 PM CEST local" line is the SAME instant on the Berlin clock. A
+  // TBC game has no instant, so rendering it anyway printed the epoch in Berlin
+  // ("1:00 AM GMT+1 local") beside a card that had just said "Time TBC".
+  it('omits the Berlin-local clock on a game with no tip-off', () => {
+    wrap(<MatchCard match={num(GAMES, 25)} tz="America/Los_Angeles" byNum={byNum} slotMap={slotMap} />)
+    expect(document.querySelector('.venue-local')).toBeNull()
+    expect(document.body.textContent).not.toMatch(/local/)
+    // A timed game in a different zone still gets it.
+    wrap(<MatchCard match={num(GAMES, 1)} tz="America/Los_Angeles" byNum={byNum} slotMap={slotMap} />)
+    expect(document.querySelector('.venue-local').textContent).toMatch(/local$/)
+  })
+
   it('falls back to a Berlin arena placeholder when none is assigned', () => {
     wrap(<MatchCard match={num(GAMES, 25)} tz={TZ} byNum={byNum} slotMap={slotMap} />)
     expect(screen.getByText('Arena TBC')).toBeInTheDocument()
@@ -228,6 +240,29 @@ describe('MatchDetail', () => {
     const g = { ...num(GAMES, 1), score: [95, 92], ot: 1 }
     wrap(<MatchDetail match={g} tz={TZ} allMatches={GAMES} onClose={() => {}} />)
     expect(screen.getByText('after overtime')).toBeInTheDocument()
+  })
+
+  // A qualification-round game has no tip-off time until FIBA sets one, so there
+  // is no instant to format. Formatting the missing `ko` anyway read
+  // "Wednesday, December 31, 1969 · 4:00 PM" on the When row.
+  it('gives a TBC game its date and no invented tip-off time', () => {
+    const g = num(GAMES, 25)
+    expect(g.ko).toBeNull()
+    wrap(<MatchDetail match={g} tz={TZ} allMatches={GAMES} onClose={() => {}} />)
+    expect(screen.getByText(/Tuesday, September 8, 2026/)).toBeInTheDocument()
+    expect(screen.getByText('Time TBC')).toBeInTheDocument()
+    expect(document.body.textContent).not.toMatch(/1969|1970/)
+    // The Berlin-local row is a second clock on the same instant: with no
+    // instant there is nothing for it to say.
+    expect(screen.queryByText('Berlin local')).not.toBeInTheDocument()
+  })
+
+  // The draw fills these slots at the end of the group phase; until then the
+  // game IS its labels. Reading match.t1/t2 left the modal headed "• vs •".
+  it('names an unresolved game by its slot labels', () => {
+    wrap(<MatchDetail match={num(GAMES, 25)} tz={TZ} allMatches={GAMES} onClose={() => {}} />)
+    expect(screen.getByText('2nd Group A')).toBeInTheDocument()
+    expect(screen.getByText('3rd Group B')).toBeInTheDocument()
   })
 })
 

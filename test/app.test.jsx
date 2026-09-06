@@ -94,6 +94,28 @@ describe('the shell', () => {
     mount()
     expect(await screen.findAllByText('Qualification to Quarter-Finals')).not.toHaveLength(0)
   })
+
+  // Each day section is headed by the day it groups. Heading it with the first
+  // game's kickoff broke on the three days whose games are ALL awaiting a
+  // tip-off (the two qualification-round days and the semi-final day), where
+  // that kickoff is null and formatted as the Unix epoch.
+  it('heads every day of the schedule with its own date', async () => {
+    mount()
+    await screen.findByText(/No results yet/)
+    const headings = [...document.querySelectorAll('.day h2')].map((h) => h.textContent)
+    expect(headings).toEqual([
+      'Friday, September 4, 2026',
+      'Saturday, September 5, 2026',
+      'Sunday, September 6, 2026',
+      'Monday, September 7, 2026',
+      'Tuesday, September 8, 2026',
+      'Wednesday, September 9, 2026',
+      'Thursday, September 10, 2026',
+      'Saturday, September 12, 2026',
+      'Sunday, September 13, 2026',
+    ])
+    expect(document.body.textContent).not.toMatch(/1969|1970/)
+  })
 })
 
 describe('the results feed', () => {

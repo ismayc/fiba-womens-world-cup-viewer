@@ -7,6 +7,7 @@ import {
   dayKey,
   detectTimezone,
   formatDateLong,
+  formatDayKeyLong,
   formatTime,
   gameDayKey,
   gameStatus,
@@ -64,6 +65,28 @@ describe('time', () => {
     expect(gameDayKey(qr, 'UTC')).toBe('2026-09-08')
     expect(gameDayKey(qr, 'UTC')).not.toBe('1970-01-01')
     expect(gameDayKey(G1, 'Europe/Berlin')).toBe('2026-09-04')
+  })
+
+  // A day heading names a DAY, so it formats the day key. Formatting the first
+  // game's kickoff instead put "Wednesday, December 31, 1969" at the head of the
+  // qualification-round and semi-final days, whose games are all awaiting a tip.
+  it('names a calendar day from its key, with or without the year', () => {
+    expect(formatDayKeyLong('2026-09-08')).toBe('Tuesday, September 8, 2026')
+    expect(formatDayKeyLong('2026-09-08', { year: false })).toBe('Tuesday, September 8')
+    expect(formatDayKeyLong(null)).toBe('')
+  })
+
+  // The epoch, not an Invalid Date: `new Date(null)` formats happily, which is
+  // why a missing tip-off printed a 1969 date instead of failing loudly. Every
+  // formatter refuses it, so a caller that forgets the TBC case shows nothing.
+  it('renders nothing at all for a missing tip-off', () => {
+    for (const tz of ['UTC', 'America/Los_Angeles']) {
+      expect(formatTime(null, tz)).toBe('')
+      expect(formatDateLong(null, tz)).toBe('')
+      expect(tzAbbrev(null, tz)).toBe('')
+      expect(formatDateLong(undefined, tz)).toBe('')
+      expect(formatTime('', tz)).toBe('')
+    }
   })
 
   it('reports status from the clock when there is no feed data', () => {
@@ -345,6 +368,31 @@ describe('URL state', () => {
 })
 
 describe('calendar files', () => {
+  // A TBC game has no instant to write. Exporting `new Date(null)` filed it on
+  // January 1, 1970; the date FIBA HAS fixed goes out as an all-day event.
+  it('exports a game with no confirmed tip as an all-day event on its date', () => {
+    const ics = buildICS(num(25))
+    expect(ics).toContain('DTSTART;VALUE=DATE:20260908')
+    expect(ics).toContain('DTEND;VALUE=DATE:20260909')
+    expect(ics).not.toMatch(/19700101|19691231/)
+    // And the slot labels stand in for the teams the draw has not named yet.
+    expect(ics).toContain('SUMMARY:FIBA WWC: 2nd Group A vs 3rd Group B')
+    expect(ics).not.toContain('null')
+  })
+
+  it('keeps a confirmed tip a timed event', () => {
+    const ics = buildICS(num(29))
+    expect(ics).toContain('DTSTART:20260910T093000Z')
+    expect(ics).not.toContain('VALUE=DATE')
+  })
+
+  it('exports every game of the tournament, TBC ones included', () => {
+    const ics = buildICSCollection(GAMES)
+    expect(ics.match(/BEGIN:VEVENT/g)).toHaveLength(GAMES.length)
+    expect(ics).not.toMatch(/19700101|19691231/)
+    expect(ics).not.toContain('null')
+  })
+
   it('builds a single-game .ics naming the tournament, not a sibling', () => {
     const ics = buildICS(G1)
     expect(ics).toContain('BEGIN:VCALENDAR')

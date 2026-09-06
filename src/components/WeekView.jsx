@@ -62,7 +62,10 @@ function WeekCell({ m, tz, hidden, byNum }) {
           </span>
         ) : (
           <>
-            {formatTime(m.ko, tz)}
+            {/* No tip-off time yet (FIBA confirms it at the end of the
+                previous round) -> "TBC", never the epoch time a null `ko`
+                would format to. */}
+            {m.ko ? formatTime(m.ko, tz) : <span className="kickoff-tbd" title="FIBA announces this tip-off time at the end of the previous round">TBC</span>}
             {m.live && <LiveBadge match={m} className="wc-live" />}
           </>
         )}
@@ -172,7 +175,7 @@ export default function WeekView({ allMatches, shown, tz, dayHidden }) {
                   <button
                     type="button"
                     className="week-day-btn"
-                    onClick={() => setDayModal({ matches, hidden })}
+                    onClick={() => setDayModal({ matches, hidden, dayKey: d })}
                     title={`Show all ${matches.length} game${matches.length === 1 ? '' : 's'} this day`}
                     aria-label={`Show all ${matches.length} game${matches.length === 1 ? '' : 's'} on ${hdr.wd} ${hdr.day}`}
                   >
@@ -193,6 +196,7 @@ export default function WeekView({ allMatches, shown, tz, dayHidden }) {
       {dayModal && (
         <DayMatchesModal
           matches={dayModal.matches}
+          dayKey={dayModal.dayKey}
           tz={tz}
           hideScores={dayModal.hidden}
           byNum={byNum}

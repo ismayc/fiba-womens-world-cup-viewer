@@ -96,21 +96,21 @@ async function main() {
         args.push(
           '(', join(work, `${slug}.png`), '-resize', `${FLAG}x${FLAG}`, ')',
           '-geometry', `+${cx - 120}+${ROW_Y[ri]}`, '-composite',
-          '-font', REG, '-pointsize', '19', '-fill', '#e6ebf3',
+          '-font', REG, '-pointsize', '19', '-fill', '#f0f1f3',
           '-annotate', `+${cx - 58}+${ROW_Y[ri] + 34}`, name,
         )
       })
       args.push(
-        '-font', BOLD, '-pointsize', '22', '-fill', '#7f8aa0',
+        '-font', BOLD, '-pointsize', '22', '-fill', '#a7adb8',
         '-annotate', `+${cx - 120}+238`, `GROUP ${letter}`,
       )
     })
     args.push(
       '-font', BOLD, '-pointsize', '50', '-fill', '#ffffff',
       '-annotate', '+200+118', 'FIBA Women’s World Cup 2026',
-      '-font', REG, '-pointsize', '27', '-fill', '#f28a3c',
+      '-font', REG, '-pointsize', '27', '-fill', '#e4571b',
       '-annotate', '+202+166', 'Schedule Viewer · Berlin, Germany · 4–13 September 2026',
-      '-font', REG, '-pointsize', '24', '-fill', '#aab4c5',
+      '-font', REG, '-pointsize', '24', '-fill', '#a7adb8',
       '-annotate', '+60+606',
       '36 games · group standings · the final-phase bracket · in your timezone',
       join(ROOT, 'public/og-image.png'),
@@ -126,8 +126,8 @@ async function main() {
     const [w, h, ground, sd] = out.split(' ')
     console.log(`og-image.png: ${w}x${h} ground=${ground} stddev=${sd}`)
     if (w !== '1200' || h !== '630') throw new Error(`wrong size ${w}x${h}`)
-    if (!ground.includes('18,35,61')) {
-      throw new Error(`ground is ${ground}, not #12233d — did a gradient rasterize to black?`)
+    if (!ground.includes('21,23,27')) {
+      throw new Error(`ground is ${ground}, not #15171b. Did a gradient rasterize to black?`)
     }
     if (Number(sd) < 0.02) throw new Error('image is nearly blank')
     console.log('OK')

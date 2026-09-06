@@ -51,7 +51,8 @@ describe('the shell', () => {
   it('names the tournament and counts its games', async () => {
     mount()
     expect(await screen.findByText(/FIBA Women’s World Cup 2026/)).toBeInTheDocument()
-    expect(screen.getByText(/All 36 games · Berlin/)).toBeInTheDocument()
+    expect(screen.getByText(/36 games, 4–13 September/)).toBeInTheDocument()
+    expect(screen.getByText('Berlin')).toBeInTheDocument()
   })
 
   it('offers exactly the views this edition has', async () => {

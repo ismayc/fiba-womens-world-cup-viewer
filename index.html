@@ -3,13 +3,25 @@
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="./favicon.svg" />
+
+    <!-- Archivo, variable on BOTH axes (width 62-125, weight 400-800). The whole
+         app is set in one family used at two extremes: expanded and heavy for
+         numerals and headings, normal for text. Loading both axes is what makes
+         that possible from a single file. Preconnect first: the font is on the
+         critical path for the scoreboard type. -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..800&display=swap"
+    />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>FIBA Women's World Cup 2026 — Schedule Viewer</title>
     <meta
       name="description"
       content="All 36 games of the FIBA Women's Basketball World Cup 2026 in Berlin, in your timezone — scores, group standings, the final-phase bracket, and which arena each game is in."
     />
-    <meta name="theme-color" content="#12233d" />
+    <meta name="theme-color" content="#15171b" />
     <!-- GitHub Pages, not Netlify: no Netlify site exists for this repo, so every
          netlify.app URL here 404s. A 404 og:image is why iMessage showed no card at
          all. Matches the wnba/nba siblings, which also point their cards at Pages. -->

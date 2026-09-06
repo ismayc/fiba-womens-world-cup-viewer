@@ -460,9 +460,15 @@ export default function App() {
           <h1>
             <span className="trophy">🏀</span> FIBA Women&rsquo;s World Cup 2026
           </h1>
+          {/* Three separate facts, set as three cells rather than joined into
+              one middle-dot string: what the app covers, where the tournament
+              is, and whose clock the times are in. */}
           <p className="subtitle">
-            All {GAMES.length} games · Berlin · shown in{' '}
-            <strong>{tz.replace(/_/g, ' ')}</strong>
+            <span>{GAMES.length} games, 4–13 September</span>
+            <span>Berlin</span>
+            <span>
+              Times in <strong>{tz.replace(/_/g, ' ')}</strong>
+            </span>
           </p>
         </div>
         <div className="view-bar">

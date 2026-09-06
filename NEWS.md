@@ -2,6 +2,46 @@
 
 Dated changelog, newest first.
 
+## September 5, 2026 (late) — the app is a results board now
+
+A visual identity pass. The old look was a set of defaults rather than decisions: navy
+rounded cards floating on a radial gradient, one bright blue spent equally on a filter
+chip and a live badge, and system-ui at a single width because the "Inter" in the
+stylesheet was never actually loaded.
+
+Two facts about this tournament drove the replacement. It is **basketball**, so the
+numbers (the tip-off time, the score, the points column) are the content and should
+read from across the room. And it is played in **Germany**, whose sports-design lineage
+runs through Otl Aicher's Munich 1972 system: a rigid grid, flat signal color, and no
+decoration that is not doing a job.
+
+* **Type.** One family, Archivo, loaded as a variable font on both axes and used at two
+  extremes: expanded and heavy for every numeral and heading, normal for text. One
+  typeface at that much contrast reads as two without the mismatch of an actual second
+  face. Every figure is tabular, so columns line up.
+* **Rows, not cards.** A day is a block: a band naming the day over a blue rule, then its
+  games as ruled rows sharing one left edge. Each row leads with a scoreboard rail:
+  tip-off in your own timezone, big and tabular, with the zone and status beneath, plus a
+  vertical rule that runs the full height. Thirty-six floating boxes with shadows became
+  one board.
+* **Color is information again.** The ball orange is the single accent and is spent only
+  on what is happening now: live, next up, the selected view. The structural blue carries
+  day bands, group plates and the next-game panel. Green and red mean a tournament
+  outcome and nothing else, so the "Through" tag no longer looks like a filter chip.
+* **Less chrome.** Three bordered pills under every row became quiet text. Six outlined
+  coverage pills became labels on a hairline. The view switch became tabs on the masthead
+  rule. Tracked-out capital eyebrows above ten different blocks became sentence-case
+  headings. Every corner radius went from a grab-bag of six values to one.
+* **Standings read as standings.** Four bordered widgets became four blocks on the same
+  grid as the schedule, and the points column is set in the display face at the size the
+  score line uses, so the column the eye needs is the column it lands on.
+* Every color in the stylesheet is now token-derived. A dozen literal values had been
+  carried over from a sibling's palette, including a teal that had not been this app's
+  accent for months. The share card and the PWA manifest follow the new ground.
+
+Both themes were rebuilt, not tinted: light is a printed results sheet, dark is the same
+board on graphite.
+
 ## September 5, 2026 (evening) — where every game actually is, on the record
 
 Hungary v France was listed on truTV. It was not on truTV. Warner Bros. Discovery

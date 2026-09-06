@@ -4,6 +4,11 @@ Dated changelog, newest first.
 
 ## 2026-09-06
 
+- **`index.html` claimed this repo has no Netlify site.** It does, and
+  `src/components/CalendarModal.jsx` has been subscribing to it all along, so the two files
+  contradicted each other. Checked September 6, 2026: the Netlify root, `/og-image.png` and
+  `/calendar.ics` all answer 200. The decision to point the canonical URL and the social
+  card at GitHub Pages is unchanged and correct; only the reason given for it was wrong.
 - **Added a stage-search coverage test.** It walks `STAGE_ORDER` and asserts every stage
   is findable by its own code and by its full label, and that a code resolves to exactly
   one stage. This viewer already passed; it now runs in all five tournament viewers, one

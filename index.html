@@ -22,9 +22,12 @@
       content="All 36 games of the FIBA Women's Basketball World Cup 2026 in Berlin, in your timezone — scores, group standings, the final-phase bracket, and which arena each game is in."
     />
     <meta name="theme-color" content="#15171b" />
-    <!-- GitHub Pages, not Netlify: no Netlify site exists for this repo, so every
-         netlify.app URL here 404s. A 404 og:image is why iMessage showed no card at
-         all. Matches the wnba/nba siblings, which also point their cards at Pages. -->
+    <!-- GitHub Pages, not Netlify. This used to claim no Netlify site exists for this
+         repo and that every netlify.app URL 404s; that is not true and contradicted
+         src/components/CalendarModal.jsx, which subscribes to the Netlify feed.
+         Checked September 6, 2026: the Netlify root, /og-image.png and /calendar.ics
+         all answer 200. The real reason the card points at Pages is that Pages is this
+         family's canonical public URL, matching the wnba/nba siblings. -->
     <link rel="canonical" href="https://ismayc.github.io/fiba-womens-world-cup-viewer/" />
 
     <!-- PWA: installable to home screen, standalone launch -->

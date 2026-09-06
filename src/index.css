@@ -2935,9 +2935,19 @@ td.pd-num { color: var(--text-dim); font-weight: 600; }
 .bs-line {
   margin-bottom: 12px;
 }
+/* minmax(0, 1fr) and min-width: 0, both load-bearing on a phone. A grid item's
+   min-width defaults to auto, its content's width, so the scroll box was sized to
+   the 587px table rather than the 328px modal and the whole modal overflowed
+   sideways instead of the table scrolling under the pinned names. Measured at a
+   simulated 390px phone on 2026-09-06: with these two lines the scroll box is the
+   modal's width, the table scrolls 224px inside it, and the name column stays put. */
 .bs-sides {
   display: grid;
+  grid-template-columns: minmax(0, 1fr);
   gap: 14px;
+}
+.bs-team {
+  min-width: 0;
 }
 .bs-head {
   display: flex;

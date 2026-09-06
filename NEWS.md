@@ -12,6 +12,12 @@ Dated changelog, newest first.
   September 14, the day after the final, with nothing committed. The per-push rehearsal
   flagged it at +8 days on this afternoon's push. The WeekView tests now pin the clock
   to September 8; verified at September 14 and a year out.
+- **Fixed: on a phone the box score overflowed the modal sideways instead of scrolling.**
+  The scroll box was a grid item, and a grid item's minimum width is its content, so
+  the box was sized to the 587px table rather than the 328px modal and the columns past
+  FT were simply off the edge. `minmax(0, 1fr)` and `min-width: 0` size it to the modal;
+  the table now scrolls inside it with the player names pinned at the left. Measured at
+  a simulated 390px phone.
 - **Box scores.** Opening a played or in-progress game now shows its quarter line score,
   a full player table for each side (MIN, PTS, FG, 3PT, FT, REB, AST, TO, STL, BLK, PF,
   +/-; starters above the bench, totals beneath) and a team-stat comparison with the

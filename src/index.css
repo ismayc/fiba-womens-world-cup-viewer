@@ -2884,6 +2884,28 @@ td.pd-num { color: var(--text-dim); font-weight: 600; }
    `bs-`, not `bx-`, which the Bracket already owns. */
 .bs-scroll {
   overflow-x: auto;
+  /* clip rather than the default: `overflow-x: auto` alone computes overflow-y to
+     auto, which would add a stray vertical scrollbar on a short box. */
+  overflow-y: clip;
+  /* Scroll cue, CSS only. The two `local` gradients ride the content and cover the
+     shadow beneath them at each end; the two `scroll` shadows are fixed to the box.
+     So a shadow shows exactly when there is more table that way, with nothing
+     measuring scrollLeft. Tinted from --text, so it reads in both themes. */
+  background:
+    linear-gradient(to right, var(--bg-soft), transparent) 0 0 / 16px 100% no-repeat local,
+    linear-gradient(to left, var(--bg-soft), transparent) 100% 0 / 16px 100% no-repeat local,
+    radial-gradient(
+        farthest-side at 0 50%,
+        color-mix(in srgb, var(--text) 22%, transparent),
+        transparent
+      )
+      0 0 / 7px 100% no-repeat scroll,
+    radial-gradient(
+        farthest-side at 100% 50%,
+        color-mix(in srgb, var(--text) 22%, transparent),
+        transparent
+      )
+      100% 0 / 7px 100% no-repeat scroll;
 }
 .bs-note {
   margin: 2px 0 0;
@@ -2922,8 +2944,50 @@ td.pd-num { color: var(--text-dim); font-weight: 600; }
   text-align: left;
   position: sticky;
   left: 0;
-  background: var(--card);
+  /* --bg-soft, the MODAL's background, not --card. The two are the same value in
+     dark and differ in light (#f4f5f6 vs #ffffff), so --card painted this column as
+     a white stripe down a light-theme modal. */
+  background: var(--bg-soft);
   min-width: 116px;
+  z-index: 1;
+}
+/* The column labels stay put while the rows scroll under them.
+   MEASURED, because it is not what it looks like: sticky resolves against the
+   nearest ancestor SCROLL CONTAINER, in either axis. `.bs-scroll` has
+   `overflow-x: auto`, so it is that container, and it never scrolls vertically,
+   which makes `top: 0` inert. Verified on 2026-09-06 at a simulated 390px phone:
+   with the wrapper scrolling, the header left the modal at -120px.
+   So the wrapper stops being a scroll container in exactly the state where it has
+   nothing to scroll: the compact phone table, whose five columns already fit. The
+   header then sticks to the modal, which is the real vertical scroller. Ask for
+   "More stats" and horizontal scrolling comes back and the header goes with it,
+   which is the deliberate trade of that mode. */
+.boxscore thead th {
+  position: sticky;
+  top: 0;
+  background: var(--bg-soft);
+  z-index: 2;
+}
+/* The modal pads 22px, and a sticky top:0 pins to the CONTENT box, so rows kept
+   scrolling through the padding strip ABOVE the pinned labels: a stray stat line
+   floating over its own header. This curtain paints that strip in the modal's own
+   background, and it lands above the rows because it sits inside the sticky cell's
+   stacking context and the row cells are not positioned at all.
+   NOT a box-shadow, which is the obvious way and does not work: the table is
+   `border-collapse: collapse`, and Chrome does not paint box-shadow on a cell in the
+   collapsed border model. Verified on 2026-09-06; the shadow computed correctly and
+   rendered nothing. */
+.boxscore thead th::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 100%;
+  height: 26px;
+  background: var(--bg-soft);
+}
+.boxscore thead th.bs-name {
+  z-index: 3;
 }
 .boxscore tbody .bs-name {
   font-weight: 500;
@@ -2931,6 +2995,33 @@ td.pd-num { color: var(--text-dim); font-weight: 600; }
 .bs-total {
   font-stretch: 118%;
   font-weight: 800;
+}
+/* Heading and the stat toggle on one line. */
+.bs-section-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+}
+.bs-section-head h4 {
+  margin-bottom: 0;
+}
+/* Shown only on a phone: above the breakpoint every column already fits. */
+.bs-more {
+  display: none;
+  background: var(--card);
+  border: 1px solid var(--border);
+  color: var(--text-dim);
+  border-radius: 2px;
+  padding: 4px 9px;
+  font: inherit;
+  font-size: 0.72rem;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.bs-more:hover {
+  color: var(--text);
+  border-color: var(--accent);
 }
 .bs-line {
   margin-bottom: 12px;
@@ -2953,6 +3044,11 @@ td.pd-num { color: var(--text-dim); font-weight: 600; }
   display: flex;
   align-items: center;
   gap: 6px;
+  /* Opaque and above the header's curtain: unscrolled, the curtain reaches up into
+     this band, and without its own background the team name was painted over. */
+  position: relative;
+  z-index: 5;
+  background: var(--bg-soft);
   font-size: 0.8rem;
   font-weight: 700;
   padding-bottom: 5px;
@@ -3025,4 +3121,22 @@ td.pd-num { color: var(--text-dim); font-weight: 600; }
    fits on a laptop without the columns scrolling under the names. */
 .md-card:has(.bs-section) {
   width: min(840px, 96vw);
+}
+
+/* ---------- Box score on a phone ----------
+   Thirteen columns across twelve rows is a lot of thumb. The four that answer
+   "who played well" are shown by default, which fits with no sideways scroll at
+   all, and "More stats" brings the rest back for anyone who wants the splits. */
+@media (max-width: 560px) {
+  .bs-more {
+    display: inline-block;
+  }
+  .boxscore:not(.bs-all) .bs-extra {
+    display: none;
+  }
+  /* Nothing to scroll in compact mode, so the wrapper stops being a scroll
+     container and the sticky header can resolve against the modal instead. */
+  .bs-scroll:has(.boxscore:not(.bs-all)) {
+    overflow: visible;
+  }
 }

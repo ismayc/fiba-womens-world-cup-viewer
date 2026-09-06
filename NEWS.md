@@ -12,6 +12,16 @@ Dated changelog, newest first.
   September 14, the day after the final, with nothing committed. The per-push rehearsal
   flagged it at +8 days on this afternoon's push. The WeekView tests now pin the clock
   to September 8; verified at September 14 and a year out.
+- **Box scores are built for a phone now.** Three changes, all below 560px and none of
+  them touching the desktop table. The four columns that answer "who played well"
+  (MIN, PTS, REB, AST) show by default, which fits with no sideways scroll at all, and
+  **More stats** brings the other nine back for anyone who wants the splits. The column
+  labels stay pinned while the rows scroll under them. And when the table does scroll
+  sideways, a soft shadow appears at whichever edge has more table beyond it, so it is
+  visible that there is more to see.
+- **Fixed: the player-name column was a white stripe in light mode.** It painted `--card`
+  (#ffffff) while the modal behind it is `--bg-soft` (#f4f5f6). The two are the same
+  value in dark, which is why it was not obvious.
 - **Fixed: on a phone the box score overflowed the modal sideways instead of scrolling.**
   The scroll box was a grid item, and a grid item's minimum width is its content, so
   the box was sized to the 587px table rather than the 328px modal and the columns past

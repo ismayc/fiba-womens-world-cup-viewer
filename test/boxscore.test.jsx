@@ -175,6 +175,40 @@ describe('MatchDetail box score', () => {
     expect(screen.getByText('Not available for this game.')).toBeInTheDocument()
   })
 
+  // The phone view shows MIN/PTS/REB/AST and hides the rest behind this toggle. Which
+  // columns are actually hidden is a media query, so jsdom cannot see it; what is
+  // asserted here is the part that lives in the markup: every non-core column carries
+  // bs-extra, and the toggle flips the table into bs-all, which is what the media
+  // query keys on.
+  it('flips every stat column on with More stats, and back off', async () => {
+    global.fetch = ok(SUMMARY_401907390)
+    wrap(<MatchDetail match={JAPAN_MALI} tz={TZ} allMatches={GAMES} onClose={() => {}} />)
+    await act(async () => {})
+    const toggle = screen.getByRole('button', { name: 'More stats' })
+    expect(toggle).toHaveAttribute('aria-expanded', 'false')
+
+    const tables = () => [...document.querySelectorAll('.boxscore')]
+    expect(tables()).toHaveLength(2)
+    expect(tables().every((t) => !t.classList.contains('bs-all'))).toBe(true)
+    // The four core columns are never marked extra; everything else always is.
+    const head = tables()[0].querySelectorAll('thead th')
+    const core = [...head].filter((th) => !th.classList.contains('bs-extra'))
+    expect(core.map((th) => th.textContent)).toEqual(['Player', 'MIN', 'PTS', 'REB', 'AST'])
+    expect([...head].some((th) => th.classList.contains('bs-extra'))).toBe(true)
+    // A body cell and a totals cell carry the same marking as their column.
+    expect(tables()[0].querySelector('tbody td').classList.contains('bs-extra')).toBe(false)
+    expect(tables()[0].querySelector('tfoot td').classList.contains('bs-extra')).toBe(false)
+
+    fireEvent.click(toggle)
+    expect(tables().every((t) => t.classList.contains('bs-all'))).toBe(true)
+    expect(screen.getByRole('button', { name: 'Fewer stats' })).toHaveAttribute(
+      'aria-expanded',
+      'true',
+    )
+    fireEvent.click(screen.getByRole('button', { name: 'Fewer stats' }))
+    expect(tables().every((t) => !t.classList.contains('bs-all'))).toBe(true)
+  })
+
   it('keeps the box score behind a reveal in spoiler-free mode', async () => {
     global.fetch = ok(SUMMARY_401907390)
     wrap(<MatchDetail match={JAPAN_MALI} tz={TZ} hideScores allMatches={GAMES} onClose={() => {}} />)

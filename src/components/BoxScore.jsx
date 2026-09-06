@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { FLAG_BY_TEAM } from '../data/teams.js'
 import { normEspn } from '../services/espn.js'
 import { orderSides } from '../services/summary.js'
@@ -51,7 +52,14 @@ function Linescore({ rows }) {
   )
 }
 
-function BoxTable({ side }) {
+// The four that answer "who played well". On a phone these fit with no sideways
+// scroll at all; everything else is one tap away behind "More stats". Marked in the
+// markup rather than filtered here, so the desktop table is unchanged and the
+// narrow-screen rule is a media query rather than a viewport measurement in JS.
+const CORE_COLS = new Set(['minutes', 'points', 'rebounds', 'assists'])
+const extra = (key) => (CORE_COLS.has(key) ? undefined : 'bs-extra')
+
+function BoxTable({ side, showAll }) {
   const rows = [...side.starters, ...side.bench]
   const benchStart = side.starters.length
 
@@ -68,14 +76,14 @@ function BoxTable({ side }) {
         <strong>{side.name}</strong>
       </header>
       <div className="bs-scroll">
-        <table className="boxscore">
+        <table className={showAll ? 'boxscore bs-all' : 'boxscore'}>
           <thead>
             <tr>
               <th className="bs-name" scope="col">
                 Player
               </th>
               {side.columns.map((c) => (
-                <th key={c.key} scope="col">
+                <th key={c.key} scope="col" className={extra(c.key)}>
                   {c.label}
                 </th>
               ))}
@@ -89,7 +97,9 @@ function BoxTable({ side }) {
                   {p.pos && <span className="bs-pos">{p.pos}</span>}
                 </th>
                 {side.columns.map((c) => (
-                  <td key={c.key}>{cell(p, c.key)}</td>
+                  <td key={c.key} className={extra(c.key)}>
+                    {cell(p, c.key)}
+                  </td>
                 ))}
               </tr>
             ))}
@@ -101,7 +111,9 @@ function BoxTable({ side }) {
                   Totals
                 </th>
                 {side.columns.map((c) => (
-                  <td key={c.key}>{side.totals[c.key] || ''}</td>
+                  <td key={c.key} className={extra(c.key)}>
+                    {side.totals[c.key] || ''}
+                  </td>
                 ))}
               </tr>
             </tfoot>
@@ -138,6 +150,9 @@ function TeamStats({ stats }) {
 }
 
 export default function BoxScoreSection({ summary, match, hidden, onReveal }) {
+  // Declared before the early returns below: a hook cannot be called conditionally.
+  const [showAll, setShowAll] = useState(false)
+
   if (hidden) {
     return (
       <div className="md-section">
@@ -168,12 +183,26 @@ export default function BoxScoreSection({ summary, match, hidden, onReveal }) {
   const box = data.box ? orderSides(data.box.sides, match) : null
   return (
     <div className="md-section bs-section">
-      <h4>Box score</h4>
+      <div className="bs-section-head">
+        <h4>Box score</h4>
+        {/* Both tables answer to one control: two toggles for the same decision is
+            twice the tapping for no extra choice. Hidden above the phone
+            breakpoint, where every column already fits. */}
+        {box && (
+          <button
+            className="bs-more"
+            onClick={() => setShowAll((s) => !s)}
+            aria-expanded={showAll}
+          >
+            {showAll ? 'Fewer stats' : 'More stats'}
+          </button>
+        )}
+      </div>
       {data.linescore && <Linescore rows={orderSides(data.linescore, match)} />}
       {box && (
         <div className="bs-sides">
           {box.map((side) => (
-            <BoxTable key={side.name} side={side} />
+            <BoxTable key={side.name} side={side} showAll={showAll} />
           ))}
         </div>
       )}

@@ -37,6 +37,18 @@ function wrap(ui, { onDetail = () => {} } = {}) {
 beforeEach(() => localStorage.clear())
 
 describe('WeekView', () => {
+  // WeekView opens on the calendar week containing TODAY if that week has matches,
+  // else the first week. The TBC assertion below needs the week of September 6 to 12,
+  // which holds the six unscheduled games, so on the real clock it was true for
+  // exactly one week and then rotted: the per-push clock rehearsal caught it at
+  // September 14 on 2026-09-06. Pin the whole describe, not the one test, to a day
+  // inside that week; fake only Date so nothing that waits on timers changes.
+  beforeEach(() => {
+    vi.useFakeTimers({ toFake: ['Date'] })
+    vi.setSystemTime(new Date('2026-09-08T12:00:00Z'))
+  })
+  afterEach(() => vi.useRealTimers())
+
   it('lays the tournament out as a calendar of days', () => {
     wrap(<WeekView allMatches={GAMES} shown={GAMES} tz={TZ} dayHidden={() => false} />)
     // The group phase runs 4-7 September.

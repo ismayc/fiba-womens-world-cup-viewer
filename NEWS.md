@@ -4,6 +4,14 @@ Dated changelog, newest first.
 
 ## 2026-09-06
 
+- **The new clock rehearsal caught its first real exposure, an hour after landing.** The
+  WeekView test added on September 5 to prove a missing tip-off reads "TBC" (not the
+  epoch's wall clock) counted six such cells. WeekView opens on the calendar week
+  containing today if that week has matches, else the first week, so the count was true
+  only while today fell in the week of September 6 to 12 and would have gone red on
+  September 14, the day after the final, with nothing committed. The per-push rehearsal
+  flagged it at +8 days on this afternoon's push. The WeekView tests now pin the clock
+  to September 8; verified at September 14 and a year out.
 - **Box scores.** Opening a played or in-progress game now shows its quarter line score,
   a full player table for each side (MIN, PTS, FG, 3PT, FT, REB, AST, TO, STL, BLK, PF,
   +/-; starters above the bench, totals beneath) and a team-stat comparison with the

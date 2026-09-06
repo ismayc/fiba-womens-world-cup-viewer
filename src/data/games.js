@@ -62,7 +62,7 @@ export const GAMES = [
   { num: 11, stage: 'Group', group: 'A', t1: 'Germany', t2: 'Japan', venue: 'maxschmeling', ko: '2026-09-05T18:00:00+02:00', espnId: '401907440', tv: ['DAZN', 'HBO Max'], score: [74, 58] },
   { num: 12, stage: 'Group', group: 'B', t1: 'France', t2: 'South Korea', venue: 'maxschmeling', ko: '2026-09-05T20:45:00+02:00', espnId: '401907441', tv: ['DAZN', 'HBO Max'], score: [95, 69] },
   { num: 13, stage: 'Group', group: 'C', t1: 'Türkiye', t2: 'Australia', venue: 'berlinarena', ko: '2026-09-06T11:30:00+02:00', espnId: '401907442', tv: ['DAZN', 'HBO Max'], score: [71, 87] },
-  { num: 14, stage: 'Group', group: 'D', t1: 'China', t2: 'Czechia', venue: 'berlinarena', ko: '2026-09-06T14:30:00+02:00', espnId: '401907443', tv: ['DAZN', 'HBO Max'] },
+  { num: 14, stage: 'Group', group: 'D', t1: 'China', t2: 'Czechia', venue: 'berlinarena', ko: '2026-09-06T14:30:00+02:00', espnId: '401907443', tv: ['DAZN', 'HBO Max'], score: [74, 70], ot: 1 },
   { num: 15, stage: 'Group', group: 'C', t1: 'Puerto Rico', t2: 'Belgium', venue: 'berlinarena', ko: '2026-09-06T17:45:00+02:00', espnId: '401907444', tv: ['truTV', 'DAZN', 'HBO Max'] },
   { num: 16, stage: 'Group', group: 'D', t1: 'Italy', t2: 'United States', venue: 'berlinarena', ko: '2026-09-06T20:45:00+02:00', espnId: '401907445', tv: ['TNT', 'DAZN', 'HBO Max'] },
   { num: 17, stage: 'Group', group: 'C', t1: 'Belgium', t2: 'Australia', venue: 'berlinarena', ko: '2026-09-07T11:30:00+02:00', espnId: '401907446', tv: ['DAZN', 'HBO Max'] },

@@ -143,7 +143,7 @@ jobs:
         run: node sports-viewer-meta/scripts/rehearse-clock.mjs --repo fiba-womens-world-cup-viewer | tee rehearsal.txt
       - name: Keep the result
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: rehearsal-fiba-womens-world-cup-viewer
           path: rehearsal.txt

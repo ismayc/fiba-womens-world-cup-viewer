@@ -4,6 +4,15 @@ Dated changelog, newest first.
 
 ## 2026-09-06
 
+- **Deleted two modules the app never imported.** Candidate 3 from the architecture
+  review, in the repo that had two of them. `utils/standings.js` was a bare re-export, a
+  pure alias and a function with no caller. `utils/eliminationCheck.js` was 43 lines
+  answering a question `clinch.js` already answers, which is where `Standings` reads it
+  from; its own header said the football siblings need a separate pass only because their
+  scoreline walk can go silent, that "this edition has no such gap", and that duplicating
+  it "would only risk the two disagreeing". That reasoning moved to the top of
+  `clinch.js`, beside the code it describes. The elimination tests moved onto
+  `computeClinch`, the engine that actually ships. Coverage is still 100%.
 - **Every edition fact now lives in one file, `src/config/league.js`.** 14 files import
   it. This app is basketball on a chassis built for football, so its config is the least
   like any sibling's: period vocabulary from the basketball viewers, everything else from

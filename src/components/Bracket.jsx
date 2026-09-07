@@ -10,6 +10,7 @@ import LiveBadge from './LiveBadge.jsx'
 import PathPicker from './PathPicker.jsx'
 import { venueFor } from '../utils/venue.js'
 import { sideNames } from '../utils/slots.js'
+import { LEAGUE } from '../config/league.js'
 
 // One of the two candidate teams inside a potential-matchup slot.
 function FeederTeam({ name, pathTeam }) {
@@ -120,7 +121,12 @@ function BracketMatch({ num, byNum, tz, hideScores, pathTeam, path }) {
         <div className="bx-score">
           {voided && <span className="status-badge">{flag.label}</span>}
           {m.score[0]}–{m.score[1]}
-          {m.ot > 0 && <span className="bx-pens"> {m.ot > 1 ? `${m.ot}OT` : 'OT'}</span>}
+          {m.ot > 0 && (
+            <span className="bx-pens">
+              {' '}
+              {m.ot > 1 ? `${m.ot}${LEAGUE.overtimeLabel}` : LEAGUE.overtimeLabel}
+            </span>
+          )}
           {awarded && <span className="awarded-note">awarded</span>}
         </div>
       )}

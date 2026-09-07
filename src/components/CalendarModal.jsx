@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { downloadICSCollection, webcalUrl, googleCalendarUrl } from '../utils/ics.js'
 import { useFollow } from '../context/follow.jsx'
 import { useModalA11y } from '../hooks/useModalA11y.js'
+import { LEAGUE } from '../config/league.js'
 
 // Subscriptions must point at the deployed feed (a localhost URL can't be
 // subscribed to), so links always use the production origin.
@@ -9,7 +10,7 @@ import { useModalA11y } from '../hooks/useModalA11y.js'
 // domain, so Subscribe handed out a live 200 feed of the wrong tournament's games.
 // The feed is a Netlify function and cannot be served from GitHub Pages, so this stays
 // on Netlify even though Pages is the canonical public URL everywhere else.
-const PROD = 'https://fiba-womens-world-cup-viewer.netlify.app'
+const PROD = LEAGUE.feedHost
 const FEED = `${PROD}/calendar.ics`
 
 function SubRow({ label, httpsUrl }) {

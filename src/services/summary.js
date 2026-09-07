@@ -12,11 +12,12 @@
 // header line scores carry only `displayValue`.
 
 import { normEspn } from './espn.js'
+import { LEAGUE } from '../config/league.js'
 
 // site.web.api, not site.api: the two serve identical routes, but site.api 403s on a
 // browser User-Agent with no CORS headers. See espn.js.
 export const SUMMARY_URL =
-  'https://site.web.api.espn.com/apis/site/v2/sports/basketball/fiba/summary'
+  `https://site.web.api.espn.com/apis/site/v2/sports/${LEAGUE.espnPath}/summary`
 
 // ── Player box score ──────────────────────────────────────────────────
 // REB already sums OREB+DREB, so drop those two to keep the wide table narrower.

@@ -3,6 +3,7 @@
 // rendered into whatever timezone the viewer selects.
 
 import { TEAM_TIMEZONES } from '../data/teamTimezones.js'
+import { LEAGUE } from '../config/league.js'
 
 // The viewer's own IANA timezone, e.g. "America/Chicago" or "Europe/London".
 export function detectTimezone() {
@@ -183,7 +184,7 @@ export function teamKickoffTooltip(iso, teamName) {
 // clock; we treat a game as live for 2h15m after tip-off so a game that goes to
 // overtime is not prematurely called finished. This is only a fallback — a real
 // ESPN status always wins in liveState() below.
-const GAME_MINUTES = 135
+const GAME_MINUTES = LEAGUE.gameLengthMinutes
 export function gameStatus(iso, now = Date.now()) {
   if (!iso) return 'upcoming'
   const start = new Date(iso).getTime()

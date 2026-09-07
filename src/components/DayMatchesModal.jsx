@@ -10,6 +10,7 @@ import { useDetail } from '../context/detail.js'
 import LiveBadge from './LiveBadge.jsx'
 import FeederPair from './FeederPair.jsx'
 import { venueFor } from '../utils/venue.js'
+import { LEAGUE } from '../config/league.js'
 
 // One compact row per match — kickoff, teams, score/status, stage, venue. Clicking
 // opens the existing full match-detail modal.
@@ -57,7 +58,10 @@ function DayRow({ match, tz, scoreHidden, onOpen, byNum }) {
                 {/* Overtime, not a shootout: basketball has no penalties, so the
                     inherited `pens` render was dead in every arm. */}
                 {match.ot > 0 && (
-                  <span className="gg-pens"> {match.ot > 1 ? `${match.ot}OT` : 'OT'}</span>
+                  <span className="gg-pens">
+                    {' '}
+                    {match.ot > 1 ? `${match.ot}${LEAGUE.overtimeLabel}` : LEAGUE.overtimeLabel}
+                  </span>
                 )}
               </span>
             ) : hasScore ? (

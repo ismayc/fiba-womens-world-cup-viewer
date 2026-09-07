@@ -11,14 +11,15 @@
 // only field that says "to be confirmed".
 
 import { VENUES } from '../data/venues.js'
+import { LEAGUE } from '../config/league.js'
 
 export const TBC_VENUE = {
   name: 'Arena TBC',
   sponsorName: null,
-  city: 'Berlin',
-  country: 'Germany',
-  countryFlag: '🇩🇪',
-  tz: 'Europe/Berlin',
+  city: LEAGUE.host.city,
+  country: LEAGUE.host.country,
+  countryFlag: LEAGUE.host.countryFlag,
+  tz: LEAGUE.host.tz,
   capacity: null,
   tbc: true,
 }

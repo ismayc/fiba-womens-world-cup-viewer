@@ -7,8 +7,9 @@ import { STAGE_LABELS } from '../data/games.js'
 import { US_BROADCAST } from '../data/broadcast.js'
 import { venueFor } from './venue.js'
 import { sideNames } from './slots.js'
+import { LEAGUE } from '../config/league.js'
 
-const MATCH_MINUTES = 135
+const MATCH_MINUTES = LEAGUE.gameLengthMinutes
 
 // A game FIBA has not given a tip-off time yet has `ko: null` but a known Berlin
 // calendar date. `new Date(null)` is the Unix epoch, so writing it out as an
@@ -69,7 +70,7 @@ export function buildICS(match) {
   // A final-phase game names its slots ("2nd Group A") until the draw resolves
   // them; `match.t1` alone exported "FIBA WWC: null vs null".
   const [side1, side2] = sideNames(match)
-  const summary = `FIBA WWC: ${side1} vs ${side2}`
+  const summary = `${LEAGUE.icsSummaryPrefix}: ${side1} ${LEAGUE.homeAwaySep} ${side2}`
   const location = `${venue.name}, ${venue.city}, ${venue.country}`
   const description = [
     `${stageLabel} · Game ${match.num}`,
@@ -83,10 +84,10 @@ export function buildICS(match) {
   const lines = [
     'BEGIN:VCALENDAR',
     'VERSION:2.0',
-    "PRODID:-//FIBA Women's World Cup 2026 Viewer//EN",
+    `PRODID:${LEAGUE.ics.prodId}`,
     'CALSCALE:GREGORIAN',
     'BEGIN:VEVENT',
-    `UID:fibawwc2026-game-${match.num}@fibawomensworldcupviewer`,
+    `UID:${LEAGUE.ics.uidPrefix}${match.num}@${LEAGUE.ics.domain}`,
     `DTSTAMP:${toICSDate(new Date())}`,
     ...when,
     `SUMMARY:${esc(summary)}`,
@@ -105,7 +106,7 @@ function buildVEvent(match) {
   const stageLabel = match.stage === 'Group' ? `Group ${match.group}` : STAGE_LABELS[match.stage]
   const score = Array.isArray(match.score) ? ` (${match.score[0]}–${match.score[1]})` : ''
   const [side1, side2] = sideNames(match)
-  const summary = `FIBA WWC: ${side1} vs ${side2}${score}`
+  const summary = `${LEAGUE.icsSummaryPrefix}: ${side1} ${LEAGUE.homeAwaySep} ${side2}${score}`
   const location = `${venue.name}, ${venue.city}, ${venue.country}`
   const description = [
     `${stageLabel} · Game ${match.num}`,
@@ -116,7 +117,7 @@ function buildVEvent(match) {
     .join('\\n')
   return [
     'BEGIN:VEVENT',
-    `UID:fibawwc2026-game-${match.num}@fibawomensworldcupviewer`,
+    `UID:${LEAGUE.ics.uidPrefix}${match.num}@${LEAGUE.ics.domain}`,
     `DTSTAMP:${toICSDate(new Date())}`,
     ...when,
     `SUMMARY:${esc(summary)}`,
@@ -139,15 +140,15 @@ function downloadText(text, filename) {
 }
 
 export function downloadICS(match) {
-  downloadText(buildICS(match), `fiba-womens-world-cup-2026-game-${match.num}.ics`)
+  downloadText(buildICS(match), `${LEAGUE.ics.filenameBase}-game-${match.num}.ics`)
 }
 
 // A whole calendar of games (used by the "download all / my teams / filtered" buttons).
-export function buildICSCollection(matches, calName = "FIBA Women's World Cup 2026") {
+export function buildICSCollection(matches, calName = LEAGUE.edition) {
   return [
     'BEGIN:VCALENDAR',
     'VERSION:2.0',
-    "PRODID:-//FIBA Women's World Cup 2026 Viewer//EN",
+    `PRODID:${LEAGUE.ics.prodId}`,
     'CALSCALE:GREGORIAN',
     `X-WR-CALNAME:${esc(calName)}`,
     ...matches.map(buildVEvent),
@@ -155,7 +156,11 @@ export function buildICSCollection(matches, calName = "FIBA Women's World Cup 20
   ].join('\r\n')
 }
 
-export function downloadICSCollection(matches, filename = 'fiba-womens-world-cup-2026.ics', calName = "FIBA Women's World Cup 2026") {
+export function downloadICSCollection(
+  matches,
+  filename = `${LEAGUE.ics.filenameBase}.ics`,
+  calName = LEAGUE.edition,
+) {
   downloadText(buildICSCollection(matches, calName), filename)
 }
 

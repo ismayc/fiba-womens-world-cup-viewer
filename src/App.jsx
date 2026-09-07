@@ -26,6 +26,7 @@ import { BRACKET, groupSlotMap, gamesByNum } from './utils/bracket.js'
 import { detectFinals, finalNotification, mergeToasts } from './services/scoreNotify.js'
 import { useFollow } from './context/follow.jsx'
 import { DetailContext } from './context/detail.js'
+import { LEAGUE } from './config/league.js'
 
 const REFRESH_MS = 120000 // auto-refresh every 2 minutes when nothing is live
 const LIVE_REFRESH_MS = 30000 // poll every 30s while a game is in progress
@@ -68,7 +69,7 @@ const INITIAL_FILTERS = {
 // Result-alert preferences, persisted to localStorage. Alerts do not require
 // Notification permission to be "on": the on-page toasts always work, and the
 // browser-notification channel simply joins in when permission is granted.
-const SCORE_ALERTS_KEY = 'fwwc:scoreAlerts'
+const SCORE_ALERTS_KEY = `${LEAGUE.storageKey}:scoreAlerts`
 function readScoreAlerts() {
   try {
     const v = JSON.parse(localStorage.getItem(SCORE_ALERTS_KEY) || '{}')
@@ -105,7 +106,7 @@ export default function App() {
       const next = t === 'light' ? 'dark' : 'light'
       document.documentElement.dataset.theme = next
       try {
-        localStorage.setItem('fwwc:theme', next)
+        localStorage.setItem(`${LEAGUE.storageKey}:theme`, next)
       } catch {
         /* ignore */
       }

@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { FLAG_BY_TEAM } from '../data/teams.js'
 import { normEspn } from '../services/espn.js'
 import { orderSides } from '../services/summary.js'
+import { LEAGUE } from '../config/league.js'
 
 // The summary-derived section of the match detail: quarter line score, one box table
 // per side, then the team-stat comparison. Takes the shared summary state (one fetch,
@@ -16,7 +17,9 @@ const flagFor = (name) => FLAG_BY_TEAM[normEspn(name ?? '')] ?? ''
 
 function Linescore({ rows }) {
   const periods = Math.max(...rows.map((r) => r.periods.length))
-  const label = (i) => (i < 4 ? `Q${i + 1}` : i === 4 ? 'OT' : `${i - 3}OT`)
+  const { regulationPeriods: REG, overtimeLabel: OT, periodShort: Q } = LEAGUE
+  const label = (i) =>
+    i < REG ? `${Q}${i + 1}` : i === REG ? OT : `${i - REG + 1}${OT}`
   const total = (r) => r.periods.reduce((sum, v) => sum + (Number(v) || 0), 0)
   return (
     <div className="bs-scroll">

@@ -4,6 +4,22 @@ Dated changelog, newest first.
 
 ## 2026-09-06
 
+- **The scenarios view's CSS classes are named after the entry round now, not a round
+  number.** The family had three answers: `sc-r32-*` in world-cup (right, it has an R32),
+  `sc-r16-*` in euros (right), and `sc-r32-*` in three viewers with no R32 at all. They are
+  `sc-entry-*` now, matching what `utils/slots.js` already calls `ENTRY_ROUND`, so the name
+  stays true whatever the format.
+- **New `test/scenario-classnames.test.js` asserts both directions**: every class the view
+  renders has a CSS rule, every rule it styles is rendered, and none is named after a round
+  number. A class rename is silent when it goes wrong, and nothing in these suites noticed
+  either direction before. It found four pre-existing defects immediately:
+  `sc-entry-confirmed` was applied to a confirmed row in **all five viewers** and styled in
+  none of them, so the intended row treatment never landed (removed rather than invented;
+  the ✔️ beside it is styled and is what marks a locked matchup); `sc-third`,
+  `sc-entry-out` and `sc-entry-note` are styled in three viewers and rendered by none,
+  belonging to a best-thirds layer those editions do not have; fiba rendered
+  `sc-entry-round` with no rule at all; and fiba's two "confirmed" tests asserted on the
+  unstyled class rather than on the visible tick.
 - **Deleted two modules the app never imported.** Candidate 3 from the architecture
   review, in the repo that had two of them. `utils/standings.js` was a bare re-export, a
   pure alias and a function with no caller. `utils/eliminationCheck.js` was 43 lines

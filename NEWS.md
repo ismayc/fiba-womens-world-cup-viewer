@@ -4,6 +4,23 @@ Dated changelog, newest first.
 
 ## 2026-09-06
 
+- **Every edition fact now lives in one file, `src/config/league.js`.** 14 files import
+  it. This app is basketball on a chassis built for football, so its config is the least
+  like any sibling's: period vocabulary from the basketball viewers, everything else from
+  the tournament ones. Three things are specific to it: `LEAGUE.host` (both arenas are in
+  Berlin on `Europe/Berlin`, which is what makes the TBC-venue fallback safe, and those
+  four values were restated by hand in `utils/venue.js`), `-game-` rather than `-match-`
+  in the `.ics` filename, and a separate `icsSummaryPrefix` because the calendar summary
+  abbreviates to "FIBA WWC".
+- **Structure deliberately stayed out.** `ADVANCING_PER_GROUP`, `DIRECT_TO_QF`,
+  `ENTRY_ROUND`, `BYE_ROUND`, `GROUP_GAME_COUNT`, the 2/1 points model and the
+  restart-the-procedure tie-break all remain in `utils/`. The group phase feeding two
+  knockout rounds is a rule, not a fact.
+- **One card said "v" while nine other sites said "vs".** This is basketball; the football
+  separator had come along with the chassis. Nothing could have caught it, because each
+  site is a different component and no test compared them. `test/home-away-separator.test.js`
+  now walks every rendered separator and fails on any written by hand. Writing it
+  immediately found six more components still hardcoding one.
 - **`index.html` claimed this repo has no Netlify site.** It does, and
   `src/components/CalendarModal.jsx` has been subscribing to it all along, so the two files
   contradicted each other. Checked September 6, 2026: the Netlify root, `/og-image.png` and

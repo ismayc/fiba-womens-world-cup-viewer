@@ -13,7 +13,7 @@ describe('the home/away separator', () => {
     const found = new Map()
     for (const f of readdirSync(DIR).filter((n) => n.endsWith('.jsx'))) {
       const src = readFileSync(join(DIR, f), 'utf8')
-      for (const m of src.matchAll(/<span className="(?:vs|nm-v|sc-r32-vs|gg-vs)">([^<{]+)<\/span>/g)) {
+      for (const m of src.matchAll(/<span className="(?:vs|nm-v|sc-entry-vs|gg-vs)">([^<{]+)<\/span>/g)) {
         found.set(`${f}:${m[1]}`, m[1].trim())
       }
     }

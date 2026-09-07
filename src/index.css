@@ -2251,19 +2251,22 @@ select {
 .sc-tiebreak { margin-left: 5px; font-size: 0.78rem; cursor: help; vertical-align: middle; color: var(--gold); }
 .sc-tag { font-size: 0.6rem; font-weight: 700; padding: 1px 6px; border-radius: 2px; margin-left: 6px; text-transform: uppercase; }
 .sc-adv { background: color-mix(in srgb, var(--through) 18%, transparent); color: var(--accent); }
-.sc-third { background: color-mix(in srgb, var(--gold) 20%, transparent); color: var(--gold); }
-.sc-r32 { border-top: 1px solid var(--border); padding-top: 10px; }
-.sc-r32-title { font-size: 0.8rem; font-weight: 700; color: var(--accent); margin-bottom: 8px; }
-.sc-r32-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 5px; }
-.sc-r32-row { display: flex; align-items: center; gap: 6px; font-size: 0.8rem; flex-wrap: wrap; }
-.sc-r32-pos { font-size: 0.66rem; font-weight: 700; color: var(--text-faint); min-width: 24px; }
-.sc-r32-team { font-weight: 600; }
-.sc-r32-vs { font-size: 0.72rem; font-style: italic; color: var(--text-faint); }
-.sc-r32-opp { color: var(--text-dim); }
-.sc-r32-num { margin-left: auto; font-size: 0.62rem; font-weight: 700; color: var(--text-faint); background: var(--card); border: 1px solid var(--border); border-radius: 2px; padding: 1px 7px; }
-.sc-r32-out { opacity: 0.7; }
-.sc-r32-note { font-size: 0.72rem; color: var(--text-faint); font-style: italic; }
-.sc-r32-lock { margin-left: 2px; font-size: 0.8rem; line-height: 1; }
+.sc-entry { border-top: 1px solid var(--border); padding-top: 10px; }
+.sc-entry-title { font-size: 0.8rem; font-weight: 700; color: var(--accent); margin-bottom: 8px; }
+.sc-entry-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 5px; }
+.sc-entry-row { display: flex; align-items: center; gap: 6px; font-size: 0.8rem; flex-wrap: wrap; }
+.sc-entry-pos { font-size: 0.66rem; font-weight: 700; color: var(--text-faint); min-width: 24px; }
+.sc-entry-team { font-weight: 600; }
+.sc-entry-vs { font-size: 0.72rem; font-style: italic; color: var(--text-faint); }
+.sc-entry-opp { color: var(--text-dim); }
+/* The round a group place feeds into. This edition's groups feed TWO knockout
+   rounds, so the row says which; the football siblings have no equivalent and no
+   such class. It was rendered with no rule at all until the scenarios-classname
+   test found it, so it inherited the row's body text beside two tag-styled spans.
+   Matched to .sc-entry-num, the tag it sits next to, rather than given a new look. */
+.sc-entry-round { font-size: 0.62rem; font-weight: 700; color: var(--text-faint); background: var(--card); border: 1px solid var(--border); border-radius: 2px; padding: 1px 7px; }
+.sc-entry-num { margin-left: auto; font-size: 0.62rem; font-weight: 700; color: var(--text-faint); background: var(--card); border: 1px solid var(--border); border-radius: 2px; padding: 1px 7px; }
+.sc-entry-lock { margin-left: 2px; font-size: 0.8rem; line-height: 1; }
 .sc-foot { font-size: 0.74rem; color: var(--text-faint); margin: 16px 0 0; font-style: italic; }
 
 /* ---------- R16 Outlook (bracket odds) ---------- */

@@ -280,6 +280,10 @@ describe('ScenariosView', () => {
     expect(document.querySelector('.sc-score')).toBeNull()
   })
 
+  // These assert on `.sc-entry-lock`, the tick a confirmed row actually renders, rather
+  // than on a `.sc-entry-confirmed` class that was applied to the row and had no CSS rule
+  // in any viewer in the family. The world-cup sibling's equivalent tests already used
+  // the tick. Asserting on the visible marker is what these were reaching for.
   // A group with nothing left to play drops out of this view entirely, so a
   // confirmed matchup has to involve a group that is STILL IN PLAY but whose
   // placings are already pinned. Group A below has one game left, yet 3rd and
@@ -309,7 +313,7 @@ describe('ScenariosView', () => {
       board,
     )
     wrap(<ScenariosView matches={board} />)
-    expect(document.querySelectorAll('.sc-r32-confirmed').length).toBeGreaterThan(0)
+    expect(document.querySelectorAll('.sc-entry-lock').length).toBeGreaterThan(0)
   })
 
   it('marks every matchup confirmed once all four groups are done', () => {
@@ -426,7 +430,7 @@ describe('ScenariosView remaining arms', () => {
     const board = allGroupsPlayed().map((g) => (g.num === 24 ? { ...g, score: undefined } : g))
     wrap(<ScenariosView matches={board} />)
     fireEvent.click(within(document.querySelector('.sc-fixture')).getAllByRole('button')[0])
-    expect(document.querySelectorAll('.sc-r32-confirmed').length).toBeGreaterThan(0)
+    expect(document.querySelectorAll('.sc-entry-lock').length).toBeGreaterThan(0)
   })
 
   it('shows a bullet for a fixture side with no flag', () => {

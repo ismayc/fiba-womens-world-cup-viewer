@@ -14,6 +14,7 @@ import { feederTeams } from '../utils/bracket.js'
 import { broadcastNotBadged, hasKnownBroadcast, watchableServices } from '../utils/watch.js'
 import { useServices } from '../context/services.jsx'
 import { venueFor } from '../utils/venue.js'
+import { LEAGUE } from '../config/league.js'
 
 // Tooltip describing which final-phase slot this team feeds into, given its
 // group's slot map and any clinched status. Returns null when there is no slot
@@ -233,7 +234,7 @@ export default function MatchCard({ match, tz, hidden = false, clinch, slotMap, 
               </span>
             )
           ) : (
-            <span className="vs">v</span>
+            <span className="vs">{LEAGUE.homeAwaySep}</span>
           )}
           <Team name={side2} ko={match.ko} clinch={match.stage === 'Group' ? clinch?.[match.t2] : undefined} group={match.group} slot={slotMap?.[match.group]} feeder={feederTeams(side2, byNum)} />
         </div>

@@ -12,6 +12,7 @@ import { useModalA11y } from '../hooks/useModalA11y.js'
 import LiveBadge from './LiveBadge.jsx'
 import { venueFor } from '../utils/venue.js'
 import { sideNames } from '../utils/slots.js'
+import { LEAGUE } from '../config/league.js'
 
 // Minute label including stoppage time, e.g. "45+3'".
 
@@ -174,7 +175,7 @@ export default function MatchDetail({ match, tz, hideScores, allMatches, onClose
                 </>
               )
             ) : (
-              <span className="md-vs">vs</span>
+              <span className="md-vs">{LEAGUE.homeAwaySep}</span>
             )}
           </div>
           <div className="md-team" title={teamKickoffTooltip(match.ko, match.t2) || undefined}>

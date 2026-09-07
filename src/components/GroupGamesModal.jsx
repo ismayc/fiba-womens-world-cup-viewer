@@ -5,6 +5,7 @@ import { clinchBadge } from '../utils/clinch.js'
 import { useModalA11y } from '../hooks/useModalA11y.js'
 import { useDetail } from '../context/detail.js'
 import LiveBadge from './LiveBadge.jsx'
+import { LEAGUE } from '../config/league.js'
 
 // Compact date for the fixture list, e.g. "Thu, Jun 11".
 function shortDate(iso, tz) {
@@ -51,7 +52,7 @@ function FixtureRow({ match, tz, team, scoreHidden, onOpen }) {
             ) : hasScore ? (
               <span className="gg-score gg-score-hidden">•–•</span>
             ) : (
-              <span className="gg-vs">vs</span>
+              <span className="gg-vs">{LEAGUE.homeAwaySep}</span>
             )}
           </span>
           <TeamSide name={match.t2} highlight={match.t2 === team} />
@@ -111,7 +112,7 @@ function KnockoutSection({ team, knockout }) {
           <span className="gg-flag">{FLAG_BY_TEAM[team] || '•'}</span>
           <span className="gg-name">{team}</span>
         </span>
-        <span className="gg-ko-vs">vs</span>
+        <span className="gg-ko-vs">{LEAGUE.homeAwaySep}</span>
         <span className="gg-ko-side">
           {knockout.opponent ? (
             <>

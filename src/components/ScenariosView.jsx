@@ -14,6 +14,7 @@ import {
   pickOutcome,
   PICK_SCORES,
 } from '../utils/scenarios.js'
+import { LEAGUE } from '../config/league.js'
 
 function Stepper({ value, onChange, label }) {
   /* v8 ignore next -- unreachable: a stepper only renders for a pick that is already a [home, away] pair of numbers */
@@ -123,7 +124,7 @@ function EntryLine({ label, dest, confirmed }) {
       {/* The team name comes out of a group table, so it is a committed member
           of this edition and always has a flag. */}
       <span className="sc-r32-team">{FLAG_BY_TEAM[dest.team]} {dest.team}</span>
-      <span className="sc-r32-vs">vs</span>
+      <span className="sc-r32-vs">{LEAGUE.homeAwaySep}</span>
       <span className="sc-r32-opp">{oppText}</span>
       {dest.round && <span className="sc-r32-round">{dest.round}</span>}
       {dest.gameNum && <span className="sc-r32-num">G{dest.gameNum}</span>}

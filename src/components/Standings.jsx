@@ -66,7 +66,7 @@ function AsItStands({ proj, onGoToMatch }) {
         {/* The team name comes out of the group table, so it is a committed
             member of this edition and always has a flag. */}
         <span className="ais-team">{FLAG_BY_TEAM[team]} {team}</span>
-        <span className="ais-vs">vs</span>
+        <span className="ais-vs">{LEAGUE.homeAwaySep}</span>
         <span className="ais-opp">{oppText}</span>
         {d.round && (
           <span className="ais-round" title={roundTitle}>

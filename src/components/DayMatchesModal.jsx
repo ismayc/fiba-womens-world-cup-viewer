@@ -67,7 +67,7 @@ function DayRow({ match, tz, scoreHidden, onOpen, byNum }) {
             ) : hasScore ? (
               <span className="gg-score gg-score-hidden">•–•</span>
             ) : (
-              <span className="gg-vs">vs</span>
+              <span className="gg-vs">{LEAGUE.homeAwaySep}</span>
             )}
           </span>
           <span className="dm-team">

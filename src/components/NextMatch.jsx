@@ -7,6 +7,7 @@ import { sideNames } from '../utils/slots.js'
 import { useFollow } from '../context/follow.jsx'
 import LiveBadge from './LiveBadge.jsx'
 import { venueFor } from '../utils/venue.js'
+import { LEAGUE } from '../config/league.js'
 
 function parts(ms) {
   const s = Math.max(0, Math.floor(ms / 1000))
@@ -104,7 +105,7 @@ export default function NextMatch({ matches, tz }) {
             <button key={m.num} className="nm-live-row" onClick={() => jumpTo(m)}>
               <span className="nm-flag">{FLAG_BY_TEAM[sideNames(m)[0]] || '•'}</span>
               <span className="nm-row-name">{sideNames(m)[0]}</span>
-              <span className="nm-v">vs</span>
+              <span className="nm-v">{LEAGUE.homeAwaySep}</span>
               <span className="nm-row-name">{sideNames(m)[1]}</span>
               <span className="nm-flag">{FLAG_BY_TEAM[sideNames(m)[1]] || '•'}</span>
               <LiveBadge match={m} />
@@ -133,7 +134,7 @@ export default function NextMatch({ matches, tz }) {
             <button key={m.num} className="nm-live-row" onClick={() => jumpTo(m)}>
               <span className="nm-flag">{FLAG_BY_TEAM[sideNames(m)[0]] || '•'}</span>
               <span className="nm-row-name">{sideNames(m)[0]}</span>
-              <span className="nm-v">vs</span>
+              <span className="nm-v">{LEAGUE.homeAwaySep}</span>
               <span className="nm-row-name">{sideNames(m)[1]}</span>
               <span className="nm-flag">{FLAG_BY_TEAM[sideNames(m)[1]] || '•'}</span>
               <span className="nm-when">{st} · {v.city}</span>
@@ -173,7 +174,7 @@ export default function NextMatch({ matches, tz }) {
       <div className="nm-teams">
         <span className="nm-flag">{FLAG_BY_TEAM[side1] || '•'}</span>
         <span className="nm-name" title={teamKickoffTooltip(match.ko, side1) || undefined}>{side1}</span>
-        <span className="nm-v">vs</span>
+        <span className="nm-v">{LEAGUE.homeAwaySep}</span>
         <span className="nm-name nm-name-right" title={teamKickoffTooltip(match.ko, side2) || undefined}>{side2}</span>
         <span className="nm-flag">{FLAG_BY_TEAM[side2] || '•'}</span>
       </div>

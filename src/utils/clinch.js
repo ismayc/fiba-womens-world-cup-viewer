@@ -1,3 +1,10 @@
+// This file is also the ONLY elimination check. utils/eliminationCheck.js used to sit
+// beside it as a thin second layer, copied from the football siblings, and the app
+// never imported it. Those siblings need one because their scoreline walk can exceed
+// its budget and go silent, leaving elimination to a separate, more generous pass.
+// This edition has no such gap: a four-team group's win/loss space is at most 2^6 = 64
+// outcomes, so the enumeration below is ALWAYS exact and a fallback could only
+// disagree with it.
 // Clinch / elimination detection. For each group we enumerate every possible
 // outcome of its remaining games and ask what is already GUARANTEED for each
 // team, using the FIBA tie-breakers in qualification.js.

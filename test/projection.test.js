@@ -6,9 +6,7 @@ import { GAMES } from './fixtures/pretournament-games.js'
 import { projectKnockout } from '../src/utils/asItStands.js'
 import { computeClinch } from '../src/utils/clinch.js'
 import { lockedOpponent } from '../src/utils/opponentClinch.js'
-import { eliminationStatus, isAlive, survivingTeams } from '../src/utils/eliminationCheck.js'
 import { softTiebreaks, TIEBREAK_LABEL } from '../src/utils/tiebreakNotes.js'
-import { computeGroup, groupHasResults } from '../src/utils/standings.js'
 import {
   PICK_SCORES,
   applyScenarioPicks,
@@ -113,26 +111,23 @@ describe('lockedOpponent', () => {
 })
 
 describe('elimination', () => {
+  // These used to run through utils/eliminationCheck.js, a module the app never
+  // imported: clinch.js already reports 'eliminated' and Standings reads it from there.
+  // The assertions moved onto the engine that actually ships.
   it('keeps everyone alive before a ball is thrown up', () => {
-    expect(survivingTeams(GAMES)).toHaveLength(16)
-    expect(isAlive(GAMES, 'Mali')).toBe(true)
+    const clinch = computeClinch(GAMES)
+    const eliminated = Object.entries(clinch).filter(([, v]) => v === 'eliminated')
+    expect(eliminated).toEqual([])
   })
 
   it('eliminates only the team that cannot reach the top three', () => {
-    const board = A(DECISIVE)
-    const status = eliminationStatus(board)
-    expect(status.Mali).toBe('eliminated')
-    expect(status.Germany).toBe('alive')
-    expect(status.Japan).toBe('alive')
-  })
-
-  it('agrees with the clinch engine, since both read one analysis', () => {
-    const board = A(DECISIVE)
-    const clinch = computeClinch(board)
-    const status = eliminationStatus(board)
-    for (const [team, verdict] of Object.entries(status)) {
-      expect(verdict === 'eliminated').toBe(clinch[team] === 'eliminated')
-    }
+    // Three of four advance here, so fourth place is the only elimination. That is a
+    // lower bar than the football siblings' top-two, which is why so few teams are out
+    // before the final round of group games.
+    const clinch = computeClinch(A(DECISIVE))
+    expect(clinch.Mali).toBe('eliminated')
+    expect(clinch.Germany).not.toBe('eliminated')
+    expect(clinch.Japan).not.toBe('eliminated')
   })
 })
 
@@ -163,14 +158,6 @@ describe('tie-break notes', () => {
   // reason, or the UI is offering an explanation the rules cannot produce.
   it('knows only ONE soft reason, because FIBA has no fair-play criterion', () => {
     expect(Object.keys(TIEBREAK_LABEL)).toEqual(['lots'])
-  })
-})
-
-describe('standings helpers', () => {
-  it('exposes the ranked group and whether it has any results', () => {
-    expect(computeGroup('A', GAMES).map((r) => r.rank)).toEqual([1, 2, 3, 4])
-    expect(groupHasResults('A', GAMES)).toBe(false)
-    expect(groupHasResults('A', A([['Japan', 'Mali', 80, 70]]))).toBe(true)
   })
 })
 

@@ -2,6 +2,14 @@
 
 Dated changelog, newest first.
 
+## 2026-09-10
+
+- **Fixed: the match-detail popup could not be closed on mobile.** The card was sized and
+  centered with `vh` units, which on iOS Safari resolve to the large viewport (as if the
+  toolbars were hidden), so its top, and the close button with it, could sit behind the
+  address bar out of reach. The overlay and card now size with `dvh` (the visible viewport
+  height), falling back to `vh` on browsers without `dvh`.
+
 ## 2026-09-06
 
 - **The scenarios view's CSS classes are named after the entry round now, not a round

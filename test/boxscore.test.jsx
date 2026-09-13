@@ -263,6 +263,68 @@ describe('BoxScoreSection', () => {
     expect(screen.getByText('Not available for this game.')).toBeInTheDocument()
   })
 
+  // A stat-carrying side (points recorded) whose every played player still reads "0"
+  // minutes is missing data, not a game nobody played (the 2026 final finalized this
+  // way). Those minutes read as unknown; a side that has real minutes keeps them.
+  const boxCol = [{ key: 'minutes', label: 'MIN' }, { key: 'points', label: 'PTS' }]
+  const minCellOf = (name) => screen.getByText(name).closest('tr').querySelectorAll('td')[0].textContent
+
+  it('shows a dash for minutes when a whole side finished at zero, and keeps real minutes elsewhere', () => {
+    const zeroSide = {
+      name: 'United States',
+      columns: boxCol,
+      hasStats: true,
+      starters: [
+        { id: 'a', name: 'Breanna Stewart', dnp: false, pos: null, stats: { minutes: '0', points: '22' } },
+        { id: 'b', name: 'Jackie Young', dnp: false, pos: null, stats: { minutes: '0', points: '18' } },
+      ],
+      bench: [{ id: 'c', name: 'Bench Sat', dnp: true, pos: null, stats: {} }],
+      totals: null,
+    }
+    const realSide = {
+      name: 'France',
+      columns: boxCol,
+      hasStats: true,
+      starters: [{ id: 'd', name: 'Gabby Williams', dnp: false, pos: null, stats: { minutes: '30', points: '15' } }],
+      bench: [],
+      totals: null,
+    }
+    const data = { box: { sides: [zeroSide, realSide], hasStats: true }, linescore: null, teamStats: null }
+    render(<BoxScoreSection summary={{ status: 'ready', data }} match={{ t1: 'United States', t2: 'France' }} hidden={false} onReveal={() => {}} />)
+    // Zero-minutes side: minutes unknown, but the points are untouched.
+    expect(minCellOf('Breanna Stewart')).toBe('–')
+    expect(screen.getByText('Breanna Stewart').closest('tr').querySelectorAll('td')[1].textContent).toBe('22')
+    // A DNP still reads DNP, not a dash.
+    expect(minCellOf('Bench Sat')).toBe('DNP')
+    // The other side had real minutes, so nothing is masked there.
+    expect(minCellOf('Gabby Williams')).toBe('30')
+  })
+
+  it('leaves minutes alone for a side with no stat line yet, or a side that is all DNP', () => {
+    const noStats = {
+      name: 'United States',
+      columns: boxCol,
+      hasStats: false,
+      starters: [{ id: 'a', name: 'Early Bird', dnp: false, pos: null, stats: { minutes: '12', points: '' } }],
+      bench: [],
+      totals: null,
+    }
+    const allDnp = {
+      name: 'France',
+      columns: boxCol,
+      hasStats: true,
+      starters: [{ id: 'b', name: 'All Rested', dnp: true, pos: null, stats: {} }],
+      bench: [],
+      totals: null,
+    }
+    const data = { box: { sides: [noStats, allDnp], hasStats: true }, linescore: null, teamStats: null }
+    render(<BoxScoreSection summary={{ status: 'ready', data }} match={{ t1: 'United States', t2: 'France' }} hidden={false} onReveal={() => {}} />)
+    // hasStats false: the "0-across-the-board" rule does not fire, so the value is shown as given.
+    expect(minCellOf('Early Bird')).toBe('12')
+    // A side that is entirely DNP has no played players, so the rule does not fire either.
+    expect(minCellOf('All Rested')).toBe('DNP')
+  })
+
   it('renders team stats alone, with a dash where one side has no value', () => {
     const data = {
       box: null,

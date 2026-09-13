@@ -66,8 +66,17 @@ function BoxTable({ side, showAll }) {
   const rows = [...side.starters, ...side.bench]
   const benchStart = side.starters.length
 
+  // ESPN sometimes finalizes a game with every player's minutes still "0" while the rest
+  // of the line is real (seen on the 2026 final: 22 points in "0" minutes). A whole side
+  // reading zero is missing data, not a game nobody played, so the minutes read as unknown
+  // rather than a misleading 0. A genuine lone 0 (one bench player) is left as ESPN gives it.
+  const played = rows.filter((p) => !p.dnp)
+  const minutesMissing =
+    side.hasStats && played.length > 0 && played.every((p) => !Number(p.stats.minutes))
+
   const cell = (p, key) => {
     if (p.dnp) return key === 'minutes' ? 'DNP' : ''
+    if (key === 'minutes' && minutesMissing) return '–'
     const v = p.stats[key]
     return v == null || v === '' ? '–' : v
   }

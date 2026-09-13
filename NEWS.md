@@ -4,6 +4,13 @@ Dated changelog, newest first.
 
 ## 2026-09-13
 
+- **Box score: minutes read as unknown when ESPN reports a whole side at zero.** ESPN
+  sometimes finalizes a game with every player's minutes still "0" while the rest of the
+  line is real (it did exactly this for the Final: a player with 22 points showing "0"
+  minutes). A whole side reading zero is missing data, not a game nobody played, so those
+  minutes now show as "–" rather than a misleading 0. A side with real minutes, and a
+  genuine lone zero, are left as ESPN gives them.
+
 - **Fixed: the whole knockout bracket was missing its scores and teams.** ESPN files this
   competition's group headlines with a straight apostrophe but every final-phase headline
   with a curly one, and the scoreboard filter matched only the straight form. That silently

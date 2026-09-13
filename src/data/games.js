@@ -84,5 +84,5 @@ export const GAMES = [
   { num: 33, stage: 'SF', t1: 'France', t2: 'Germany', label1: 'Winner Game 29', label2: 'Winner Game 32', venue: 'berlinarena', ko: '2026-09-12T16:30:00+02:00', espnId: '401917258', tv: ['DAZN', 'HBO Max'], tvNote: 'Also on TBS and truTV', score: [86, 64] },
   { num: 34, stage: 'SF', t1: 'Spain', t2: 'United States', label1: 'Winner Game 30', label2: 'Winner Game 31', venue: 'berlinarena', ko: '2026-09-12T20:00:00+02:00', espnId: '401917257', tv: ['DAZN', 'HBO Max'], tvNote: 'Also on TBS and truTV', score: [66, 76] },
   { num: 35, stage: '3rd', t1: 'Spain', t2: 'Germany', label1: 'Loser Game 33', label2: 'Loser Game 34', venue: 'berlinarena', ko: '2026-09-13T16:30:00+02:00', espnId: '401917259', tv: ['truTV', 'DAZN', 'HBO Max'], score: [81, 58] },
-  { num: 36, stage: 'Final', t1: 'United States', t2: 'France', label1: 'Winner Game 33', label2: 'Winner Game 34', venue: 'berlinarena', ko: '2026-09-13T20:00:00+02:00', espnId: '401917260', tv: ['TNT', 'truTV', 'DAZN', 'HBO Max'] },
+  { num: 36, stage: 'Final', t1: 'United States', t2: 'France', label1: 'Winner Game 33', label2: 'Winner Game 34', venue: 'berlinarena', ko: '2026-09-13T20:00:00+02:00', espnId: '401917260', tv: ['TNT', 'truTV', 'DAZN', 'HBO Max'], score: [97, 79] },
 ]

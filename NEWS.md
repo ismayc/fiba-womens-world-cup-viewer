@@ -4,6 +4,15 @@ Dated changelog, newest first.
 
 ## 2026-09-13
 
+- **Fixed: the whole knockout bracket was missing its scores and teams.** ESPN files this
+  competition's group headlines with a straight apostrophe but every final-phase headline
+  with a curly one, and the scoreboard filter matched only the straight form. That silently
+  dropped all twelve knockout games (Qualification to Quarter-Finals, Quarter-Finals,
+  Semi-Finals, Third-Place and Final), so the bracket showed no results from the group stage
+  onward even though the refresh ran clean twice a day. The filter now accepts both
+  apostrophes, a guard test locks it, and the qualification, quarter-final, semi-final and
+  third-place results are back with the teams that played them.
+
 - **Confirmed knockout matchups now stand out in the Scenarios view.** A projected matchup
   that is mathematically locked given the results so far gets a faint wash in the app's
   accent color, so a settled pairing reads as settled at a glance. The ✔ that already

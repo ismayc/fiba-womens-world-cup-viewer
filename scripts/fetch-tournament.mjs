@@ -49,7 +49,12 @@ const ESPN = 'https://site.web.api.espn.com/apis/site/v2/sports/basketball/fiba'
 // site.api.espn.com 403s from any datacenter IP while site.web.api serves the
 // same routes, so CI must use the host above. Do not "simplify" it back.
 
-const EVENT_NOTE = /^FIBA Women's World Cup\b/
+// ESPN is inconsistent about the apostrophe: group headlines use a straight
+// apostrophe (U+0027) while every final-phase headline uses a curly one (U+2019),
+// e.g. "FIBA Women's World Cup - Group C" but "FIBA Women’s World Cup - Quarterfinals".
+// Matching only the straight form silently dropped all twelve knockout games, so the
+// bracket showed no scores from the group stage on. Accept either form.
+const EVENT_NOTE = /^FIBA Women['’]s World Cup\b/
 
 // ---------------------------------------------------------------------------
 // Helpers

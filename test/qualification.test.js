@@ -211,6 +211,16 @@ describe('advancement', () => {
     expect(computeQualification(GAMES).allComplete).toBe(false)
   })
 
+  it('does not count a live or voided game toward group completion', () => {
+    // A live game has a provisional score; completing the group off it would let the
+    // standings emit a placing verdict before the result is settled.
+    const idx = complete.findIndex((g) => g.stage === 'Group' && g.group === 'A' && g.score)
+    const flag = (key) => complete.map((g, i) => (i === idx ? { ...g, [key]: true } : g))
+    expect(groupComplete('A', flag('live'))).toBe(false)
+    expect(groupComplete('A', flag('voided'))).toBe(false)
+    expect(groupComplete('A', complete)).toBe(true)
+  })
+
   it('ranks all four teams even before a ball is thrown up', () => {
     const rows = rankGroup('A', GAMES)
     expect(rows).toHaveLength(4)

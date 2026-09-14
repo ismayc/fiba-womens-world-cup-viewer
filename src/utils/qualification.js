@@ -185,9 +185,14 @@ export function rankGroup(group, games) {
 }
 
 export function groupComplete(group, games) {
+  // A group is complete only when every game is truly FINAL. A live game carries a
+  // provisional score, so counting it here would flip completion mid-game and let
+  // rowStatus emit a qualification verdict off a score that can still change. Same final
+  // predicate as clinch.js and bracketResolve.js.
   return (
-    games.filter((g) => g.stage === 'Group' && g.group === group && g.score).length >=
-    GROUP_GAME_COUNT
+    games.filter(
+      (g) => g.stage === 'Group' && g.group === group && g.score && !g.live && !g.voided,
+    ).length >= GROUP_GAME_COUNT
   )
 }
 

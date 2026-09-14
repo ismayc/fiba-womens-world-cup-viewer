@@ -2,6 +2,16 @@
 
 Dated changelog, newest first.
 
+## 2026-09-14
+
+- **Group completion now requires every game to be truly final.** The provisional "as it
+  stands" standings deliberately count a live game's score (and are labeled ● LIVE), but
+  `groupComplete` also counted a live game toward the group being finished, which could flip
+  the group to "complete" mid-game and let the placing badges appear off a score that could
+  still change. It now counts only final games, the same predicate the clinch engine and the
+  bracket resolver already use. No change to the provisional table itself. Coverage stays at
+  100%.
+
 ## 2026-09-13
 
 - **Box score: minutes read as unknown when ESPN reports a whole side at zero.** ESPN

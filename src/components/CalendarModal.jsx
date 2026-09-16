@@ -6,10 +6,9 @@ import { LEAGUE } from '../config/league.js'
 
 // Subscriptions must point at the deployed feed (a localhost URL can't be
 // subscribed to), so links always use the production origin.
-// Scaffolded from the soccer Women's World Cup viewer, and this host was left on ITS
-// domain, so Subscribe handed out a live 200 feed of the wrong tournament's games.
-// The feed is a Netlify function and cannot be served from GitHub Pages, so this stays
-// on Netlify even though Pages is the canonical public URL everywhere else.
+// For this finished edition /calendar.ics is a STATIC file (scripts/build-calendar.mjs),
+// so the feed is served from GitHub Pages, the canonical host, not a Netlify function.
+// The live siblings keep this on Netlify because their feed is a per-request function.
 const PROD = LEAGUE.feedHost
 const FEED = `${PROD}/calendar.ics`
 

@@ -290,10 +290,13 @@ refresh workflow runs them before any `npm install`.
 
 ## Outside `src`
 
-- `netlify/functions/calendar.js` — the auto-updating `webcal://` `.ics` feed. It
-  is **ESM on purpose** (the package is `"type": "module"`, so a CommonJS function
-  502s on the Netlify Git-build path), it is ESPN-backed, and it carries its own
-  `VENUE_ALIASES` because a function cannot import from the app's source tree.
+- `scripts/build-calendar.mjs` — builds the static `webcal://` `.ics` feed,
+  `public/calendar.ics`, from the committed schedule (a `prebuild` hook regenerates
+  it). It replaced an ESPN-backed Netlify function: ESPN dropped date-range
+  scoreboard queries and its fiba slug is time-multiplexed, so the live feed 502'd
+  and would have emptied once ESPN advanced past 2026. The static file is served by
+  GitHub Pages and Netlify alike, and `test/calendar-feed.test.js` guards it against
+  drifting from the committed data.
   It must use **site.web.api**: a Netlify function runs on a datacenter IP, which
   `site.api` refuses.
 - `test/` — Vitest suite (units + jsdom component tests). `test/fixtures/`

@@ -8,7 +8,9 @@
   "author": "Chester Ismay",
   "scripts": {
     "dev": "vite",
+    "prebuild": "node scripts/build-calendar.mjs",
     "build": "vite build",
+    "build:calendar": "node scripts/build-calendar.mjs",
     "preview": "vite preview",
     "test": "vitest run",
     "test:watch": "vitest",

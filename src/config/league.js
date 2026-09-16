@@ -79,8 +79,8 @@ export const LEAGUE = {
     filenameBase: 'fiba-womens-world-cup-2026',
   },
 
-  // Netlify serves /calendar.ics; GitHub Pages cannot run the function. Both hosts are
-  // live: index.html used to claim no Netlify site existed for this repo, which was
-  // checked and corrected on September 6, 2026.
-  feedHost: 'https://fiba-womens-world-cup-viewer.netlify.app',
+  // The origin the calendar subscription links point at. /calendar.ics is a STATIC
+  // file for this finished edition (scripts/build-calendar.mjs), so unlike the live
+  // siblings it is served by GitHub Pages, the canonical host, and not only Netlify.
+  feedHost: 'https://ismayc.github.io/fiba-womens-world-cup-viewer',
 }

@@ -12,9 +12,10 @@ qualification math.
 🔗 **Live:** https://ismayc.github.io/fiba-womens-world-cup-viewer/ · https://fiba-womens-world-cup-viewer.netlify.app
 
 GitHub Pages is the canonical public URL and the one the link-preview card points
-at. Netlify is the mirror that keeps deploying when GitHub Actions is down, and it
-is also the only host that can serve `/calendar.ics`, since that feed is a Netlify
-function.
+at. Netlify is the mirror that keeps deploying when GitHub Actions is down. Both
+hosts serve `/calendar.ics`: for this finished edition the feed is a static file
+built from the committed schedule, not a Netlify function, so GitHub Pages serves it
+too.
 
 **This edition has not been played yet.** It tips off on 4 September 2026 and the
 Final is on 13 September. The schedule ships complete and score-free; results
@@ -85,7 +86,7 @@ app was grown from.
   broadcast.
 - **Spoiler-free mode** — hide every score behind a tap-to-reveal.
 - **Calendar** — add a single game to your calendar, export a filtered set, or
-  subscribe to an auto-updating `webcal://` feed that fills in teams and scores.
+  subscribe to a `webcal://` feed of the whole tournament with every final score.
 
 ## Data
 
@@ -147,7 +148,7 @@ not be "simplified":
    fetch script, never read from the feed.
 3. **`site.web.api.espn.com`, not `site.api.espn.com`.** The two serve identical
    routes, but `site.api` returns 403 to datacenter IPs, which is every CI runner
-   and every Netlify function.
+   the fetch script runs on.
 4. **`mergeToasts` in `services/scoreNotify.js`.** It looks like it belongs inline
    in App's `setToasts` call, and it did. v8 does not attribute coverage to an
    updater arrow React invokes from inside its own reducer, so inlining it makes

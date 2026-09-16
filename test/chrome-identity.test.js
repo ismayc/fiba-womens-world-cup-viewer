@@ -54,7 +54,10 @@ describe('the browser chrome agrees with src/config/league.js', () => {
     // this family rather than an accident, so it is asserted as a derivation rather than
     // as a second literal.
     const slug = JSON.parse(read('package.json')).name
-    expect(LEAGUE.feedHost).toBe(`https://${slug}.netlify.app`)
+    // Unlike the live siblings, whose feedHost is the Netlify function's origin, this
+    // finished edition serves a STATIC /calendar.ics, so its subscription links point
+    // at GitHub Pages, the canonical public host.
+    expect(LEAGUE.feedHost).toBe(`https://ismayc.github.io/${slug}`)
     expect(LEAGUE.ics.domain).toBe(slug.replace(/-/g, ''))
   })
 

@@ -2,6 +2,16 @@
 
 Dated changelog, newest first.
 
+## 2026-09-16
+
+- **Calendar subscription feed now works.** The subscribable `/calendar.ics` was a
+  Netlify function that fetched ESPN live, but ESPN dropped date-range scoreboard
+  queries and its fiba slug is time-multiplexed, so the feed had begun returning an
+  error rather than the schedule and would have emptied entirely once ESPN moved past
+  2026. It is now a static file built from the committed schedule, with every game's
+  tip-off, venue, and final score baked in. Because it is a real file rather than a
+  function, it is served by GitHub Pages, the canonical host, and by Netlify alike.
+
 ## 2026-09-14
 
 - **Group completion now requires every game to be truly final.** The provisional "as it

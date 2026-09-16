@@ -23,7 +23,7 @@
 import { writeFileSync, readFileSync } from 'node:fs'
 import { join, dirname } from 'node:path'
 import { fileURLToPath } from 'node:url'
-import { getJson } from './lib/fetch.mjs'
+import { getJson, mapLimit, CONCURRENCY } from './lib/fetch.mjs'
 import {
   EDITION,
   FLAGS,
@@ -198,9 +198,21 @@ function normalizeEvent(event) {
 }
 
 async function fetchEspn() {
-  const url = `${ESPN}/scoreboard?dates=${EDITION.window}&limit=200`
-  const data = await getJson(url)
-  const events = (data.events || []).filter(keepEvent)
+  // ESPN dropped hyphenated date-range scoreboard queries in September 2026 (every
+  // `dates=A-B` now answers HTTP 400, even a same-day `A-A`), so fetch each day of the
+  // tournament window on its own, concurrently, and merge the events by id.
+  const [from, to] = EDITION.window.split('-')
+  const at = (s) => Date.UTC(+s.slice(0, 4), +s.slice(4, 6) - 1, +s.slice(6, 8))
+  const days = []
+  for (let t = at(from); t <= at(to); t += 86400000) {
+    days.push(new Date(t).toISOString().slice(0, 10).replaceAll('-', ''))
+  }
+  const pages = await mapLimit(days, CONCURRENCY, (day) =>
+    getJson(`${ESPN}/scoreboard?dates=${day}&limit=200`),
+  )
+  const byId = new Map()
+  for (const data of pages) for (const ev of data.events || []) byId.set(ev.id, ev)
+  const events = [...byId.values()].filter(keepEvent)
   assert(events.length > 0, `ESPN returned no ${EDITION.year} Women's World Cup events`)
   assert(
     events.length <= EDITION.games,

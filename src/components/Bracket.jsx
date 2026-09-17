@@ -137,13 +137,16 @@ function BracketMatch({ num, byNum, tz, hideScores, pathTeam, path }) {
   )
 }
 
-function Column({ title, nums, ...common }) {
+function Column({ title, nums, colClass = '', ...common }) {
   return (
-    <div className="bx-col">
+    <div className={`bx-col ${colClass}`.trim()}>
       <div className="bx-col-head">{title}</div>
       <div className="bx-col-body">
         {nums.map((n) => (
-          <BracketMatch key={n} num={n} {...common} />
+          // The cell wrapper is the anchor the elbow connectors draw from.
+          <div className="bx-cell" key={n}>
+            <BracketMatch num={n} {...common} />
+          </div>
         ))}
       </div>
     </div>
@@ -268,9 +271,17 @@ export default function Bracket({ matches, tz, hideScores, focusMatch, onFocusHa
             feeding game: the other side is a group winner arriving on a bye.
           </p>
           <div className="bracket">
-            <Column title={STAGE_LABELS.QR} nums={BRACKET.left.QR} {...common} />
-            <Column title={STAGE_LABELS.QF} nums={BRACKET.left.QF} {...common} />
-            <Column title={STAGE_LABELS.SF} nums={BRACKET.left.SF} {...common} />
+            {/* Halves wrap the cascade columns so the elbow connectors can scope
+                :first-child / :last-child to each side (round counts differ per
+                competition). display:contents keeps the flex row intact. The QR
+                round feeds the QF 1:1 (the other side of each box is a group
+                winner on a bye), so it is marked bx-col-playin for a straight
+                connector instead of a 2:1 pairing elbow. */}
+            <div className="bx-half bx-half-left">
+              <Column title={STAGE_LABELS.QR} nums={BRACKET.left.QR} colClass="bx-col-playin" {...common} />
+              <Column title={STAGE_LABELS.QF} nums={BRACKET.left.QF} {...common} />
+              <Column title={STAGE_LABELS.SF} nums={BRACKET.left.SF} {...common} />
+            </div>
 
             <div className="bx-col bx-col-final">
               <div className="bx-col-head bx-final-head">🏆 {STAGE_LABELS.Final}</div>
@@ -281,9 +292,11 @@ export default function Bracket({ matches, tz, hideScores, focusMatch, onFocusHa
               </div>
             </div>
 
-            <Column title={STAGE_LABELS.SF} nums={BRACKET.right.SF} {...common} />
-            <Column title={STAGE_LABELS.QF} nums={BRACKET.right.QF} {...common} />
-            <Column title={STAGE_LABELS.QR} nums={BRACKET.right.QR} {...common} />
+            <div className="bx-half bx-half-right">
+              <Column title={STAGE_LABELS.SF} nums={BRACKET.right.SF} {...common} />
+              <Column title={STAGE_LABELS.QF} nums={BRACKET.right.QF} {...common} />
+              <Column title={STAGE_LABELS.QR} nums={BRACKET.right.QR} colClass="bx-col-playin" {...common} />
+            </div>
           </div>
         </>
       )}

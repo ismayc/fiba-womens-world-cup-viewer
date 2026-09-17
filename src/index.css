@@ -1414,7 +1414,7 @@ select {
 .bracket-hint { font-size: 0.8rem; color: var(--text-faint); margin: 0 0 12px; }
 .bracket {
   display: flex;
-  gap: 18px;
+  gap: 28px;
   align-items: stretch;
   overflow-x: auto;
   padding-bottom: 14px;
@@ -1441,6 +1441,108 @@ select {
   justify-content: space-around;
   flex: 1;
   gap: 10px;
+}
+/* Elbow connectors between rounds. Each match in a cascade column sits in a
+   flex:1 cell so the round distributes its matches evenly and a child cell
+   centers on the boundary between its two feeder cells. The elbows are drawn as
+   percentage-height borders on the cells (50% of a cell always reaches the pair
+   boundary), so the joins stay aligned at any height. The bracket is two-sided:
+   the left half's spines point right toward the Final, the right half's point
+   left, and each half scopes :first-child / :last-child through a display:contents
+   wrapper (round counts differ per competition). The Final column sits outside
+   both halves, so it keeps its space-around body and draws no connectors. */
+.bx-half {
+  display: contents;
+}
+.bx-half .bx-col-body {
+  justify-content: stretch;
+  gap: 0;
+}
+.bx-half .bx-cell {
+  flex: 1 1 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  position: relative;
+}
+/* Left half: spine out the right of each feeder cell (not the innermost column,
+   which would feed the Final), stub into the left of each child cell. */
+.bx-half-left > .bx-col:not(:last-child) .bx-cell::after {
+  content: '';
+  position: absolute;
+  right: -14px;
+  width: 14px;
+  height: 50%;
+  pointer-events: none;
+}
+.bx-half-left > .bx-col:not(:last-child) .bx-cell:nth-child(odd of .bx-cell)::after {
+  top: 50%;
+  border-top: 1px solid var(--border);
+  border-right: 1px solid var(--border);
+}
+.bx-half-left > .bx-col:not(:last-child) .bx-cell:nth-child(even of .bx-cell)::after {
+  bottom: 50%;
+  border-bottom: 1px solid var(--border);
+  border-right: 1px solid var(--border);
+}
+.bx-half-left > .bx-col:not(:first-child) .bx-cell::before {
+  content: '';
+  position: absolute;
+  left: -14px;
+  width: 14px;
+  top: 50%;
+  border-top: 1px solid var(--border);
+  pointer-events: none;
+}
+/* Right half: the mirror. Spine out the left of each feeder cell (not the
+   innermost column, here the first child), stub into the right of each child. */
+.bx-half-right > .bx-col:not(:first-child) .bx-cell::after {
+  content: '';
+  position: absolute;
+  left: -14px;
+  width: 14px;
+  height: 50%;
+  pointer-events: none;
+}
+.bx-half-right > .bx-col:not(:first-child) .bx-cell:nth-child(odd of .bx-cell)::after {
+  top: 50%;
+  border-top: 1px solid var(--border);
+  border-left: 1px solid var(--border);
+}
+.bx-half-right > .bx-col:not(:first-child) .bx-cell:nth-child(even of .bx-cell)::after {
+  bottom: 50%;
+  border-bottom: 1px solid var(--border);
+  border-left: 1px solid var(--border);
+}
+.bx-half-right > .bx-col:not(:last-child) .bx-cell::before {
+  content: '';
+  position: absolute;
+  right: -14px;
+  width: 14px;
+  top: 50%;
+  border-top: 1px solid var(--border);
+  pointer-events: none;
+}
+/* Play-in (qualifying) round: it feeds the quarter-finals 1:1, not 2:1 (the
+   other side of each quarter-final is a group winner arriving on a bye), so its
+   cells align one-to-one with the next column. Override the pairing elbow with a
+   straight connector at each cell's center. The extra .bx-col class raises
+   specificity above the odd/even elbow rules above. */
+.bx-half-left > .bx-col.bx-col-playin:not(:last-child) .bx-cell:nth-child(odd of .bx-cell)::after,
+.bx-half-left > .bx-col.bx-col-playin:not(:last-child) .bx-cell:nth-child(even of .bx-cell)::after {
+  top: 50%;
+  bottom: auto;
+  height: 0;
+  border-top: 1px solid var(--border);
+  border-right: none;
+}
+.bx-half-right > .bx-col.bx-col-playin:not(:first-child) .bx-cell:nth-child(odd of .bx-cell)::after,
+.bx-half-right > .bx-col.bx-col-playin:not(:first-child) .bx-cell:nth-child(even of .bx-cell)::after {
+  top: 50%;
+  bottom: auto;
+  height: 0;
+  border-top: 1px solid var(--border);
+  border-left: none;
 }
 .bx-match {
   background: var(--card);

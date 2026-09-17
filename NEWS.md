@@ -2,6 +2,19 @@
 
 Dated changelog, newest first.
 
+## 2026-09-17
+
+- **The knockout bracket now draws elbow connectors between rounds.** Each match
+  sits in a `flex:1` cell so a round distributes its matches evenly, a child
+  centers on the boundary between its two feeders, and 1px elbows drawn as
+  percentage-height borders trace each round to the next. The bracket is
+  two-sided, so the left half's spines point right toward the Final and the right
+  half's point left; each half is wrapped in a `display:contents` element so the
+  connectors scope correctly whatever the round count. The qualification round
+  feeds the quarter-finals one-to-one (the other side is a group winner on a bye),
+  so it draws a straight connector rather than a pairing elbow. The Final column
+  stays standalone. The one-round-at-a-time mobile view is unchanged.
+
 ## 2026-09-16
 
 - **Calendar subscription feed now works.** The subscribable `/calendar.ics` was a

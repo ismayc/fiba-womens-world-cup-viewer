@@ -111,7 +111,9 @@ badges and the projected bracket all follow. Do **not** poke components directly
 
 Match by `espnId` from `src/data/games.js`, never by rewriting team names, because a
 wrong matchup is a data bug, and ESPN's own abbreviations collide here (it serves
-Mali as "KOR"). `t1` in the committed board is filed as ESPN's `home` side.
+Mali as "KOR"). In the real feed `t1` (FIBA's first-named team) is ESPN's `away`
+side, but `applyLive` orients the score by team name (`aligned`), so the recipe below,
+which serves `t1` as `home`, still lands each score on the right team.
 
 ```js
 const finals = [

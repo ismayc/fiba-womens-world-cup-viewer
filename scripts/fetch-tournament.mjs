@@ -187,6 +187,13 @@ function normalizeEvent(event) {
     espnId: event.id,
     group: groupOf(c),
     espnKo: toBerlin(c.date),
+    // `timeValid: false` means ESPN has set only the DATE, and what it sends in place
+    // of a tip is midnight US Eastern that day. The date is real and the final-phase
+    // matcher below needs it, so `espnKo` keeps it; this flag is what stops the clock
+    // part being committed as a kickoff. Without it a game FIBA has honestly marked
+    // "to be confirmed" would acquire a confident wrong time — and, west of Eastern,
+    // the wrong day. See sports-viewer-meta/docs/LINEAGES.md §6.
+    espnTbd: c.timeValid === false || undefined,
     venue: VENUE_META[venueId].key,
     t1,
     t2,
@@ -251,7 +258,7 @@ function buildGames(espnEvents) {
       // FIBA owns the tip time. Where ESPN disagrees, the conflict must already
       // be recorded, or the build stops: an unexplained schedule move is exactly
       // the thing this check exists to surface.
-      if (hit.espnKo !== g.ko) {
+      if (!hit.espnTbd && hit.espnKo !== g.ko) {
         const bug = knownBug(hit.espnId)
         assert(
           bug && bug.fibaKo === g.ko && bug.espnKo === hit.espnKo,
@@ -293,8 +300,8 @@ function buildGames(espnEvents) {
       espnId: resolved.espnId,
       venue: resolved.venue,
       ...usCoverage(g),
-      ko: resolved.espnKo,
-      tbdTip: false,
+      ko: resolved.espnTbd ? null : resolved.espnKo,
+      tbdTip: !!resolved.espnTbd,
       score: resolved.score,
       ot: resolved.ot,
     }

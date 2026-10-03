@@ -211,7 +211,13 @@ export async function fetchLive(signal, dates) {
       awarded: /FORFEIT|AWARD/i.test(st.type?.name || ''),
       statusLabel: statusLabelOf(st.type?.name || ''),
       score: parseEspnScore(home, away, state),
-      instant: ev.date ? new Date(ev.date).getTime() : null,
+      // Only a REAL kickoff. When ESPN has not set one it sends `timeValid: false`
+      // and, in place of a time, midnight US Eastern on the day of the game — which
+      // the two fills below would write over a `tbdTip` game's honest "to be
+      // confirmed", replacing it with a time nobody announced, on the previous
+      // evening anywhere west of Eastern. A placeholder is not an instant, so it
+      // does not become one here. See sports-viewer-meta/docs/LINEAGES.md §6.
+      instant: ev.date && comp.timeValid !== false ? new Date(ev.date).getTime() : null,
     }
 
     if (rec.id != null) map.set('id:' + rec.id, rec)

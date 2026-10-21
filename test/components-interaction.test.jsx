@@ -476,6 +476,26 @@ describe('NextMatch interaction', () => {
     expect(screen.getByText('Czechia')).toBeInTheDocument()
   })
 
+  // Czechia's first game (v Italy, 20:15 on Sep 4) comes after the day's first tip-off
+  // (Japan v Mali and Australia v Puerto Rico, both 11:30) and two games in between.
+  // So the card must skip every earlier game, not just happen to land on the first one.
+  // Checked against the unfollowed banner first, so the premise cannot rot if the
+  // fixture changes.
+  it('shows a followed team’s next game over every earlier game', () => {
+    const { unmount } = wrap(<NextMatch matches={GAMES} tz={TZ} />)
+    expect(document.querySelector('.nextmatch').textContent).toMatch(/Japan/)
+    expect(document.querySelector('.nextmatch').textContent).not.toMatch(/Czechia/)
+    unmount()
+
+    localStorage.setItem('fwwc:followed', JSON.stringify(['Czechia']))
+    wrap(<NextMatch matches={GAMES} tz={TZ} />)
+    const card = document.querySelector('.nextmatch')
+    expect(card).not.toHaveClass('nextmatch-stack')
+    expect(card.textContent).toMatch(/Czechia/)
+    expect(card.textContent).toMatch(/Italy/)
+    expect(card.textContent).not.toMatch(/Japan|Mali|Australia|Puerto Rico|China|Nigeria/)
+  })
+
   it('shows a live game ahead of the countdown', () => {
     const live = GAMES.map((g) =>
       g.num === 1 ? { ...g, score: [40, 38], live: { clock: '3:00', period: 'Q2' } } : g,

@@ -298,6 +298,11 @@ describe('MatchDetail', () => {
     expect(screen.getByText(/Courtside 1891/)).toBeInTheDocument()
   })
 
+  it('still shows an outlet note when the feed spells the outlet in another case', () => {
+    wrap(<MatchDetail match={{ ...num(GAMES, 1), tv: ['hbo max', 'dazn'] }} tz={TZ} allMatches={GAMES} onClose={() => {}} />)
+    expect(screen.getByText(/Standard or Premium/)).toBeInTheDocument()
+  })
+
   it('shows the round-level window on a game whose split is unpublished', () => {
     wrap(<MatchDetail match={num(GAMES, 29)} tz={TZ} allMatches={GAMES} onClose={() => {}} />)
     expect(screen.getByText('Also on TNT and/or truTV')).toBeInTheDocument()

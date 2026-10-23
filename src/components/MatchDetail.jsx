@@ -4,6 +4,7 @@ import { fetchGameSummary } from '../services/summary.js'
 import BoxScoreSection from './BoxScore.jsx'
 import { STAGE_LABELS } from '../data/games.js'
 import { OUTLET_NOTES, US_BROADCAST } from '../data/broadcast.js'
+import { nameKey } from '../utils/watch.js'
 import { teamRecord } from '../utils/tournamentStats.js'
 import { formatTime, formatDateLong, formatDayKeyLong, tzAbbrev, liveState, statusFlag, teamKickoffTooltip } from '../utils/time.js'
 import { downloadICS } from '../utils/ics.js'
@@ -265,7 +266,7 @@ export default function MatchDetail({ match, tz, hideScores, allMatches, onClose
             {/* Naming an outlet without its condition is the same mistake as not
                 naming it: a Basic With Ads subscriber does not get these games. */}
             {Object.entries(OUTLET_NOTES)
-              .filter(([outlet]) => match.tv?.includes(outlet))
+              .filter(([outlet]) => match.tv?.some((n) => nameKey(n) === nameKey(outlet)))
               .map(([outlet, note]) => (
                 <div key={outlet} className="md-watch-note">
                   <span className="md-lang">{outlet}</span> {note}

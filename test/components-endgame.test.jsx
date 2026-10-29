@@ -100,6 +100,16 @@ describe('a finished tournament', () => {
     })
   })
 
+  // The champion line is the biggest spoiler; ChampionBanner already hides it.
+  it('names no champion or runners-up in spoiler-free mode', () => {
+    afterTheFinal(() => {
+      wrap(<NextMatch matches={board} tz={TZ} hideScores />)
+      expect(screen.queryByText(champion)).toBeNull()
+      expect(screen.queryByText(/Runners-up/)).toBeNull()
+      expect(screen.getByText(/tournament has concluded/)).toBeInTheDocument()
+    })
+  })
+
   it('falls back to a generic message when the Final has no result', () => {
     afterTheFinal(() => {
       const noFinal = board.map((g) => (g.num === 36 ? { ...g, score: undefined } : g))

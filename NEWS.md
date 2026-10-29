@@ -2,6 +2,19 @@
 
 Dated changelog, newest first.
 
+## 2026-10-29
+
+- **Spoiler-free mode no longer gives away overtime or the champion.** A live game's badge named the
+  period and the clock ("OT", "Q4", "OT 5:12"), and its tooltip repeated ESPN's detail
+  text. An OT badge says the game was tied after four quarters, and a Q4 badge that later
+  changes says the same. With scores hidden, the badge now reads only "LIVE" on the game
+  card, the Week view, the day and group pop-ups, the bracket, the next-game banner, and
+  the game pop-up (until "reveal"). The next-game banner also stopped naming the
+  champion and the runners-up after the Final while scores are hidden, the way the
+  champion banner already did. The overtime tag on a final score was already behind
+  the hidden score, and the game list has no winner highlight. Found while fixing the
+  same leak in the NFL viewer (issue #1 there).
+
 ## 2026-09-17
 
 - **The knockout bracket now draws elbow connectors between rounds.** Each match

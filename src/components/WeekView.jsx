@@ -66,7 +66,7 @@ function WeekCell({ m, tz, hidden, byNum }) {
                 previous round) -> "TBC", never the epoch time a null `ko`
                 would format to. */}
             {m.ko ? formatTime(m.ko, tz) : <span className="kickoff-tbd" title="FIBA announces this tip-off time at the end of the previous round">TBC</span>}
-            {m.live && <LiveBadge match={m} className="wc-live" />}
+            {m.live && <LiveBadge match={m} className="wc-live" hideScores={hidden} />}
           </>
         )}
       </div>

@@ -18,6 +18,7 @@ import PathPicker from '../src/components/PathPicker.jsx'
 import LiveBadge from '../src/components/LiveBadge.jsx'
 import CalendarModal from '../src/components/CalendarModal.jsx'
 import DayMatchesModal from '../src/components/DayMatchesModal.jsx'
+import GroupGamesModal from '../src/components/GroupGamesModal.jsx'
 import ServicesModal from '../src/components/ServicesModal.jsx'
 import Filters from '../src/components/Filters.jsx'
 import FeederPair from '../src/components/FeederPair.jsx'
@@ -779,5 +780,67 @@ describe('ScoreToasts auto-dismiss', () => {
     }))
     render(<ScoreToasts items={items} onOpen={() => {}} onDismiss={() => {}} />)
     expect(document.querySelectorAll('.goal-toast')).toHaveLength(4)
+  })
+})
+
+// A live badge that names the period gives the result away in spoiler-free mode: an
+// OT badge says the game was tied after regulation, and a Q4 badge that later turns
+// into OT says the same. Hidden, every badge reads only LIVE, tooltip included.
+describe('live badge in spoiler-free mode', () => {
+  const OT_LIVE = { clock: '5:12', period: 'OT', detail: 'OT 5:12' }
+  const live = (n) => ({ ...num(GAMES, n), score: [80, 80], live: OT_LIVE })
+  const noPeriod = (root = document.body) => {
+    expect(root.textContent).not.toMatch(/OT|5:12/)
+    expect(root.innerHTML).not.toMatch(/OT 5:12|5:12/)
+  }
+
+  it('shows only LIVE on the badge, its label, and its tooltip', () => {
+    render(<LiveBadge match={{ live: OT_LIVE }} hideScores />)
+    const badge = document.querySelector('.badge-live')
+    expect(badge.textContent).toBe('● LIVE')
+    expect(badge).toHaveAttribute('aria-label', 'Live')
+    expect(badge).toHaveAttribute('title', 'Live')
+  })
+
+  it('hides the period on the game card until the score is revealed', () => {
+    wrap(<MatchCard match={live(1)} tz={TZ} hidden byNum={byNum} slotMap={slotMap} />)
+    noPeriod()
+    expect(document.querySelector('.badge-live').textContent).toBe('● LIVE')
+    fireEvent.click(screen.getByRole('button', { name: /reveal/i }))
+    expect(document.querySelector('.badge-live').textContent).toMatch(/OT/)
+  })
+
+  it('hides the period in the Week view, the day pop-up, and the group pop-up', () => {
+    const board = GAMES.map((g) => (g.num === 1 ? live(1) : g))
+    const { unmount } = wrap(<WeekView allMatches={board} shown={board} tz={TZ} dayHidden={() => true} />)
+    noPeriod()
+    unmount()
+    const day = wrap(<DayMatchesModal matches={[live(1)]} tz={TZ} hideScores byNum={byNum} onClose={() => {}} />)
+    noPeriod()
+    day.unmount()
+    wrap(<GroupGamesModal group="A" matches={[live(1)]} tz={TZ} hideScores onClose={() => {}} />)
+    noPeriod()
+  })
+
+  it('hides the period on the next-game banner, single and stacked', () => {
+    const one = GAMES.map((g) => (g.num === 1 ? live(1) : g))
+    const { unmount } = wrap(<NextMatch matches={one} tz={TZ} hideScores />)
+    noPeriod()
+    unmount()
+    const two = GAMES.map((g) => ([21, 22].includes(g.num) ? live(g.num) : g))
+    wrap(<NextMatch matches={two} tz={TZ} hideScores />)
+    noPeriod()
+    expect([...document.querySelectorAll('.badge-live')].map((b) => b.textContent)).toEqual(['● LIVE', '● LIVE'])
+  })
+
+  it('hides the period on the bracket and in the game pop-up until revealed', () => {
+    const board = GAMES.map((g) => (g.num === 33 ? live(33) : g))
+    const { unmount } = wrap(<Bracket matches={board} tz={TZ} hideScores />)
+    noPeriod()
+    unmount()
+    wrap(<MatchDetail match={live(1)} tz={TZ} hideScores allMatches={GAMES} onClose={() => {}} />)
+    noPeriod(document.querySelector('.md-head'))
+    fireEvent.click(document.querySelector('.md-reveal'))
+    expect(document.querySelector('.md-head').textContent).toMatch(/OT/)
   })
 })

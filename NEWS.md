@@ -2,6 +2,12 @@
 
 Dated changelog, newest first.
 
+## 2026-10-31
+
+- **Spoiler-free mode no longer raises result alerts.** A result alert names the winner,
+  so with scores hidden the viewer raises no result toast and no browser notification.
+  The alerts start again when scores are shown, without replaying past results.
+
 ## 2026-10-29
 
 - **Spoiler-free mode no longer gives away overtime or the champion.** A live game's badge named the

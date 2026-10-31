@@ -341,6 +341,36 @@ describe('result alerts', () => {
     vi.unstubAllGlobals()
   })
 
+  it('raises no score toast and no browser notification in spoiler-free mode', async () => {
+    const made = []
+    class FakeNotification {
+      static permission = 'granted'
+      static requestPermission = vi.fn(async () => 'granted')
+      constructor(title) {
+        made.push(title)
+      }
+    }
+    vi.stubGlobal('Notification', FakeNotification)
+    window.history.replaceState({}, '', '/?hide=1')
+    localStorage.setItem('fwwc:scoreAlerts', JSON.stringify({ enabled: true, scope: 'all' }))
+
+    let payload = espnScoreboard([num(1)], { 1: { state: 'in', score: [40, 38], period: 2 } })
+    global.fetch = vi.fn(async () => ({ ok: true, json: async () => payload }))
+    mount()
+    await waitFor(() => expect(document.querySelector('.badge-live')).toBeTruthy())
+
+    payload = espnScoreboard([num(1)], { 1: { state: 'post', score: [88, 61] } })
+    fireEvent.click(screen.getByRole('button', { name: /Refresh/ }))
+    // The final has landed: the live badge is gone, so the merged board has run
+    // through the alert effect ...
+    await waitFor(() => expect(document.querySelector('.badge-live')).toBeFalsy())
+    // ... and still nothing names the result, on the page or in the OS.
+    await act(async () => {})
+    expect(screen.queryByText(/FINAL: Japan win/)).not.toBeInTheDocument()
+    expect(made).toEqual([])
+    vi.unstubAllGlobals()
+  })
+
   it('asks for permission when alerts are switched on', async () => {
     const requestPermission = vi.fn(async () => 'granted')
     vi.stubGlobal('Notification', class {

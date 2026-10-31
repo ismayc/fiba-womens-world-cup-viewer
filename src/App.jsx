@@ -318,7 +318,9 @@ export default function App() {
       followed,
     })
     finalSnapRef.current = next
-    if (!scoreAlerts.enabled || events.length === 0) return
+    // Spoiler-free mode raises no score alerts at all: a final-score alert is a score. The
+    // snapshot still advances, so turning spoilers back on does not replay them.
+    if (!scoreAlerts.enabled || hideScores || events.length === 0) return
     // Defense-in-depth: a healthy poll yields at most a couple of new results —
     // though this tournament legitimately ends two games at once, since a
     // group's last two games tip off simultaneously. A batch larger than that
@@ -345,7 +347,7 @@ export default function App() {
         /* some browsers throw if constructed outside a SW; ignore */
       }
     }
-  }, [matches, scoreAlerts, followed])
+  }, [matches, scoreAlerts, followed, hideScores])
 
   // Turn result alerts on/off. Toasts work regardless of Notification permission,
   // so enabling never blocks on it — but we still ask (from this user gesture,
@@ -817,7 +819,7 @@ export default function App() {
       </footer>
 
       {servicesOpen && <ServicesModal onClose={() => setServicesOpen(false)} />}
-      <ScoreToasts items={toasts} onOpen={setDetailMatch} onDismiss={dismissToast} />
+      <ScoreToasts items={hideScores ? [] : toasts} onOpen={setDetailMatch} onDismiss={dismissToast} />
 
       {detailMatch && (
         <MatchDetail

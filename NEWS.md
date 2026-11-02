@@ -2,6 +2,11 @@
 
 Dated changelog, newest first.
 
+## 2026-11-02
+
+- **The Week view fits a phone.** It shows one day per row and drops days with no matches. Seven side-by-side columns used to cut long team names in half, and a week whose games came late opened on blank columns.
+- **The group tables fit a phone.** PF and PA hide below 560px, PD stays, and the status badge can drop under the team name, so the page no longer scrolls sideways.
+
 ## 2026-10-31
 
 - **Spoiler-free mode no longer raises result alerts.** A result alert names the winner,

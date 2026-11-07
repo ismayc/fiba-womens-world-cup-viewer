@@ -2,6 +2,10 @@
 
 Dated changelog, newest first.
 
+## 2026-11-07
+
+- **The README is up to date again.** It now says the tournament is complete, drops the unpublished-fixtures note, and covers box scores, DAZN, and the full spoiler-free behavior.
+
 ## 2026-11-02
 
 - **The Week view fits a phone.** It shows one day per row and drops days with no matches. Seven side-by-side columns used to cut long team names in half, and a week whose games came late opened on blank columns.

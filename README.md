@@ -17,9 +17,8 @@ hosts serve `/calendar.ics`: for this finished edition the feed is a static file
 built from the committed schedule, not a Netlify function, so GitHub Pages serves it
 too.
 
-**This edition has not been played yet.** It tips off on 4 September 2026 and the
-Final is on 13 September. The schedule ships complete and score-free; results
-arrive through the refresh job as games finish.
+**This edition is complete.** It ran 4 to 13 September 2026, and the committed
+data holds every final score.
 
 ## The format, and why it shapes the app
 
@@ -62,7 +61,8 @@ app was grown from.
   teams, or "Live now"), with a jump-to-game button. It stacks both games when a
   group's final round tips two at once, which FIBA schedules by design.
 - **Result alerts** — opt-in 🔔 on-page toasts and browser notifications the
-  moment a game goes final, scoped to your followed teams or all games. (Final
+  moment a game goes final, scoped to your followed teams or all games (none in
+  spoiler-free mode). (Final
   scores, not baskets: a basketball game has sixty-plus scoring plays, and the
   scoreboard feed does not carry them.)
 - **Five views** — chronological schedule, a week calendar, group standings,
@@ -79,12 +79,15 @@ app was grown from.
   projected final phase recompute exactly.
 - **Bracket** — the full 12-game final phase with FIBA's slot labels, showing
   candidate pairs for unresolved feeds and tracing any team's path to the Final.
-- **My services** — pick your US providers (HBO Max, YouTube TV, Hulu + Live TV,
+- **My services** — pick your US providers (DAZN, HBO Max, YouTube TV, Hulu + Live TV,
   Fubo, Sling, DirecTV Stream, cable/satellite) and filter the schedule to what
   you can actually watch. A game whose US coverage has not been published yet is
   kept rather than hidden, since that is missing data rather than an absent
   broadcast.
-- **Spoiler-free mode** — hide every score behind a tap-to-reveal.
+- **Box scores** — open a game for its quarter line score, player table, and
+  team-stat comparison.
+- **Spoiler-free mode** — hide every score, overtime marker, champion, and result
+  alert.
 - **Calendar** — add a single game to your calendar, export a filtered set, or
   subscribe to a `webcal://` feed of the whole tournament with every final score.
 
@@ -99,14 +102,13 @@ Two sources, one authority:
 
 The build **fails** if the two disagree about which teams meet, and reports a
 tip-off conflict only if it is already recorded. There is exactly one such
-conflict today: ESPN files South Korea v Nigeria on 4 September two hours early
+conflict: ESPN files South Korea v Nigeria on 4 September two hours early
 (12:30 Berlin against FIBA's 14:30), the signature of a double-applied timezone
 offset. FIBA is the organizer, so the app ships FIBA's time. See
 `KNOWN_ESPN_TIME_BUGS` in `scripts/official.mjs`.
 
-ESPN has **not published the twelve final-phase fixtures** yet, because the teams
-are not known. The app ships those records with FIBA's slot labels and no teams,
-and the refresh job fills them in as ESPN publishes them.
+ESPN published all 36 games, including the twelve final-phase fixtures, and the
+committed data holds the final results.
 
 Regenerate with:
 
